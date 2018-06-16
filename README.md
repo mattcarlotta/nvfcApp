@@ -1,18 +1,20 @@
 # Nvidia GPU Fan Controller (nvfcApp)
-a GTK3 GUI application that runs a python script to create a modifiable 2D curve of [temp, speed] points that are used to control a Nvidia GPU fan within a Debian/GNU environment.
+a GTK3 GUI application that creates a modifiable 2D curve of [temp, speed] points that are used to control a Nvidia GPU fan within a Debian/GNU environment.
 
 ![nvfc.png](https://code.mattcarlotta.io/root/nvda-fcontrl/raw/master/nvfc.png)
 
 ## Quickstart Linux
 
-* Install python:  
-  `sudo apt-get install python`
+* Install python3:  
+  `sudo apt-get install python3.6`
 * Install matplotlib:  
   `sudo apt-get install python-matplotlib`
 * Install Tkinter:  
-  `sudo apt-get install python-tk`
+  `sudo apt-get install python3-tk`
 * Install pyGTK:  
-  `sudo apt-get install python-gtk2-dev`
+  `sudo apt-get install libgtk-3-dev`
+* Install cairocffi:  
+  `sudo apt-get install python3-cairocffi`  
 * Install libcanberra-gtk:  
   `sudo apt-get install libcanberra-gtk-module`
 * Allow the Nvidia card's fan to be controlled:  
@@ -20,7 +22,7 @@ a GTK3 GUI application that runs a python script to create a modifiable 2D curve
 * Reboot your computer for the GPU settings to take effect:  
   `sudo reboot`
 * Open a terminal in the folder containing nvfc.py, then execute:  
-  `python nvfc.py`
+  `python3 nvfcapp.py`
 
 ## Button Actions
 
@@ -34,7 +36,7 @@ a GTK3 GUI application that runs a python script to create a modifiable 2D curve
 * Fan Speed - Current GPU fan speed (%)
 
 ## Notes
-⚠️ Only works with nvidia proprietary drivers
+⚠️ Only works on OS's that support python3 and have nvidia proprietary drivers installed
 
 ⚠️ Versions 349.12 and 349.16 are not supported due to a regression in the drivers
 
@@ -42,17 +44,19 @@ a GTK3 GUI application that runs a python script to create a modifiable 2D curve
 
 ⚠️ It currently must be used with an open terminal
 
-⚠️ Closing the app resets the GPU fan speed to auto (controlled by driver)
+⚠️ Closing the app resets the GPU fan speed to be controlled by driver
 
 
 
 ## Dependencies:
 
-* python  
-* matplotlib  
+* python3
+* matplotlib
 * Tkinter
 * pyGTK
+* cairocffi
 * libcanberra-gtk
+* nvidia-driver-350+
 
 Based on the work of Luke Frisken and Mister Pup:  
 * https://code.google.com/p/nvidia-fanspeed/
