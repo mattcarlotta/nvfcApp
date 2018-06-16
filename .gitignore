@@ -1,0 +1,6 @@
+.anjuta_sym_db.db
+/.anjuta
+/src/__pycache__
+/src/notes
+/src/config.csv
+/src/*.pyc
