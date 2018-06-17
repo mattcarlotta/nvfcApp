@@ -21,7 +21,7 @@ gi.require_version('Gtk', '3.0')
 
 from gi.repository import Gtk, GdkPixbuf, Gio, Gdk
 import signal
-from chartController import Chart
+from chartController import Chart, applyData, resetData, saveToFile
 from styleProvider import styles
 styles()
 
@@ -40,6 +40,8 @@ class GUI:
 		self.chartBox = self.builder.get_object('chartBox')
 		Chart(self.chartBox)
 
+		# self.applyButton = self.builder.get_object('applyButton')
+
 		# signal traps
 		signal.signal(signal.SIGINT, self.on_nvfcApp_destroy) #CTRL-C
 		signal.signal(signal.SIGQUIT, self.on_nvfcApp_destroy) #CTRL-\
@@ -48,9 +50,21 @@ class GUI:
 
 		self.window.show_all()
 
-	def on_nvfcApp_destroy(self=None, window=None, *data):
+	def on_nvfcApp_destroy(self=None, widget=None):
 		Chart.close()
 		Gtk.main_quit()
+
+	def on_applyButton_clicked(self, widget):
+		applyData()
+
+	def on_resetButton_clicked(self, widget):
+		resetData()
+
+	def on_saveButton_clicked(self, widget):
+		saveToFile()
+
+	def on_quitButton_clicked(self, widget):
+		self.on_nvfcApp_destroy()
 
 def main():
 	app = GUI()

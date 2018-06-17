@@ -18,15 +18,28 @@ from dragHandler import *
 from messageController import displayDialogBox
 import sys
 import math
-import nvFspd
+# import nvFspd
+from nvFspd import NvidiaFanController, updatedCurve
 import os
 from os import path
 import csv
 
-x_values = []
-y_values = []
+
+""" Global Variables """
+fig = plt.figure(num="Nvidia Fan Controller", figsize=(12, 9)) # create a figure (one figure per window)
+axes = fig.add_subplot(111) # add a subplot to the figure. axes is of type Axes which contains most of the figure elements
+canvas = FigureCanvas(fig)
+canvas.set_size_request(800, 600)
 update_stats = True # sets flag for updating chart with GPU stats
-updatedCurve = nvFspd.updatedCurve
+x_min = -5
+x_max = 105
+y_min = 25
+y_max = 105
+axes.set_title("GPU Fan Controller")
+axes.grid()
+axes.set_xlim(x_min, x_max)
+axes.set_ylim(y_min, y_max)
+""" --------------- """
 
 
 class Chart():
@@ -34,126 +47,55 @@ class Chart():
         global current_temp
         global current_fan_speed
         global nvidiaController
+        global fig
+        global dataController
+        global line
 
         initChartValues()
         self.plot = plt
-        self.fig = plt.figure(num="Nvidia Fan Controller", figsize=(12, 9)) # create a figure (one figure per window)
-        self.axes = self.fig.add_subplot(111) # add a subplot to the figure. axes is of type Axes which contains most of the figure elements
-        self.canvas = FigureCanvas(self.fig)
-        self.canvas.set_size_request(800, 600)
+        self.fig = fig
+        self.axes = axes
+        self.canvas = canvas
         chartBox.add(self.canvas)
-        self.anim = animation.FuncAnimation(self.fig, self.updateLabelStats, interval=1000)
+        self.anim = animation.FuncAnimation(self.fig, updateLabelStats, interval=1000)
         
-
-        # working on the Axes object
-        self.axes.set_title("GPU Fan Controller") # title for the chart
-        self.axes.grid()
-
         # chart min/max display values
-        self.x_min = -5
-        self.x_max = 105
-        self.y_min = 25
-        self.y_max = 105
-        self.axes.set_xlim(self.x_min, self.x_max)
-        self.axes.set_ylim(self.y_min, self.y_max)
+        self.x_min = x_min
+        self.x_max = x_max
+        self.y_min = y_min
+        self.y_max = y_max
 
-        # Save button
-        saveFig = self.fig.add_axes([0.8, 0.015, 0.1, 0.04])
-        self.saveFig = Button(saveFig, "Save")
-        self.saveFig.on_clicked(self.saveToFile)
+        # matplotlib stops working if two buttons aren't present
+        # [left, bottom, width, height]
+        self.fig.add_axes([0, -100, 0.01, 0.01])
+        self.fig.add_axes([0, 100, 0.01, 0.01])
 
-        # printAxes = self.fig.add_axes([0.2, 0.025, 0.1, 0.04])  #position rect [left, bottom, width, height] where all quantities are in fractions of figure width and height
-        # self.printButton = Button(printAxes, "Print")
-        # self.printButton.on_clicked(self.printData)
-
-        # Reset button
-        resetChart = self.fig.add_axes([0.125, 0.015, 0.1, 0.04])
-        self.resetChart = Button(resetChart, "Reset")
-        self.resetChart.on_clicked(self.resetData)
-
-        # Apply button
-        applyAxes = self.fig.add_axes([0.685, 0.015, 0.1, 0.04])
-        self.applyAxes = Button(applyAxes, "Apply")
-        self.applyAxes.on_clicked(self.applyData)
-
-        #b=blue, o=circle, picker=max distance for considering point as clicked
-        self.line, = self.axes.plot(x_values, y_values, linestyle='-', marker='o', color='b', picker=5) #tuple unpacking: this function returns a tuple, with the comma we take the first element
+        line, = axes.plot(x_values, y_values, linestyle='-', marker='o', color='b', picker=5) #b=blue, o=circle, picker=max distance for 
 
         self.dragHandler = DragHandler(self)
-        self.dataController = DataController(x_values, y_values)
+        dataController = DataController(x_values, y_values)
 
         #validate points from file!
-        # self.updatedCurve = nvFspd.updatedCurve
-        # self.nvidiaController = nvFspd.NvidiaFanController(x_values, y_values)
-        nvidiaController = nvFspd.NvidiaFanController(x_values, y_values)
+        nvidiaController = NvidiaFanController(x_values, y_values)
         nvidiaController.start()
-
-        # self.fig.canvas.mpl_connect("close_event", self.on_close)
-        # self.draw_plot()
-
-    def exit_signal_handler(self, signal, frame):
-        plt.close('all')
-        nvidiaController.stop()
-        # Gtk.main_quit()
 
     def close(self=None, widget=None, *data):
         plt.close('all')
         nvidiaController.stop()
         # Gtk.main_quit()
-
-    def resetData(self, event):
-        initChartValues() # reset to initial values
-        xydata = [x_values, y_values]
-        self.line.set_data(xydata) # update curve with values
-        self.updateChart(x_values, y_values) # update chart to reflect values
-
-    def updateChart(self, xdata, ydata):
-        """
-        Due to how the NvidiaFanController run loop was structured to constantly update, there was an issue where updating the curve points could take anywhere from 3 to 10+ loop iterations
-        By pausing the loop, updates to the curve points occur consistently between 1-3 loop iterations
-        As a precaution, updating the chart with GPU temp/fan speed stats have also been paused, although may not be necessary.
-        """
-        self.setUpdateStats(False) # temporarily stops live GPU updates
-        updatedCurve(True) # pauses the nvFspd run loop
-        nvidiaController.setCurve(xdata, ydata) # updates curve with new x and y data
-        updatedCurve(False) # resumes nvFspd loop
-        self.setUpdateStats(True) # enables live GPU updates
-
-    def setUpdateStats(self, bool):
-        global update_stats
-        update_stats = bool
-
-    def applyData(self, event):
-        xdata = self.line.get_xdata() # grabs current curve y data
-        ydata = self.line.get_ydata() # grabs current curve y data
-        is_valid_curve = self.dataController.setData(xdata, ydata) # checks if curve is exponentially growing (returns bool)
-
-        if is_valid_curve:
-            self.updateChart(xdata, ydata) # updates nvFspd.NvidiaFanController() with new curve data
-            displayDialogBox('Successfully applied the current curve to the fan settings!')
-        else:
-            xdata, ydata = self.dataController.getData() # gets previous data
-            xydata = [xdata, ydata] 
-            self.line.set_data(xydata) # resets line to previous curve
-
-    def saveToFile(self, event):
-        config = []
-        xdata, ydata = self.dataController.getData() # get current curve points
-
-        for index in range(0, len(xdata)):
-            res = [xdata[index], ydata[index]] # combine x and y data
-            config.append(res) # append it to config
-
-        savedConfig = np.array(config) # convert config to numpy array (req'd to convert base10 to int)
-        np.savetxt("config.csv", savedConfig.astype(int) , delimiter=",", fmt='%i') # saves array[temp, fspd] to config.csv
-        displayDialogBox('Successfully saved the current curve configuration!')
     
-    def updateLabelStats(self, i):
-        if (update_stats):
-            current_temp = nvFspd.NvidiaFanController().getTemp() # grabs current temp from NvidiaFanController
-            self.axes.set_xlabel("Temperature "+ "(" + str(current_temp) +"°C)") # updates chart x-axis label
-            current_fan_speed = str(nvFspd.NvidiaFanController().getFanSpeed()) # grabs current fspd from NvidiaFanController
-            self.axes.set_ylabel("Fan Speed " + "(" + str(current_fan_speed) + "%)") # updates chart y-axis label
+def applyData():
+    xdata = line.get_xdata() # grabs current curve y data
+    ydata = line.get_ydata() # grabs current curve y data
+    is_valid_curve = dataController.setData(xdata, ydata) # checks if curve is exponentially growing (returns bool)
+
+    if is_valid_curve:
+        updateChart(xdata, ydata) # updates nvFspd.NvidiaFanController() with new curve data
+        displayDialogBox('Successfully applied the current curve to the fan settings!')
+    else:
+        xdata, ydata = dataController.getData() # gets previous data
+        xydata = [xdata, ydata] 
+        line.set_data(xydata) # resets line to previous curve
 
 def initChartValues():
     global x_values
@@ -176,6 +118,48 @@ def initChartValues():
         # updates default curve values with csv array
         x_values = cfg_x #temp
         y_values = cfg_y #speed
+
+def resetData():
+    initChartValues() # reset to initial values
+    xydata = [x_values, y_values]
+    line.set_data(xydata) # update curve with values
+    updateChart(x_values, y_values) # update chart to reflect values
+
+def saveToFile():
+    config = []
+    xdata, ydata = dataController.getData() # get current curve points
+
+    for index in range(0, len(xdata)):
+        res = [xdata[index], ydata[index]] # combine x and y data
+        config.append(res) # append it to config
+
+    savedConfig = np.array(config) # convert config to numpy array (req'd to convert base10 to int)
+    np.savetxt("config.csv", savedConfig.astype(int) , delimiter=",", fmt='%i') # saves array[temp, fspd] to config.csv
+    displayDialogBox('Successfully saved the current curve configuration!')
+
+def setUpdateStats(bool):
+    global update_stats
+    update_stats = bool
+
+def updateChart(xdata, ydata):
+    """
+    Due to how the NvidiaFanController run loop was structured to constantly update, there was an issue where updating the curve points could take anywhere from 3 to 10+ loop iterations
+    By pausing the loop, updates to the curve points occur consistently between 1-3 loop iterations
+    As a precaution, updating the chart with GPU temp/fan speed stats have also been paused, although may not be necessary.
+    """
+    setUpdateStats(False) # temporarily stops live GPU updates
+    updatedCurve(True) # pauses the nvFspd run loop
+    nvidiaController.setCurve(xdata, ydata) # updates curve with new x and y data
+    updatedCurve(False) # resumes nvFspd loop
+    setUpdateStats(True) # enables live GPU updates
+
+def updateLabelStats(i):
+    if (update_stats):
+        current_temp = NvidiaFanController().getTemp() # grabs current temp from NvidiaFanController
+        axes.set_xlabel("Temperature "+ "(" + str(current_temp) +"°C)") # updates chart x-axis label
+        current_fan_speed = str(NvidiaFanController().getFanSpeed()) # grabs current fspd from NvidiaFanController
+        axes.set_ylabel("Fan Speed " + "(" + str(current_fan_speed) + "%)") # updates chart y-axis label
+
 
 if __name__ == '__main__':
     print ('Use GUI')
