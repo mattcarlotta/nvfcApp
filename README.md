@@ -28,7 +28,7 @@ a GTK3 GUI application that creates a modifiable 2D curve of [temp, speed] point
 
 * Apply - Applies the curve to the GPU fan for the duration of the session
 * Reset - Sets the curve to default values (can be values from `config.csv`)
-* Save -  A "Save as" file dialog pops open. Simply input a file name and it'll automatically add a .csv extension. See notes below for more information. 
+* Save -  A "Save as" file dialog pops open. Simply input a file name, click save, and it'll automatically add a .csv extension. See notes below for more information. 
 
 ## Live Updates
 
