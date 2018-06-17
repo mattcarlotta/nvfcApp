@@ -36,7 +36,7 @@ a GTK3 GUI application that creates a modifiable 2D curve of [temp, speed] point
 * Fan Speed - Current GPU fan speed (%)
 
 ## Notes
-⚠️ On start up, this application only looks for a `config.csv` within the app directory. If missing, it'll load a default curve. 
+⚠️ On start up, this application only looks for a `config.csv` file within the app directory. If missing, it'll load a default curve. 
 
 ⚠️ Only works on OS's that support python3 and have nvidia proprietary drivers installed
 
@@ -49,7 +49,6 @@ a GTK3 GUI application that creates a modifiable 2D curve of [temp, speed] point
 ⚠️ Closing the app resets the GPU fan speed to be controlled by driver
 
 
-Note: 
 ## Dependencies:
 
 * python3
