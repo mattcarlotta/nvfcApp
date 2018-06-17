@@ -1,7 +1,7 @@
 # Nvidia GPU Fan Controller (nvfcApp)
 a GTK3 GUI application that creates a modifiable 2D curve of [temp, speed] points that are used to control a Nvidia GPU fan within a Debian/GNU environment.
 
-![nvfc.png](https://code.mattcarlotta.io/root/nvda-fcontrl/raw/master/nvfc.png)
+![nvfc.png](https://code.mattcarlotta.io/root/nvfcApp/raw/master/nvfcApp.png)
 
 ## Quickstart Linux
 
