@@ -1,4 +1,4 @@
-from errorController import displayErrorBox
+from messageController import displayErrorBox
 
 class DragHandler(object):
 	def __init__(self, chartObj):

@@ -18,10 +18,10 @@
 # with this program.  If not, see <http://www.gnu.org/licenses/>.
 import gi
 gi.require_version('Gtk', '3.0')
-
 from gi.repository import Gtk, GdkPixbuf, Gio, Gdk
 import signal
 from chartController import Chart, applyData, resetData, saveToFile
+import sys
 from styleProvider import styles
 styles()
 
@@ -40,8 +40,6 @@ class GUI:
 		self.chartBox = self.builder.get_object('chartBox')
 		Chart(self.chartBox)
 
-		# self.applyButton = self.builder.get_object('applyButton')
-
 		# signal traps
 		signal.signal(signal.SIGINT, self.on_nvfcApp_destroy) #CTRL-C
 		signal.signal(signal.SIGQUIT, self.on_nvfcApp_destroy) #CTRL-\
@@ -50,7 +48,7 @@ class GUI:
 
 		self.window.show_all()
 
-	def on_nvfcApp_destroy(self=None, widget=None):
+	def on_nvfcApp_destroy(s=None, w=None, d=None):
 		Chart.close()
 		Gtk.main_quit()
 
@@ -71,5 +69,5 @@ def main():
 	Gtk.main()
 		
 if __name__ == "__main__":
-	main()
+	sys.exit(main())
 

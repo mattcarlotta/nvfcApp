@@ -5,7 +5,10 @@ from gi.repository import Gtk, Gdk
 def styles():
 	css_provider = Gtk.CssProvider()
 
-	css_provider.load_from_path('./styles/styles.css')
+	try:
+		css_provider.load_from_path('./styles/styles.css')
+	except:
+		css_provider.load_from_path('src/styles/styles.css')
 
 	Gtk.StyleContext.add_provider_for_screen(
 	    Gdk.Screen.get_default(), css_provider,     

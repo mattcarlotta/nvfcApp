@@ -1,4 +1,4 @@
-from errorController import displayErrorBox
+from messageController import displayErrorBox
 
 class Data(object):
 	def __init__(self, xdata, ydata):
