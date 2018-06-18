@@ -1,3 +1,18 @@
-#chart_box {
+/*#chart_box {
 	padding: 10px;
+}
+*/
+#app_menu_container {
+	background: linear-gradient(to bottom, #383733 0%,#45443e 48%);
+}
+
+#app_menu_container button {
+	color: #bfbfbf;
+}
+
+#app_menu_container button:hover {
+	color: #ebebeb;
+	background: transparent;
+	border: 1px solid #33322f;
+	box-shadow: inset 0px 0px 2px 1px rgba(235,235,235,0.15);
 }

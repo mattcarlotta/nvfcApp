@@ -37,8 +37,23 @@ class GUI:
 		self.builder.connect_signals(self)
 
 		self.window = self.builder.get_object('nvfcApp')
-		self.chartBox = self.builder.get_object('chartBox')
-		Chart(self.chartBox)
+		self.pageContainer = self.builder.get_object('pageContainer')
+		self.notebook = Gtk.Notebook()
+		self.pageContainer.add(self.notebook)
+
+		# appends chart graph to tab 1
+		Chart(self.notebook)
+
+		self.page2 = Gtk.Box()
+		self.page2.set_border_width(10)
+		self.page2.add(Gtk.Label('A page with an image for a Title.'))
+		self.notebook.append_page(
+			self.page2,
+			Gtk.Image.new_from_icon_name(
+			    "help-about",
+			    Gtk.IconSize.MENU
+			)
+		)
 
 		# signal traps
 		signal.signal(signal.SIGINT, self.on_nvfcApp_destroy) #CTRL-C

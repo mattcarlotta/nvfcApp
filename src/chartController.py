@@ -20,11 +20,12 @@ from nvFspd import NvidiaFanController, updatedCurve
 from os import path
 import csv
 
-style.use(['seaborn-dark', 'seaborn-talk']) # current plot theme
+style.use(['ggplot']) # current plot theme
+# style.use(['fivethirtyeight'])
 
 """ Global Variables """
 fig = plt.figure(num="Nvidia Fan Controller", figsize=(12, 9)) # create a figure (one figure per window)
-axes = fig.add_subplot(111) # add a subplot to the figure. axes is of type Axes which contains most of the figure elements
+axes = fig.add_subplot(1,1,1) # add a subplot to the figure. axes is of type Axes which contains most of the figure elements
 canvas = FigureCanvas(fig)
 canvas.set_size_request(800, 600)
 update_stats = True # sets flag for updating chart with GPU stats
@@ -34,13 +35,13 @@ y_min = 25 # sets the y min value for the background grid
 y_max = 105 # sets the y max value for the background grid 
 axes.set_xlim(x_min, x_max)
 axes.set_ylim(y_min, y_max)
-axes.set_title("Fan Controller")
-axes.grid() # draws background grid
+axes.set_title("GPU Fan Controller")
+axes.grid(linestyle='-', linewidth='0.1', color='grey') # draws background grid
 """ --------------- """
 
 
 class Chart():
-	def __init__(self, chartBox):
+	def __init__(self, notebook):
 		global current_temp
 		global current_fan_speed
 		global nvidiaController
@@ -49,11 +50,15 @@ class Chart():
 		global line
 
 		initChartValues()
+		self.graphTab = Gtk.Box()
+		# self.graphTab.set_border_width(10)
+		
 		self.plot = plt
 		self.fig = fig
 		self.axes = axes
 		self.canvas = canvas
-		chartBox.add(self.canvas)
+		self.graphTab.add(self.canvas)
+		notebook.append_page(self.graphTab, Gtk.Label('Graph'))
 		self.anim = animation.FuncAnimation(self.fig, updateLabelStats, interval=1000)
 
 		# chart min/max display values
@@ -67,7 +72,7 @@ class Chart():
 		self.fig.add_axes([0, -100, 0.01, 0.01])
 		self.fig.add_axes([0, 100, 0.01, 0.01])
 
-		line, = axes.plot(x_values, y_values, linestyle='-', marker='o', color='b', picker=5) #b=blue, o=circle, picker=max distance for 
+		line, = axes.plot(x_values, y_values, linestyle='-', marker='s', markersize=4.5, color='b', picker=5) #b=blue, o=circle, picker=max distance for 
 
 		self.dragHandler = DragHandler(self)
 		dataController = DataController(x_values, y_values)
