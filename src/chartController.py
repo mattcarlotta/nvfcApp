@@ -32,6 +32,7 @@ x_min = -5 # sets the x min value for the background grid
 x_max = 105 # sets the x max value for the background grid 
 y_min = 0 # sets the y min value for the background grid  
 y_max = 105 # sets the y max value for the background grid 
+axes.axhline(y=10, xmin=0, xmax=1) # shows red a line across (10, 0) to represent lowest value
 axes.set_xlim(x_min, x_max)
 axes.set_ylim(y_min, y_max)
 axes.set_title("GPU Fan Controller")
