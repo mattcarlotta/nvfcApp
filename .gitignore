@@ -2,5 +2,5 @@
 /.anjuta
 /src/__pycache__
 /src/notes
-/src/config.csv
+/src/*.csv
 /src/*.pyc

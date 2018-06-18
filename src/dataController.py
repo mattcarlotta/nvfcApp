@@ -30,7 +30,7 @@ class DataController(object):
 
 	#Check temp and speed monotonic and greater than zero, check speed inside [30, 100], temp inside [0,120] ecc ecc
 	def validate(self, xdata, ydata):
-		first = [0,30]
+		first = [0,10]
 		last = [100,100]
 
 		if xdata[0] != first[0]:

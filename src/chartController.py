@@ -31,7 +31,7 @@ canvas.set_size_request(800, 600)
 update_stats = True # sets flag for updating chart with GPU stats
 x_min = -5 # sets the x min value for the background grid  
 x_max = 105 # sets the x max value for the background grid 
-y_min = 25 # sets the y min value for the background grid  
+y_min = 5 # sets the y min value for the background grid  
 y_max = 105 # sets the y max value for the background grid 
 axes.set_xlim(x_min, x_max)
 axes.set_ylim(y_min, y_max)
@@ -50,16 +50,16 @@ class Chart():
 		global line
 
 		initChartValues()
-		self.graphTab = Gtk.Box()
-		# self.graphTab.set_border_width(10)
-		
+	
 		self.plot = plt
 		self.fig = fig
 		self.axes = axes
 		self.canvas = canvas
-		self.graphTab.add(self.canvas)
-		notebook.append_page(self.graphTab, Gtk.Label('Graph'))
-		self.anim = animation.FuncAnimation(self.fig, updateLabelStats, interval=1000)
+		self.graphTab = Gtk.Box()
+		# self.graphTab.set_border_width(10)
+		self.graphTab.add(self.canvas) # add plt figure canvas to the newly created gtkBox
+		notebook.append_page(self.graphTab, Gtk.Label('Graph')) # add the gtkBox to the notebook
+		self.anim = animation.FuncAnimation(self.fig, updateLabelStats, interval=1000) # updates chart w/ GPU stats every 1000ms
 
 		# chart min/max display values
 		self.x_min = x_min
@@ -72,19 +72,18 @@ class Chart():
 		self.fig.add_axes([0, -100, 0.01, 0.01])
 		self.fig.add_axes([0, 100, 0.01, 0.01])
 
-		line, = axes.plot(x_values, y_values, linestyle='-', marker='s', markersize=4.5, color='b', picker=5) #b=blue, o=circle, picker=max distance for 
+		line, = axes.plot(x_values, y_values, linestyle='-', marker='s', markersize=4.5, color='b', picker=5) #b=blue, o=circle, picker=max distance for selection
 
 		self.dragHandler = DragHandler(self)
 		dataController = DataController(x_values, y_values)
 
-		#validate points from file!
+		#start updating the GPU fan speeds!
 		nvidiaController = NvidiaFanController(x_values, y_values)
 		nvidiaController.start()
 
 	def close(self=None, widget=None, *data):
 		plt.close('all')
 		nvidiaController.stop()
-		# Gtk.main_quit()
 
 def applyData():
 	xdata = line.get_xdata() # grabs current curve y data
@@ -103,17 +102,14 @@ def initChartValues():
 	global x_values
 	global y_values
 
-	# x_values = [0,  13, 33, 46, 58, 66, 73, 79, 85, 89, 94, 100] # default values
-	# y_values = [30, 32, 36, 39, 44, 50, 56, 65, 74, 82, 91, 100] # default values
-
-	x_values = [0,  10, 20, 30, 40, 50, 60, 65, 70, 80, 90, 100] # default values
-	y_values = [30, 35, 40, 45, 55, 60, 65, 70, 75, 85, 95, 100] # default values
-
+	# default curve values
+	x_values = [0, 	11, 23, 34, 45, 55, 65, 74, 81, 88, 94, 100]
+	y_values = [10, 15, 21, 27, 34, 41, 50, 59, 68, 78, 88, 100]
 
 	cfg_x = []
 	cfg_y = []
 
-	# Load array [temp, fspd] from csv
+	# loads configuration array [temp, fspd] from csv
 	if path.exists("config.csv"):
 		try:
 			with open('config.csv', 'r') as csvfile:
@@ -121,12 +117,12 @@ def initChartValues():
 				for row in config:
 					cfg_x.append(int(row[0]))
 					cfg_y.append(int(row[1]))
-		except:
-			displayErrorBox("Failed to load configuration file. Falling back to a default curve")
 
-		# updates default curve values with csv array
-		x_values = cfg_x #temp
-		y_values = cfg_y #speed
+			# updates default curve values with config array
+			x_values = cfg_x #temp
+			y_values = cfg_y #speed
+		except:
+			displayErrorBox("Failed to load configuration file. Falling back to a default curve.")
 
 def resetData():
 	initChartValues() # reset to initial values
