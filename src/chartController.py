@@ -21,7 +21,6 @@ from os import path
 import csv
 
 style.use(['ggplot']) # current plot theme
-# style.use(['fivethirtyeight'])
 
 """ Global Variables """
 fig = plt.figure(num="Nvidia Fan Controller", figsize=(12, 9)) # create a figure (one figure per window)
@@ -31,7 +30,7 @@ canvas.set_size_request(800, 600)
 update_stats = True # sets flag for updating chart with GPU stats
 x_min = -5 # sets the x min value for the background grid  
 x_max = 105 # sets the x max value for the background grid 
-y_min = 5 # sets the y min value for the background grid  
+y_min = 0 # sets the y min value for the background grid  
 y_max = 105 # sets the y max value for the background grid 
 axes.set_xlim(x_min, x_max)
 axes.set_ylim(y_min, y_max)
@@ -164,9 +163,9 @@ def updateChart(xdata, ydata):
 
 def updateLabelStats(i):
 	if (update_stats):
-		current_temp = NvidiaFanController().getTemp() # grabs current temp from NvidiaFanController
+		current_temp = NvidiaFanController().checkGPUTemp() # grabs current temp from NvidiaFanController
 		axes.set_xlabel("Temperature "+ "(" + str(current_temp) + u"°C)") # updates chart x-axis label
-		current_fan_speed = str(NvidiaFanController().getFanSpeed()) # grabs current fspd from NvidiaFanController
+		current_fan_speed = str(NvidiaFanController().checkFanSpeed()) # grabs current fspd from NvidiaFanController
 		axes.set_ylabel("Fan Speed " + "(" + str(current_fan_speed) + u"%)") # updates chart y-axis label
 
 

@@ -28,12 +28,14 @@ from subprocess import *
 import time
 import os
 import threading
-from messageController import displayDialogBox
+from messageController import displayDialogBox, displayErrorBox
 
+""" Global Variables """
 current_temp = 0
-new_fan_speed = 0
+current_fan_speed = 0
 old_fan_speed = 0
 updated_curve = False
+""" --------------- """
 
 class Curve():
 	def __init__(self, *args, **kwargs):
@@ -104,33 +106,39 @@ class NvidiaFanController(StoppableThread):
 		if len(args) == 2: #[[temp0, temp1, temp2], [speed0, speed1, speed2]]
 			self.curve = Curve(args[0], args[1])
 
+	def checkGPUTemp(self): return current_temp
+
+	def checkFanSpeed(self): return current_fan_speed
+
 	def getDriverVersion(self):
+		# grabs the GPU driver as a string and returns a float
 		try:
 			drv_ver = check_output("nvidia-smi | sed -n -e 's/^.*Version: //p' | head -c 6", shell=True)
 			return float(drv_ver)
 		except Exception:
-			print ("Exception in parsing Nvidia Driver Version. We'll use old attribute 'GPUCurrentFanSpeed'")
-			return -1
+			displayErrorBox("Error in parsing Nvidia Driver version. GPU fan control has been terminated.")
+			self.stop()
 
 	def getFanSpeed(self):
-		return new_fan_speed
+		# grab current fan speed
+		output = check_output("nvidia-smi --query-gpu=fan.speed --format=csv,noheader | head -c 3", shell=True)
+		current_fan_speed = int(output)
+		return current_fan_speed
 
 	def getTemp(self):
-		process = Popen("nvidia-smi --query-gpu=temperature.gpu --format=csv,noheader", shell=True, stdin=PIPE, stdout=PIPE)
-		new_temp = process.stdout.readlines()
-		return int(new_temp[0])
+		# grab current temp
+		output = check_output("nvidia-smi --query-gpu=temperature.gpu --format=csv,noheader", shell=True)
+		current_temp = int(output)
+		return current_temp
 
 	def resetFan(self):
 		# print "Reset to Auto Fan"
 		process = Popen("nvidia-settings -a [gpu:0]/GPUFanControlState=0", shell=True, stdin=PIPE, stdout=PIPE)
 
 	def run(self):
-		global current_temp
-
 		# if app is running, control GPU fan
 		while(not self.stopped()):
-			if (updated_curve): 
-				continue # pause loop to update curve points
+			if (updated_curve): continue # pause loop to update curve points
 			else:
 				self.updateFan() # update fan if needed
 				time.sleep(1.0)
@@ -153,32 +161,34 @@ class NvidiaFanController(StoppableThread):
 
 	def setFanSpeed(self, speed):
 		drv_ver = self.getDriverVersion()
-
+		# check if driver version is larger than 352.09
 		if drv_ver >= NvidiaFanController.DRIVER_VERSION_CHANGE:
 			process = Popen("nvidia-settings -a [gpu:0]/GPUFanControlState=1 -a [fan:0]/GPUTargetFanSpeed={0}".format(speed), shell=True, stdin=PIPE, stdout=PIPE)
+		# if driver is 349.16 or 349.12 exit app
 		elif drv_ver in NvidiaFanController.DRIVER_VERSIONS_ERROR:
 			displayDialogBox("Cannot control fan speed in driver version {0}. Please update your driver to use this app.".format(drv_ver))
 			self.stop()
+		# else use alternative update GPU control method (GPUCurrent (old) =>  GPUTarget (newer))
 		else:
 			process = Popen("nvidia-settings -a [gpu:0]/GPUFanControlState=1 -a [fan:0]/GPUCurrentFanSpeed={0}".format(speed), shell=True, stdin=PIPE, stdout=PIPE)
 
 	def updateFan(self):
-		global new_fan_speed
+		global current_fan_speed
 		global current_temp
 		global old_fan_speed
 		
 		self.curve_lock.acquire() # get Curve
 
 		current_temp = self.getTemp() # get current GPU temp
-		new_fan_speed = self.curve.evaluate(current_temp) # set temp based upon curve fspd point
+		current_fan_speed = self.curve.evaluate(current_temp) # set temp based upon curve fspd point
 
 		""" 
 		Check if the fspd needs to be updated because of temp change or because of curve point update
 		No need to hammer the GPU with updates if nothing has changed
 		"""
-		if (old_fan_speed != new_fan_speed): 
-			self.setFanSpeed(new_fan_speed) # sets new fan speed according to curve points
-			old_fan_speed = new_fan_speed # updates an old fspd to compare against an incoming new fspd
+		if (old_fan_speed != current_fan_speed): 
+			self.setFanSpeed(current_fan_speed) # sets new fan speed according to curve points
+			old_fan_speed = current_fan_speed # updates an old fspd to compare against an incoming new fspd
 
 		self.curve_lock.release()
 
