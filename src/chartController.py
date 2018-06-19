@@ -69,7 +69,7 @@ class Chart():
 		# self.fig.patch.set_facecolor('0.15') # sets background color
 
 		# matplotlib stops working if two buttons aren't present
-		for ax in [-100,100]: self.fig.add_axes([0, ax, 0.01, 0.01]) # [lft, bttm, w, h]
+		# for ax in [-100,100]: self.fig.add_axes([0, ax, 0.01, 0.01]) # [lft, bttm, w, h]
 
 		# creates curve w/ options: color=blue, s=squares, picker=max distance for selection
 		line, = axes.plot(x_values, y_values, linestyle='-',  marker='s', markersize=4.5, color='b', picker=5, linewidth=1.5)
