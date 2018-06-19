@@ -4,7 +4,6 @@
 import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
-import matplotlib as mpl
 import matplotlib.pyplot as plt
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_gtk3cairo import FigureCanvasGTK3Cairo as FigureCanvas
@@ -21,10 +20,6 @@ import csv
 
 style.use(['fivethirtyeight']) # current plot theme
 
-# with plt.style.context("fivethirtyeight"):
-#     mpl.rcParams["axes.grid"] = True
-#     mpl.rcParams["axes.linewidth"]  = 1.25
-
 """ Global Variables """
 fig = plt.figure(num="Nvidia Fan Controller", figsize=(12, 9)) # create a figure (one figure per window)
 fig.subplots_adjust(left=0.11, bottom=0.15, right=0.94, top=0.89, wspace=0.2, hspace=0)
@@ -35,50 +30,46 @@ ticks = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
 
 class Chart():
 	def __init__(self, notebook):
-		global current_temp
-		global current_fan_speed
 		global nvidiaController
-		global fig
 		global dataController
 		global line
 
 		initChartValues()
-	
+		self.plot = plt # add plt instance
 		self.fig = fig # add plt.figure instance
 		self.axes = axes # add a subplot instance to the figure
 		self.canvas = FigureCanvas(self.fig) # add fig instance to a figure canvas
 		self.canvas.set_size_request(800, 600) # set default canvas height (req'd for displaying the chart)
 
+		# appends the chart => to a box => to a notebook
 		self.graphTab = Gtk.Box()
 		self.graphTab.add(self.canvas) # add plt figure canvas to the newly created gtkBox
 		notebook.append_page(self.graphTab, Gtk.Label('Graph')) # add the gtkBox to the notebook
 		
-		self.anim = animation.FuncAnimation(self.fig, updateLabelStats, interval=1000) # updates chart w/ GPU stats every 1000ms
+		# updates chart with GPU stats every 1000ms
+		self.anim = animation.FuncAnimation(self.fig, updateLabelStats, interval=1000) 
 
-		# chart min/max display values
-		self.x_min = -5 # sets the x min value for the background grid  
-		self.x_max = 105 # sets the x max value for the background grid 
-		self.y_min = 0 # sets the y min value for the background grid  
-		self.y_max = 105 # sets the y max value for the background grid 
-
-		# axes configurations
-		self.axes.axhline(y=10, xmin=0, xmax=1, linewidth=1, color='red') # shows red a line across (10, 0) to represent lowest value
-		self.axes.grid(linestyle='-', linewidth='0.1', color='grey')
+		# chart min/max values for the background grid layout
+		self.x_min = -5
+		self.x_max = 105
+		self.y_min = 0
+		self.y_max = 105
 		self.axes.set_xlim(self.x_min, self.x_max)
 		self.axes.set_xticks(ticks)
 		self.axes.set_ylim(self.y_min, self.y_max)
 		self.axes.set_yticks(ticks)
-		self.axes.set_title("GPU Fan Controller", fontsize=16)
 		self.axes.tick_params(colors='0.7', which='both', labelsize=12)
-		for axis in ['bottom','left']:
-  			self.axes.spines[axis].set_color('0.1')
-		plt.setp(self.axes.spines.values(), linewidth=0.2)
+		self.axes.grid(linestyle='-', linewidth='0.1', color='grey') # background lines (thin and grey)
+
+		# misc. chart configurations
+		self.axes.axhline(y=10, xmin=0, xmax=1, linewidth=1, color='red') # red line across @ (10, 0) to represent lowest value
+		self.axes.set_title("GPU Fan Controller", fontsize=16)
+		for axis in ['bottom','left']: self.axes.spines[axis].set_color('0.1')
+		self.plot.setp(self.axes.spines.values(), linewidth=0.2)
 		# self.fig.patch.set_facecolor('0.15') # sets background color
 
 		# matplotlib stops working if two buttons aren't present
-		# [left, bottom, width, height]
-		self.fig.add_axes([0, -100, 0.01, 0.01])
-		self.fig.add_axes([0, 100, 0.01, 0.01])
+		for ax in [-100,100]: self.fig.add_axes([0, ax, 0.01, 0.01]) # [lft, bttm, w, h]
 
 		# creates curve w/ options: color=blue, s=squares, picker=max distance for selection
 		line, = axes.plot(x_values, y_values, linestyle='-',  marker='s', markersize=4.5, color='b', picker=5, linewidth=1.5)
@@ -104,8 +95,7 @@ def applyData():
 		displayDialogBox('Successfully applied the current curve to the fan settings!')
 	else:
 		xdata, ydata = dataController.getData() # gets previous data
-		xydata = [xdata, ydata] 
-		line.set_data(xydata) # resets line to previous curve
+		line.set_data([xdata, ydata]) # resets line to previous curve
 
 def initChartValues():
 	global x_values
@@ -146,7 +136,7 @@ def saveToFile():
 	for index in range(0, len(xdata)): 
 		config += str(xdata[index]) + "," + str(ydata[index]) + "\n" # combines x and y curve data: (x, y) (x, y) ...etc as a string (req'd for writing out)
 
-	#default saved as *.csv
+	# default saved as *.csv
 	f = filedialog.asksaveasfile(mode='w', defaultextension=".csv") 
 
 	if f is None: return # if dialog is canceled
@@ -157,12 +147,13 @@ def saveToFile():
 
 def setUpdateStats(bool):
 	global update_stats
-	update_stats = bool # whether or not update GPU stats
+	update_stats = bool # whether or not to update GPU stats
 
 
 """
-Due to how the NvidiaFanController run loop was previously structured (to constantly update), there was an issue where updating the curve points could take anywhere from 3 to 10+ loop iterations
-By pausing the loop, updates to the curve points occur consistently between 1-3 loop iterations
+Due to how the NvidiaFanController run loop was previously structured (to constantly update), there was an issue where 
+updating the curve and fan speed could take anywhere from 3 to 10+ loop iterations.
+By pausing the loop, updates to the curve and fan speed occur consistently within 1 loop cycle.
 As a precaution, updating the chart with GPU temp/fan speed stats have also been paused, although may not be necessary.
 """
 def updateChart(xdata, ydata):
