@@ -81,14 +81,31 @@
             <property name="can_focus">False</property>
             <property name="toolbar_style">both</property>
             <child>
-              <object class="GtkToolButton" id="openButton">
+              <object class="GtkToolButton" id="enableButton">
                 <property name="visible">True</property>
+                <property name="sensitive">False</property>
                 <property name="can_focus">True</property>
-                <property name="tooltip_text" translatable="yes">Open configuration</property>
-                <property name="label" translatable="yes">Open</property>
+                <property name="tooltip_text" translatable="yes">Enable GPU Fan Controlling</property>
+                <property name="label" translatable="yes">Enable</property>
                 <property name="use_underline">True</property>
-                <property name="stock_id">gtk-open</property>
-                <signal name="clicked" handler="on_openButton_clicked" swapped="no"/>
+                <property name="stock_id">gtk-media-play</property>
+                <signal name="clicked" handler="on_enableButton_clicked" swapped="no"/>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="homogeneous">True</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkToolButton" id="disableButton">
+                <property name="visible">True</property>
+                <property name="sensitive">False</property>
+                <property name="can_focus">False</property>
+                <property name="tooltip_text" translatable="yes">Disable GPU Fan Controlling</property>
+                <property name="label" translatable="yes">Disable</property>
+                <property name="use_underline">True</property>
+                <property name="stock_id">gtk-stop</property>
+                <signal name="clicked" handler="on_disableButton_clicked" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -97,7 +114,9 @@
             </child>
             <child>
               <object class="GtkToolButton" id="applyButton">
+                <property name="name">appyButton</property>
                 <property name="visible">True</property>
+                <property name="sensitive">False</property>
                 <property name="can_focus">False</property>
                 <property name="tooltip_text" translatable="yes">Apply to curve</property>
                 <property name="label" translatable="yes">Apply</property>
@@ -113,6 +132,7 @@
             <child>
               <object class="GtkToolButton" id="resetButton">
                 <property name="visible">True</property>
+                <property name="sensitive">False</property>
                 <property name="can_focus">False</property>
                 <property name="tooltip_text" translatable="yes">Reset curve to default</property>
                 <property name="label" translatable="yes">Reset</property>
@@ -126,8 +146,25 @@
               </packing>
             </child>
             <child>
+              <object class="GtkToolButton" id="openButton">
+                <property name="visible">True</property>
+                <property name="sensitive">False</property>
+                <property name="can_focus">True</property>
+                <property name="tooltip_text" translatable="yes">Open configuration</property>
+                <property name="label" translatable="yes">Open</property>
+                <property name="use_underline">True</property>
+                <property name="stock_id">gtk-open</property>
+                <signal name="clicked" handler="on_openButton_clicked" swapped="no"/>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="homogeneous">True</property>
+              </packing>
+            </child>
+            <child>
               <object class="GtkToolButton" id="saveButton">
                 <property name="visible">True</property>
+                <property name="sensitive">False</property>
                 <property name="can_focus">False</property>
                 <property name="tooltip_text" translatable="yes">Save configuration</property>
                 <property name="label" translatable="yes">Save</property>
@@ -143,7 +180,7 @@
             <child>
               <object class="GtkToolButton" id="quitButton">
                 <property name="visible">True</property>
-                <property name="can_focus">False</property>
+                <property name="can_focus">True</property>
                 <property name="tooltip_text" translatable="yes">Quit application</property>
                 <property name="label" translatable="yes">Quit</property>
                 <property name="use_underline">True</property>

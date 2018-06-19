@@ -112,6 +112,7 @@ def initChartValues():
 	# loads configuration array [temp, fspd] from csv
 	if path.exists(file): setDataFromFile(file)
 
+
 def openFile():
 	global loadedConfigDir
 
@@ -139,7 +140,7 @@ def saveToFile():
 
 	for index in range(0, len(xdata)):
 		config += str(xdata[index]) + "," + str(ydata[index]) + "\n" # combines x and y curve data: (x, y) (x, y)
-		
+
 	# default saved as *.csv
 	file = filedialog.asksaveasfile(
 		title="Save configuration",
@@ -177,6 +178,16 @@ def setUpdateStats(bool):
 	global update_stats
 	update_stats = bool # whether or not to update GPU stats
 
+def stopControlling():
+	setUpdateStats(False)
+	nvidiaController.stop()
+	plt.cla()
+	axes.set_title("GPU Fan Controller", fontsize=16, color='grey', pad=20)
+
+def stopAndClearChart():
+	stopControlling()
+	displayErrorBox("There was an error when attempting to read GPU statistics. Please make sure you're using the proprietary Nvidia drivers and that they're currently in use.")
+
 def updateChart(xdata, ydata):
 	setUpdateStats(False) # temporarily stops live GPU updates
 	updatedCurve(True) # pauses the nvFspd run loop
@@ -186,11 +197,32 @@ def updateChart(xdata, ydata):
 
 def updateLabelStats(i):
 	if (update_stats):
-		current_temp = NvidiaFanController().checkGPUTemp() # grabs current temp from NvidiaFanController
-		axes.set_xlabel("Temperature "+ "(" + str(current_temp) + u"°C)", fontsize=12, labelpad=20) # updates chart x-axis label
-		current_fan_speed = str(NvidiaFanController().checkFanSpeed()) # grabs current fspd from NvidiaFanController
-		axes.set_ylabel("Fan Speed " + "(" + str(current_fan_speed) + u"%)", fontsize=12, labelpad=10) # updates chart y-axis label
+		try:
+			current_temp = NvidiaFanController().checkGPUTemp() # grabs current temp from NvidiaFanController
+			current_fan_speed = NvidiaFanController().checkFanSpeed() # grabs current fspd from NvidiaFanController
 
+			# check to see if values are present
+			if not current_temp or current_fan_speed: raise ValueError('')
+
+			# updates chart labels
+			axes.set_xlabel("Temperature "+ "(" + str(current_temp) + u"°C)", fontsize=12, labelpad=20)
+			axes.set_ylabel("Fan Speed " + "(" + str(current_fan_speed) + u"%)", fontsize=12, labelpad=10)
+		except ValueError:
+			stopAndClearChart()
+
+"""
+def updateLabelStats(i):
+	if (update_stats):
+		current_temp = NvidiaFanController().checkGPUTemp() # grabs current temp from NvidiaFanController
+		current_fan_speed = NvidiaFanController().checkFanSpeed() # grabs current fspd from NvidiaFanController
+
+		if not current_temp or current_fan_speed: return stopAndClearChart()
+			# Gtk.main_quit()
+
+		# updates chart labels
+		axes.set_xlabel("Temperature "+ "(" + str(current_temp) + u"°C)", fontsize=12, labelpad=20)
+		axes.set_ylabel("Fan Speed " + "(" + str(current_fan_speed) + u"%)", fontsize=12, labelpad=10)
+"""
 
 if __name__ == '__main__':
-	print ('Use GUI instead')
+	print ('Please launch GUI')

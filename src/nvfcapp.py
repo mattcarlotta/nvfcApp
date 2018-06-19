@@ -19,9 +19,11 @@
 import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, GdkPixbuf, Gio, Gdk
+from subprocess import *
 import signal
-from chartController import Chart, applyData, resetData, saveToFile, close, openFile
 import sys
+from chartController import Chart, applyData, resetData, saveToFile, close, openFile
+from gpuController import enableGPUControl, disableGPUControl
 from styleProvider import styles
 styles()
 
@@ -46,6 +48,11 @@ class GUI:
 		self.notebook = Gtk.Notebook()
 		self.pageContainer.add(self.notebook)
 
+
+		# checks if Nvidia drivers are in use (if they are, enable curve button options)
+		driverInUse = check_output("lspci -k | grep -EA3 'VGA|3D|Display' | grep 'use' |  sed 's/.*: //'", shell=True).decode('utf-8').strip()
+		if driverInUse == 'nvidia': self.enable_menu_buttons()
+
 		# appends chart graph to tab 1
 		Chart(self.notebook)
 
@@ -59,6 +66,7 @@ class GUI:
 			    Gtk.IconSize.MENU
 			)
 		)
+
 
 		# signal traps
 		signal.signal(signal.SIGINT, self.on_nvfcApp_destroy) #CTRL-C
@@ -75,6 +83,12 @@ class GUI:
 	def on_applyButton_clicked(self, widget):
 		applyData()
 
+	def on_disableButton_clicked(self, widget):
+		disableGPUControl()
+
+	def on_enableButton_clicked(self, widget):
+		enableGPUControl()
+
 	def on_openButton_clicked(self, widget):
 		openFile()
 
@@ -86,6 +100,11 @@ class GUI:
 
 	def on_quitButton_clicked(self, widget):
 		self.on_nvfcApp_destroy()
+
+	def enable_menu_buttons(self):
+		for label in ['enableButton','disableButton', 'applyButton', 'resetButton', 'openButton', 'saveButton']:
+			button = self.builder.get_object(label)
+			button.set_sensitive(False)
 
 def main():
 	app = GUI()
