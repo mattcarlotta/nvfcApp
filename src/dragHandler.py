@@ -28,9 +28,9 @@ class DragHandler(object):
 
 	def on_release_event(self, event):
 		if self.dragged is not None:
-			xdata = self.dragged.get_xdata() #no need to copy the list, since it is used only by the line2D object
+			xdata = self.dragged.get_xdata() # no need to copy the list, since it is used only by the line2D object
 			ydata = self.dragged.get_ydata()
-			index = self.ind #if two or more points are too closed, this tuple contains more than one point. we take the first
+			index = self.ind # if two or more points are too close, this tuple contains more than one point. we take the first
 			chartObj = self.chartObj
 			if event.xdata <= chartObj.x_min or event.xdata >= chartObj.x_max or event.ydata <= chartObj.y_min or event.ydata >= chartObj.y_max:
 				# print "ERROR: cannot move point [",index[0],"] out of chart"

@@ -2,8 +2,7 @@ from messageController import displayErrorBox
 
 class Data(object):
 	def __init__(self, xdata, ydata):
-		self.xdata = list(xdata)
-		self.ydata = list(ydata)
+		self.setData(xdata, ydata)
 
 	def getData(self):
 		xdata = list(self.xdata)
@@ -28,7 +27,7 @@ class DataController(object):
 		else:
 			return False
 
-	#Check temp and speed monotonic and greater than zero, check speed inside [30, 100], temp inside [0,120] ecc ecc
+	# checks if temp and speed monotonic are greater than zero and checks speed inside [10, 100], temp inside [0,100] ecc ecc
 	def validate(self, xdata, ydata):
 		first = [0,10]
 		last = [100,100]
