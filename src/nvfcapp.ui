@@ -88,6 +88,7 @@
                 <property name="label" translatable="yes">Open</property>
                 <property name="use_underline">True</property>
                 <property name="stock_id">gtk-open</property>
+                <signal name="clicked" handler="on_openButton_clicked" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>

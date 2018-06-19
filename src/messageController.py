@@ -1,5 +1,12 @@
-import tkinter as tk
-from tkinter import messagebox as tkMessageBox
+try:
+	# python3
+	import tkinter as tk
+	from tkinter.messagebox import showinfo, showerror
+except ImportError:
+	# python2
+	import Tkinter as tk
+	from tkMessageBox import showinfo, showerror
+
 
 def destroy(root):
 	root.destroy()
@@ -7,12 +14,11 @@ def destroy(root):
 def displayDialogBox(message):
 	dialogBox = tk.Tk()
 	dialogBox.withdraw()
-	tkMessageBox.showinfo('Message', message)
+	showinfo('Message', message)
 	destroy(dialogBox)
 
 def displayErrorBox(message):
 	errorBox = tk.Tk()
 	errorBox.withdraw()
-	tkMessageBox.showerror('Error', message)
+	showerror('Error', message)
 	destroy(errorBox)
-	

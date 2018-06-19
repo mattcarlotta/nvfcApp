@@ -3,20 +3,41 @@ a GTK3 GUI application that creates a modifiable 2D curve of [temp, speed] point
 
 ![nvfc.png](https://code.mattcarlotta.io/root/nvfcApp/raw/master/nvfcApp.png)
 
-## Quickstart Linux
+## Quickstart for running python 2.7:
+
+* Install python3:  
+  `sudo apt-get install python`
+* Install matplotlib:  
+  `sudo apt-get install python-matplotlib`
+* Install Tkinter:  
+  `sudo apt-get install python-tk`
+* Install pyGTK:  
+  `sudo apt-get install libgtk-2-dev`
+* Install cairocffi:  
+  `sudo apt-get install python-cairocffi`  
+* Install libcanberra-gtk:  
+  `sudo apt-get install libcanberra-gtk-module`
+* Allow the Nvidia card's fan to be controlled:  
+  `sudo nvidia-xconfig --enable-all-gpus` and `sudo nvidia-xconfig --cool-bits=28`
+* Reboot your computer for the GPU settings to take effect:  
+  `sudo reboot`
+* Open a terminal in the folder containing nvfc.py, then execute:  
+  `python nvfcapp.py`
+
+## Quickstart for running python 3.6:
 
 * Install python3:  
   `sudo apt-get install python3.6`
 * Install matplotlib:  
-  `sudo apt-get install python-matplotlib`
+  `sudo apt-get install python3-matplotlib`
 * Install Tkinter:  
   `sudo apt-get install python3-tk`
 * Install pyGTK:  
   `sudo apt-get install libgtk-3-dev`
 * Install cairocffi:  
   `sudo apt-get install python3-cairocffi`  
-* Install libcanberra-gtk:  
-  `sudo apt-get install libcanberra-gtk-module`
+* Install libcanberra-gtk3:  
+  `sudo apt-get install libcanberra-gtk3-module`
 * Allow the Nvidia card's fan to be controlled:  
   `sudo nvidia-xconfig --enable-all-gpus` and `sudo nvidia-xconfig --cool-bits=28`
 * Reboot your computer for the GPU settings to take effect:  
@@ -28,7 +49,7 @@ a GTK3 GUI application that creates a modifiable 2D curve of [temp, speed] point
 
 * Apply - Applies the curve to the GPU fan for the duration of the session.
 * Reset - Sets the curve to default values (can be values from `config.csv`).
-* Save -  A "Save as" file dialog pops open. Simply input a file name, click save, and it'll automatically add a .csv extension. See notes below for more information. 
+* Save -  A "Save as" file dialog pops open. Simply input a file name, click save, and it'll automatically add a .csv extension. See notes below for more information.
 
 ## Live Updates
 
@@ -36,7 +57,7 @@ a GTK3 GUI application that creates a modifiable 2D curve of [temp, speed] point
 * Fan Speed - Current GPU fan speed (%)
 
 ## Notes
-⚠️ On start up, this application only looks for a `config.csv` file within the app directory. If missing, it'll load a default curve. 
+⚠️ On start up, this application only looks for a `config.csv` file within the app directory. If missing, it'll load a default curve.
 
 ⚠️ Only works on OS's that support python3 and have nvidia proprietary drivers installed.
 
@@ -57,7 +78,7 @@ a GTK3 GUI application that creates a modifiable 2D curve of [temp, speed] point
 * pyGTK
 * cairocffi
 * libcanberra-gtk
-* nvidia-driver-350+
+* proprietary nvidia-drivers
 
 Based on the work of Luke Frisken and Mister Pup:  
 * https://code.google.com/p/nvidia-fanspeed/

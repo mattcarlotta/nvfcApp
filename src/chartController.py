@@ -12,7 +12,13 @@ from matplotlib import animation, style
 from dataController import *
 from dragHandler import *
 from messageController import displayDialogBox, displayErrorBox
-from tkinter import filedialog
+try:
+	# python3
+	from tkinter import filedialog
+except ImportError:
+	# python2
+	import tkFileDialog as filedialog
+
 import sys
 from nvFspd import NvidiaFanController, updatedCurve
 from os import path
@@ -25,7 +31,11 @@ fig = plt.figure(num="Nvidia Fan Controller", figsize=(12, 9)) # create a figure
 fig.subplots_adjust(left=0.11, bottom=0.15, right=0.94, top=0.89, wspace=0.2, hspace=0)
 axes = fig.add_subplot(1,1,1) # add a subplot to the figure. axes is of type Axes which contains most of the figure elements
 update_stats = True # sets flag for updating chart with GPU stats
-ticks = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
+ticks = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100] # ticks across x and y axes
+# default curve values
+x_values = [0, 	11, 23, 34, 45, 55, 65, 74, 81, 88, 94, 100]
+y_values = [10, 15, 21, 27, 34, 41, 50, 59, 68, 78, 88, 100]
+loadedConfigDir = None # stores an opened config file path in case the curve is reset
 """ --------------- """
 
 class Chart():
@@ -45,9 +55,9 @@ class Chart():
 		self.graphTab = Gtk.Box()
 		self.graphTab.add(self.canvas) # add plt figure canvas to the newly created gtkBox
 		notebook.append_page(self.graphTab, Gtk.Label('Graph')) # add the gtkBox to the notebook
-		
+
 		# updates chart with GPU stats every 1000ms
-		self.anim = animation.FuncAnimation(self.fig, updateLabelStats, interval=1000) 
+		self.anim = animation.FuncAnimation(self.fig, updateLabelStats, interval=1000)
 
 		# chart min/max values for the background grid layout
 		self.x_min = -5
@@ -81,9 +91,9 @@ class Chart():
 		nvidiaController = NvidiaFanController(x_values, y_values)
 		nvidiaController.start()
 
-	def close(self=None, widget=None, *data):
-		plt.close('all')
-		nvidiaController.stop()
+def close():
+	plt.close('all')
+	nvidiaController.stop()
 
 def applyData():
 	xdata = line.get_xdata() # grabs current curve y data
@@ -98,64 +108,75 @@ def applyData():
 		line.set_data([xdata, ydata]) # resets line to previous curve
 
 def initChartValues():
-	global x_values
-	global y_values
-
-	# default curve values
-	x_values = [0, 	11, 23, 34, 45, 55, 65, 74, 81, 88, 94, 100]
-	y_values = [10, 15, 21, 27, 34, 41, 50, 59, 68, 78, 88, 100]
-
-	cfg_x = []
-	cfg_y = []
-
+	file = loadedConfigDir or "config.csv"
 	# loads configuration array [temp, fspd] from csv
-	if path.exists("config.csv"):
-		try:
-			with open('config.csv', 'r') as csvfile:
-				config = csv.reader(csvfile, delimiter=',')
-				for row in config:
-					cfg_x.append(int(row[0]))
-					cfg_y.append(int(row[1]))
+	if path.exists(file): setDataFromFile(file)
 
-			# updates default curve values with config array
-			x_values = cfg_x #temp
-			y_values = cfg_y #speed
-		except:
-			displayErrorBox("Failed to load configuration file. Falling back to a default curve.")
+def openFile():
+	global loadedConfigDir
+
+	file = filedialog.askopenfilename(
+		title="Select configuration",
+		filetypes=[('csv files', ".csv")])
+
+	if not file: return # if dialog is canceled
+
+	xdata, ydata = setDataFromFile(file)
+
+	if xdata and ydata:
+		line.set_data([xdata, ydata]) # update curve with values
+		updateChart(x_values, y_values) # update chart to reflect values
+		loadedConfigDir = file
 
 def resetData():
 	initChartValues() # reset to initial values
-	xydata = [x_values, y_values]
-	line.set_data(xydata) # update curve with values
+	line.set_data([x_values, y_values]) # update curve with values
 	updateChart(x_values, y_values) # update chart to reflect values
 
 def saveToFile():
 	config = '' # initialize config variable
 	xdata, ydata = dataController.getData() # get current curve points
 
-	for index in range(0, len(xdata)): 
-		config += str(xdata[index]) + "," + str(ydata[index]) + "\n" # combines x and y curve data: (x, y) (x, y) ...etc as a string (req'd for writing out)
-
+	for index in range(0, len(xdata)):
+		config += str(xdata[index]) + "," + str(ydata[index]) + "\n" # combines x and y curve data: (x, y) (x, y)
+		
 	# default saved as *.csv
-	f = filedialog.asksaveasfile(mode='w', defaultextension=".csv") 
+	file = filedialog.asksaveasfile(
+		title="Save configuration",
+		mode='w',
+		filetypes=[('csv files', ".csv")],
+		defaultextension=".csv")
 
-	if f is None: return # if dialog is canceled
+	if file is None: return # if dialog is canceled
 
-	f.write(str(config)) # write string to file
-	f.close() # close instance
+	file.write(str(config)) # write string to file
+	file.close() # close instance
 	displayDialogBox('Successfully saved the current curve configuration!')
+
+def setDataFromFile(file):
+	global x_values
+	global y_values
+
+	try:
+		cfg_x = []
+		cfg_y = []
+		with open(file, 'r') as csvfile:
+			config = csv.reader(csvfile, delimiter=',')
+			for row in config:
+				cfg_x.append(int(row[0]))
+				cfg_y.append(int(row[1]))
+
+		# updates default curve values with config array
+		x_values = cfg_x #temp
+		y_values = cfg_y #speed
+		return cfg_x, cfg_y
+	except:
+		displayErrorBox("Failed to load configuration file.")
 
 def setUpdateStats(bool):
 	global update_stats
 	update_stats = bool # whether or not to update GPU stats
 
-
-"""
-Due to how the NvidiaFanController run loop was previously structured (to constantly update), there was an issue where 
-updating the curve and fan speed could take anywhere from 3 to 10+ loop iterations.
-By pausing the loop, updates to the curve and fan speed occur consistently within 1 loop cycle.
-As a precaution, updating the chart with GPU temp/fan speed stats have also been paused, although may not be necessary.
-"""
 def updateChart(xdata, ydata):
 	setUpdateStats(False) # temporarily stops live GPU updates
 	updatedCurve(True) # pauses the nvFspd run loop
