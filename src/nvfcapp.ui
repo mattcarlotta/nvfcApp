@@ -81,8 +81,62 @@
             <property name="can_focus">False</property>
             <property name="toolbar_style">both</property>
             <child>
+              <object class="GtkToolButton" id="enableButton">
+                <property name="name">enableButton</property>
+                <property name="visible">True</property>
+                <property name="sensitive">False</property>
+                <property name="can_focus">True</property>
+                <property name="tooltip_text" translatable="yes">Enable GPU Fan Controlling</property>
+                <property name="label" translatable="yes">Enable</property>
+                <property name="use_underline">True</property>
+                <property name="stock_id">gtk-media-play</property>
+                <signal name="clicked" handler="on_enableButton_clicked" swapped="no"/>
+                <style>
+                  <class name="toolbar"/>
+                </style>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="homogeneous">True</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkToolButton" id="disableButton">
+                <property name="name">disableButton</property>
+                <property name="visible">True</property>
+                <property name="sensitive">False</property>
+                <property name="can_focus">False</property>
+                <property name="tooltip_text" translatable="yes">Disable GPU Fan Controlling</property>
+                <property name="label" translatable="yes">Disable</property>
+                <property name="use_underline">True</property>
+                <property name="stock_id">gtk-media-stop</property>
+                <signal name="clicked" handler="on_disableButton_clicked" swapped="no"/>
+                <style>
+                  <class name="toolbar"/>
+                </style>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="homogeneous">True</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkSeparatorToolItem" id="menuSeperator1">
+                <property name="name">toolmenuSeparator1</property>
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <style>
+                  <class name="toolbar_separator"/>
+                </style>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="homogeneous">False</property>
+              </packing>
+            </child>
+            <child>
               <object class="GtkToolButton" id="applyButton">
-                <property name="name">appyButton</property>
+                <property name="name">applyButton</property>
                 <property name="visible">True</property>
                 <property name="sensitive">False</property>
                 <property name="can_focus">False</property>
@@ -91,6 +145,9 @@
                 <property name="use_underline">True</property>
                 <property name="stock_id">gtk-apply</property>
                 <signal name="clicked" handler="on_applyButton_clicked" swapped="no"/>
+                <style>
+                  <class name="toolbar"/>
+                </style>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -99,6 +156,7 @@
             </child>
             <child>
               <object class="GtkToolButton" id="resetButton">
+                <property name="name">resetButton</property>
                 <property name="visible">True</property>
                 <property name="sensitive">False</property>
                 <property name="can_focus">False</property>
@@ -107,6 +165,9 @@
                 <property name="use_underline">True</property>
                 <property name="stock_id">gtk-refresh</property>
                 <signal name="clicked" handler="on_resetButton_clicked" swapped="no"/>
+                <style>
+                  <class name="toolbar"/>
+                </style>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -115,6 +176,7 @@
             </child>
             <child>
               <object class="GtkToolButton" id="openButton">
+                <property name="name">resetButton</property>
                 <property name="visible">True</property>
                 <property name="sensitive">False</property>
                 <property name="can_focus">True</property>
@@ -123,6 +185,9 @@
                 <property name="use_underline">True</property>
                 <property name="stock_id">gtk-open</property>
                 <signal name="clicked" handler="on_openButton_clicked" swapped="no"/>
+                <style>
+                  <class name="toolbar"/>
+                </style>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -131,6 +196,7 @@
             </child>
             <child>
               <object class="GtkToolButton" id="saveButton">
+                <property name="name">saveButton</property>
                 <property name="visible">True</property>
                 <property name="sensitive">False</property>
                 <property name="can_focus">False</property>
@@ -139,6 +205,9 @@
                 <property name="use_underline">True</property>
                 <property name="stock_id">gtk-floppy</property>
                 <signal name="clicked" handler="on_saveButton_clicked" swapped="no"/>
+                <style>
+                  <class name="toolbar"/>
+                </style>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -146,7 +215,22 @@
               </packing>
             </child>
             <child>
+              <object class="GtkSeparatorToolItem" id="menuSeperator2">
+                <property name="name">toolmenuSeparator2</property>
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <style>
+                  <class name="toolbar_separator"/>
+                </style>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="homogeneous">False</property>
+              </packing>
+            </child>
+            <child>
               <object class="GtkToolButton" id="quitButton">
+                <property name="name">quitButton</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="tooltip_text" translatable="yes">Quit application</property>
@@ -154,12 +238,18 @@
                 <property name="use_underline">True</property>
                 <property name="stock_id">gtk-quit</property>
                 <signal name="clicked" handler="on_quitButton_clicked" swapped="no"/>
+                <style>
+                  <class name="toolbar"/>
+                </style>
               </object>
               <packing>
                 <property name="expand">False</property>
                 <property name="homogeneous">True</property>
               </packing>
             </child>
+            <style>
+              <class name="menu_container"/>
+            </style>
           </object>
           <packing>
             <property name="expand">False</property>

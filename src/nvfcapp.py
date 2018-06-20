@@ -22,7 +22,7 @@ from gi.repository import Gtk, GdkPixbuf, Gio, Gdk
 from subprocess import *
 import signal
 import sys
-from chartController import Chart, applyData, resetData, saveToFile, close, openFile
+from chartController import *
 from styleProvider import styles
 styles()
 
@@ -50,7 +50,7 @@ class GUI:
 
 		# checks if Nvidia drivers are in use (if they are, enable curve button options)
 		driverInUse = check_output("lspci -k | grep -EA3 'VGA|3D|Display' | grep 'use' |  sed 's/.*: //'", shell=True).decode('utf-8').strip()
-		if driverInUse == 'nvidia': self.enable_menu_buttons()
+		if driverInUse == 'nvidia': self.enable_curve_buttons()
 
 		# appends chart graph to tab 1
 		Chart(self.notebook)
@@ -82,6 +82,14 @@ class GUI:
 	def on_applyButton_clicked(self, widget):
 		applyData()
 
+	def on_disableButton_clicked(self, widget):
+		self.disable_curve_buttons()
+		disableGPUControl()
+
+	def on_enableButton_clicked(self, widget):
+		self.enable_curve_buttons()
+		enableGPUControl()
+
 	def on_openButton_clicked(self, widget):
 		openFile()
 
@@ -94,10 +102,22 @@ class GUI:
 	def on_quitButton_clicked(self, widget):
 		self.on_nvfcApp_destroy()
 
-	def enable_menu_buttons(self):
-		for label in ['applyButton', 'resetButton', 'openButton', 'saveButton']:
+	def curve_button_options(self, arr, bool):
+		for label in arr:
 			button = self.builder.get_object(label)
-			button.set_sensitive(True)
+			button.set_sensitive(bool)
+
+	def enable_curve_buttons(self):
+		arr1 = ['enableButton']
+		arr2 = ['disableButton','applyButton', 'resetButton', 'openButton', 'saveButton']
+		self.curve_button_options(arr1, False)
+		self.curve_button_options(arr2, True)
+
+	def disable_curve_buttons(self):
+		arr1 = ['enableButton']
+		arr2 = ['disableButton', 'applyButton', 'resetButton', 'openButton', 'saveButton']
+		self.curve_button_options(arr1, True)
+		self.curve_button_options(arr2, False)
 
 def main():
 	app = GUI()

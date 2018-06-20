@@ -139,7 +139,9 @@ class NvidiaFanController(StoppableThread):
 	def run(self):
 		# if app is running, control GPU fan
 		while(not self.stopped()):
-			if (updated_curve): continue # pause loop to update curve points
+			if (updated_curve):
+				time.sleep(1.0)
+				continue # pause loop to update curve points
 			else:
 				self.updateFan() # update fan if needed
 				time.sleep(1.0)
@@ -167,14 +169,14 @@ class NvidiaFanController(StoppableThread):
 
 		if not drv_ver:
 			self.stop()
-			
+
 		# check if driver version is larger than 352.09
 		elif drv_ver >= NvidiaFanController.DRIVER_VERSION_CHANGE:
 			process = Popen("nvidia-settings -a [gpu:0]/GPUFanControlState=1 -a [fan:0]/GPUTargetFanSpeed={0}".format(speed), shell=True, stdin=PIPE, stdout=PIPE)
 
 		# if driver is 349.16 or 349.12 exit app
 		elif drv_ver in NvidiaFanController.DRIVER_VERSIONS_ERROR:
-			displayDialogBox("Cannot control fan speed in driver version {0}. Please update your driver to use this app.".format(drv_ver))
+			displayDialogBox("Can't control fan speed in driver version {0}. Please update your driver to use this app.".format(drv_ver))
 			self.stop()
 
 		# else use alternative update GPU control method (GPUCurrent (old) =>  GPUTarget (newer))
@@ -203,6 +205,10 @@ class NvidiaFanController(StoppableThread):
 
 def disableFanControl():
 	process = Popen("nvidia-settings -a [gpu:0]/GPUFanControlState=0", shell=True, stdin=PIPE, stdout=PIPE)
+
+def enableFanControl():
+	global old_fan_speed
+	old_fan_speed = 0
 
 def updatedCurve(bool):
 	global updated_curve

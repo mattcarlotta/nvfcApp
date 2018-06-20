@@ -4,14 +4,14 @@
 import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
+import csv
 import matplotlib.pyplot as plt
 from matplotlib.figure import Figure
-from matplotlib.backends.backend_gtk3cairo import FigureCanvasGTK3Cairo as FigureCanvas
 from matplotlib.widgets import Button
 from matplotlib import animation, style
-from dataController import *
-from dragHandler import *
-from messageController import displayDialogBox, displayErrorBox
+from os import path
+import sys
+
 try:
 	# python3
 	from tkinter import filedialog
@@ -19,10 +19,18 @@ except ImportError:
 	# python2
 	import tkFileDialog as filedialog
 
-import sys
-from nvFspd import NvidiaFanController, updatedCurve, disableFanControl
-from os import path
-import csv
+try:
+	# python3
+	from matplotlib.backends.backend_gtk3cairo import FigureCanvasGTK3Cairo as FigureCanvas
+except:
+	# python2
+	from matplotlib.backends.backend_gtkcairo import FigureCanvasGTKCairo as FigureCanvas
+
+from dataController import *
+from dragHandler import *
+from messageController import displayDialogBox, displayErrorBox
+from nvFspd import *
+
 
 style.use(['fivethirtyeight']) # current plot theme
 
@@ -107,6 +115,21 @@ def applyData():
 		xdata, ydata = dataController.getData() # gets previous data
 		line.set_data([xdata, ydata]) # resets line to previous curve
 
+def disableGPUControl():
+	setLabelColor('grey', 'grey') # sets label colors
+	setAxesLabels(0,0) # 0's GPU stats
+	setUpdateStats(False) # stops live GPU updates
+	updatedCurve(True) # temporarily pauses the nvFspd run loop
+	disableFanControl() # resets fan back to auto
+	displayDialogBox("Disabled GPU curve fan control. Reverted back to driver control.")
+
+def enableGPUControl():
+	setLabelColor('black', 'blue')
+	setUpdateStats(True) # enables live GPU updates
+	updatedCurve(False) # unpauses the nvFspd run loop
+	enableFanControl() # resets old_fan_speed to trigger a curve update
+	displayDialogBox("Enabled GPU fan control.")
+
 def initChartValues():
 	file = loadedConfigDir or "config.csv"
 	# loads configuration array [temp, fspd] from csv
@@ -173,6 +196,17 @@ def setDataFromFile(file):
 	except:
 		displayErrorBox("Failed to load configuration file.")
 
+def setLabelColor(c1,c2):
+	axes.title.set_color(c1)
+	axes.xaxis.label.set_color(c1)
+	axes.yaxis.label.set_color(c1)
+	plt.setp(line, color=c2)
+
+def setAxesLabels(currtmp,currfspd):
+	# updates chart labels
+	axes.set_xlabel("Temperature "+ "(" + str(currtmp) + u"°C)", fontsize=12, labelpad=20)
+	axes.set_ylabel("Fan Speed " + "(" + str(currfspd) + u"%)", fontsize=12, labelpad=10)
+
 def setUpdateStats(bool):
 	global update_stats
 	update_stats = bool # whether or not to update GPU stats
@@ -204,24 +238,9 @@ def updateLabelStats(i):
 			if not current_temp or not current_fan_speed: raise ValueError('Missing temp and/or fan speed')
 
 			# updates chart labels
-			axes.set_xlabel("Temperature "+ "(" + str(current_temp) + u"°C)", fontsize=12, labelpad=20)
-			axes.set_ylabel("Fan Speed " + "(" + str(current_fan_speed) + u"%)", fontsize=12, labelpad=10)
+			setAxesLabels(current_temp, current_fan_speed)
 		except ValueError:
 			stopAndClearChart()
-
-"""
-def updateLabelStats(i):
-	if (update_stats):
-		current_temp = NvidiaFanController().checkGPUTemp() # grabs current temp from NvidiaFanController
-		current_fan_speed = NvidiaFanController().checkFanSpeed() # grabs current fspd from NvidiaFanController
-
-		if not current_temp or current_fan_speed: return stopAndClearChart()
-			# Gtk.main_quit()
-
-		# updates chart labels
-		axes.set_xlabel("Temperature "+ "(" + str(current_temp) + u"°C)", fontsize=12, labelpad=20)
-		axes.set_ylabel("Fan Speed " + "(" + str(current_fan_speed) + u"%)", fontsize=12, labelpad=10)
-"""
 
 if __name__ == '__main__':
 	print ('Please launch GUI')
