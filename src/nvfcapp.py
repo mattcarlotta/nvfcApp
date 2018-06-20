@@ -28,25 +28,28 @@ styles()
 
 #Comment the first line and uncomment the second before installing
 #or making the tarball (alternatively, use project variables)
-UI_FILE = "nvfcapp.ui"
-SRC_UI_FILE = "src/nvfcapp.ui"
+UI_WINDOWS = ["nvfcapp.ui"]
 #UI_FILE = "/usr/local/share/nvfcapp/ui/nvfcapp.ui"
 
 class GUI:
 	def __init__(self):
 		self.builder = Gtk.Builder()
 		try:
-			self.builder.add_from_file(UI_FILE)
+			for window in UI_WINDOWS: self.builder.add_from_file(window)
 		except:
-			self.builder.add_from_file(SRC_UI_FILE)
+			for window in UI_WINDOWS: self.builder.add_from_file("src/" + window)
 
 		self.builder.connect_signals(self)
 
-		self.window = self.builder.get_object('nvfcApp')
-		self.pageContainer = self.builder.get_object('pageContainer')
-		self.notebook = Gtk.Notebook()
-		self.pageContainer.add(self.notebook)
+		# main application window
+		self.appWindow = self.builder.get_object('nvfcApp')
+		self.appWindow.set_position(Gtk.WindowPosition.CENTER_ALWAYS)
 
+		# about window (hidden)
+		self.aboutWindow = self.builder.get_object('nvfcAbout')
+
+		# notebook container
+		self.notebook = self.builder.get_object('notebookContainer')
 
 		# checks if Nvidia drivers are in use (if they are, enable curve button options)
 		driverInUse = check_output("lspci -k | grep -EA3 'VGA|3D|Display' | grep 'use' |  sed 's/.*: //'", shell=True).decode('utf-8').strip()
@@ -66,18 +69,23 @@ class GUI:
 			)
 		)
 
-
 		# signal traps
 		signal.signal(signal.SIGINT, self.on_nvfcApp_destroy) #CTRL-C
 		signal.signal(signal.SIGQUIT, self.on_nvfcApp_destroy) #CTRL-\
 		signal.signal(signal.SIGHUP, self.on_nvfcApp_destroy) #terminal closed
 		signal.signal(signal.SIGTERM, self.on_nvfcApp_destroy)
 
-		self.window.show_all()
+		self.appWindow.show_all()
 
 	def on_nvfcApp_destroy(s=None, w=None, d=None):
 		close()
 		Gtk.main_quit()
+
+	def	on_aboutOkButton_clicked(self, widget):
+		self.aboutWindow.destroy()
+
+	def on_aboutButton_activate(self, widget):
+		self.aboutWindow.show_all()
 
 	def on_applyButton_clicked(self, widget):
 		applyData()
@@ -86,7 +94,7 @@ class GUI:
 		self.disable_curve_buttons()
 		disableGPUControl()
 
-	def on_fileButton_select(self, widget):
+	def on_fileButton_activate(self, widget):
 		self.on_nvfcApp_destroy()
 
 	def on_enableButton_clicked(self, widget):
@@ -103,6 +111,7 @@ class GUI:
 		saveToFile()
 
 	def on_quitButton_clicked(self, widget):
+		print('Executed')
 		self.on_nvfcApp_destroy()
 
 	def curve_button_options(self, arr, bool):
