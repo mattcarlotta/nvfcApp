@@ -1,5 +1,7 @@
 from messageController import displayErrorBox
 
+isActive = True
+
 class DragHandler(object):
 	def __init__(self, chartObj):
 		self.dragged = None
@@ -8,23 +10,20 @@ class DragHandler(object):
 		self.chartObj.fig.canvas.mpl_connect("button_release_event", self.on_release_event)
 
 	def on_pick_event(self, event):
-		self.dragged = event.artist #Line2D
-		self.pick_pos = (event.mouseevent.xdata, event.mouseevent.ydata)
-		self.ind = event.ind
+		if isActive:
+			self.dragged = event.artist #Line2D
+			self.pick_pos = (event.mouseevent.xdata, event.mouseevent.ydata)
+			self.ind = event.ind
 
-		if self.ind[0] == 0:
-			# print "ERROR: cannot modify first point"
-			self.dragged = None
-			displayErrorBox("Can't modify the first point!")
-		elif self.ind[0] == len(self.dragged.get_xdata()) - 1:
-			# print "ERROR: cannot modify last point"
-			self.dragged = None
-			displayErrorBox("Can't modify the last point!")
+			if self.ind[0] == 0:
+				# print "ERROR: cannot modify first point"
+				self.dragged = None
+				displayErrorBox("Can't modify the first point!")
+			elif self.ind[0] == len(self.dragged.get_xdata()) - 1:
+				# print "ERROR: cannot modify last point"
+				self.dragged = None
+				displayErrorBox("Can't modify the last point!")
 
-		#print "self.ind: ", self.ind
-		#xdata = self.dragged.get_xdata()
-		#ydata = self.dragged.get_ydata()
-		#print 'onpick points:', xdata[self.ind], ydata[self.ind]
 
 	def on_release_event(self, event):
 		if self.dragged is not None:
@@ -45,3 +44,7 @@ class DragHandler(object):
 			self.dragged.set_data(xydata)
 			self.dragged = None
 			self.chartObj.fig.canvas.draw()
+
+def setCurveControl(bool):
+	global isActive
+	isActive = bool

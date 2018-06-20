@@ -121,6 +121,7 @@ def disableGPUControl():
 	setUpdateStats(False) # stops live GPU updates
 	updatedCurve(True) # temporarily pauses the nvFspd run loop
 	disableFanControl() # resets fan back to auto
+	setCurveControl(False) # disables curve points
 	displayDialogBox("Disabled GPU curve fan control. Reverted back to driver control.")
 
 def enableGPUControl():
@@ -128,10 +129,11 @@ def enableGPUControl():
 	setUpdateStats(True) # enables live GPU updates
 	updatedCurve(False) # unpauses the nvFspd run loop
 	enableFanControl() # resets old_fan_speed to trigger a curve update
+	setCurveControl(True) # allows curve points to be moved
 	displayDialogBox("Enabled GPU fan control.")
 
 def initChartValues():
-	file = loadedConfigDir or "config.csv"
+	file = loadedConfigDir or "default.csv"
 	# loads configuration array [temp, fspd] from csv
 	if path.exists(file): setDataFromFile(file)
 
@@ -144,7 +146,7 @@ def openFile():
 
 	if not file: return # if dialog is canceled
 
-	xdata, ydata = setDataFromFile(file)
+	xdata, ydata = setDataFromFile(file) # returns read csv xdata/ydata
 
 	if xdata and ydata:
 		line.set_data([xdata, ydata]) # update curve with values
@@ -172,7 +174,7 @@ def saveToFile():
 
 	if file is None: return # if dialog is canceled
 
-	file.write(str(config)) # write string to file
+	file.write(config) # write config string to file
 	file.close() # close instance
 	displayDialogBox('Successfully saved the current curve configuration!')
 
@@ -189,12 +191,16 @@ def setDataFromFile(file):
 				cfg_x.append(int(row[0]))
 				cfg_y.append(int(row[1]))
 
+		# check if arrays contain 12 curve positions
+		if len(cfg_x) != 12 or len(cfg_y) != 12: raise Exception('Invalid config')
+
 		# updates default curve values with config array
 		x_values = cfg_x #temp
 		y_values = cfg_y #speed
 		return cfg_x, cfg_y
 	except:
 		displayErrorBox("Failed to load configuration file.")
+		return None, None
 
 def setLabelColor(c1,c2):
 	axes.title.set_color(c1)
