@@ -86,6 +86,9 @@ class GUI:
 		self.disable_curve_buttons()
 		disableGPUControl()
 
+	def on_fileButton_select(self, widget):
+		self.on_nvfcApp_destroy()
+
 	def on_enableButton_clicked(self, widget):
 		self.enable_curve_buttons()
 		enableGPUControl()
