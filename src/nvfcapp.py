@@ -23,7 +23,6 @@ from subprocess import *
 import signal
 import sys
 from chartController import Chart, applyData, resetData, saveToFile, close, openFile
-from gpuController import enableGPUControl, disableGPUControl
 from styleProvider import styles
 styles()
 
@@ -83,12 +82,6 @@ class GUI:
 	def on_applyButton_clicked(self, widget):
 		applyData()
 
-	def on_disableButton_clicked(self, widget):
-		disableGPUControl()
-
-	def on_enableButton_clicked(self, widget):
-		enableGPUControl()
-
 	def on_openButton_clicked(self, widget):
 		openFile()
 
@@ -102,9 +95,9 @@ class GUI:
 		self.on_nvfcApp_destroy()
 
 	def enable_menu_buttons(self):
-		for label in ['enableButton','disableButton', 'applyButton', 'resetButton', 'openButton', 'saveButton']:
+		for label in ['applyButton', 'resetButton', 'openButton', 'saveButton']:
 			button = self.builder.get_object(label)
-			button.set_sensitive(False)
+			button.set_sensitive(True)
 
 def main():
 	app = GUI()

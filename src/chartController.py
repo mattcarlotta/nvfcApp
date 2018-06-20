@@ -20,7 +20,7 @@ except ImportError:
 	import tkFileDialog as filedialog
 
 import sys
-from nvFspd import NvidiaFanController, updatedCurve
+from nvFspd import NvidiaFanController, updatedCurve, disableFanControl
 from os import path
 import csv
 
@@ -112,7 +112,6 @@ def initChartValues():
 	# loads configuration array [temp, fspd] from csv
 	if path.exists(file): setDataFromFile(file)
 
-
 def openFile():
 	global loadedConfigDir
 
@@ -178,14 +177,14 @@ def setUpdateStats(bool):
 	global update_stats
 	update_stats = bool # whether or not to update GPU stats
 
-def stopControlling():
+def stopControllingGPU():
 	setUpdateStats(False)
 	nvidiaController.stop()
 	plt.cla()
 	axes.set_title("GPU Fan Controller", fontsize=16, color='grey', pad=20)
 
 def stopAndClearChart():
-	stopControlling()
+	stopControllingGPU()
 	displayErrorBox("There was an error when attempting to read GPU statistics. Please make sure you're using the proprietary Nvidia drivers and that they're currently in use.")
 
 def updateChart(xdata, ydata):
@@ -202,7 +201,7 @@ def updateLabelStats(i):
 			current_fan_speed = NvidiaFanController().checkFanSpeed() # grabs current fspd from NvidiaFanController
 
 			# check to see if values are present
-			if not current_temp or current_fan_speed: raise ValueError('')
+			if not current_temp or not current_fan_speed: raise ValueError('Missing temp and/or fan speed')
 
 			# updates chart labels
 			axes.set_xlabel("Temperature "+ "(" + str(current_temp) + u"°C)", fontsize=12, labelpad=20)
