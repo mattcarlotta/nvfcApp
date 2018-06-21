@@ -1,9 +1,10 @@
 from os import path
 from messageController import displayDialogBox
-from nvFspd import updatedCurve
-from fileController import openFile, setDataFromFile
+import nvFspd
+import fileController
 
-"""Global Variables"""
+
+""" Global Variables """
 loadedConfigDir = None # stores an opened config file path in case the curve is reset
 update_stats = True # sets flag for updating chart with GPU stats
 """ --------------- """
@@ -30,30 +31,34 @@ def initChartValues():
 	file = loadedConfigDir or "default.csv" # load from default or a previously loaded configuration
 	# loads configuration array [temp, fspd] from csv
 	if path.exists(file):
-		cfg_x, cfg_y = setDataFromFile(file)
+		cfg_x, cfg_y = fileController.setDataFromFile(file)
 
-		# if setDataFromFile returns [None, None], revert back to global x/y values
+		# if setDataFromFile returns [False, False], revert back to global x/y values
 		if not cfg_x or not cfg_y: return x_values, y_values
+
+		# returns data from loaded file
 		return cfg_x, cfg_y
 
+	# returns default values
 	return x_values, y_values
 
-def initValuesFromFile(nvidiaController, line):
+# attempts to open and load configuration files
+def initValuesFromOpenFile(nvidiaController, line):
 	global loadedConfigDir
 
-	# attempt to gather curve config from file
-	xdata, ydata, file = openFile()
+	# attempt to gather curve config data from file
+	xdata, ydata, file = fileController.openFile()
 
 	# if xdata and ydata are present
 	if xdata and ydata:
 		line.set_data([xdata, ydata]) # update curve with values
 		updateChart(nvidiaController, xdata, ydata) # update chart to reflect values
-		loadedConfigDir = file
+		loadedConfigDir = file # store configuration directory for curve resets
 
 # returns whether or not to enable live updates
 def getUpdateStatus(): return update_stats
 
-# resets curve from initial values
+# resets curve to initial values
 def resetData(nvidiaController, line):
 	cfg_x, cfg_y = initChartValues() # reset to initial values
 	line.set_data([cfg_x, cfg_y]) # update curve with values
@@ -66,7 +71,7 @@ def stopControllingGPU(nvidiaController, axes):
 	plt.cla()
 	axes.set_title("GPU Fan Controller", fontsize=16, color='grey', pad=20)
 
-# determins whether or not the graph will be updating GPU stats
+# determines whether or not the graph will be updating GPU stats
 def setUpdateStats(bool):
 	global update_stats
 	update_stats = bool
@@ -74,7 +79,7 @@ def setUpdateStats(bool):
 # updates chart curve
 def updateChart(nvidiaController, xdata, ydata):
 	setUpdateStats(False) # temporarily stops live GPU updates
-	updatedCurve(True) # pauses the nvFspd run loop
+	nvFspd.updatedCurve(True) # pauses the nvFspd run loop
 	nvidiaController.setCurve(xdata, ydata) # updates curve with new x and y data
-	updatedCurve(False) # resumes nvFspd loop
+	nvFspd.updatedCurve(False) # resumes nvFspd loop
 	setUpdateStats(True) # enables live GPU updates

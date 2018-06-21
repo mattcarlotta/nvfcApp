@@ -1,25 +1,26 @@
 import matplotlib.pyplot as plt
-from chartController import setLabelColor, setAxesLabels
-from chartDataActions import setUpdateStats
-from dragController import setCurveControl
-from nvFspd import enableFanControl, disableFanControl, updatedCurve
+import chartController
+import chartDataActions
+import dragController
+import nvFspd
 from messageController import displayDialogBox
+
 
 # triggered by "Disable" button
 def disableGPUControl():
-	setLabelColor('grey', 'grey') # sets label colors
-	setAxesLabels(0,0) # 0's GPU stats
-	setUpdateStats(False) # stops live GPU updates
-	updatedCurve(True) # temporarily pauses the nvFspd run loop
-	disableFanControl() # resets fan back to auto
-	setCurveControl(False) # disables curve points
+	chartController.setLabelColor('grey', 'grey') # sets label colors
+	chartController.setAxesLabels(0,0) # 0's GPU stats
+	chartDataActions.setUpdateStats(False) # stops live GPU updates
+	nvFspd.updatedCurve(True) # temporarily pauses the nvFspd run loop
+	nvFspd.disableFanControl() # resets fan back to auto
+	dragController.setCurveControl(False) # disables curve points
 	displayDialogBox("Disabled GPU curve fan control. Reverted back to driver control.")
 
 # triggered by "Enable" button
 def enableGPUControl():
-	setLabelColor('black', 'blue')
-	setUpdateStats(True) # enables live GPU updates
-	updatedCurve(False) # unpauses the nvFspd run loop
-	enableFanControl() # resets old_fan_speed to trigger a curve update
-	setCurveControl(True) # allows curve points to be moved
+	chartController.setLabelColor('black', 'blue')
+	chartDataActions.setUpdateStats(True) # enables live GPU updates
+	nvFspd.updatedCurve(False) # unpauses the nvFspd run loop
+	nvFspd.enableFanControl() # resets old_fan_speed to trigger a curve update
+	dragController.setCurveControl(True) # allows curve points to be moved
 	displayDialogBox("Enabled GPU fan control.")

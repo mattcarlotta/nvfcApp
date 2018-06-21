@@ -7,6 +7,8 @@ except ImportError:
 import csv
 from messageController import displayDialogBox, displayErrorBox
 
+
+# attempts to open, then read a configuration file
 def openFile():
 	cfg_x = []
 	cfg_y = []
@@ -23,6 +25,7 @@ def openFile():
 	elif len(cfg_x) != 12 or len(cfg_y) != 12: return False, False, False
 	else: return cfg_x, cfg_y, file
 
+# attempts to save a configuration file
 def saveToFile(dataController):
 	config = '' # initialize config variable
 	xdata, ydata = dataController.getData() # get current curve points
@@ -43,6 +46,7 @@ def saveToFile(dataController):
 	file.close() # close instance
 	displayDialogBox('Successfully saved the current curve configuration!')
 
+# attempts to read a configuration file
 def setDataFromFile(file):
 	try:
 		cfg_x = []

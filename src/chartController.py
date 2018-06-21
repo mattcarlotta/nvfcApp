@@ -37,10 +37,10 @@ style.use(['fivethirtyeight']) # current plot theme
 
 """ Global Variables """
 fig = plt.figure(num="Nvidia Fan Controller", figsize=(12, 9)) # create a figure (one figure per window)
-fig.subplots_adjust(left=0.11, bottom=0.15, right=0.94, top=0.89, wspace=0.2, hspace=0) # adjusts Chart's window within notebook
+fig.subplots_adjust(left=0.11, bottom=0.15, right=0.94, top=0.89, wspace=0.2, hspace=0) # adjusts Chart's window
 axes = fig.add_subplot(1,1,1) # add a subplot to the figure
-ticks = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100] # ticks across x and y axes
 """ --------------- """
+
 
 class Chart():
 	def __init__(self, notebook):
@@ -57,7 +57,7 @@ class Chart():
 		self.canvas.set_size_request(800, 600) # set default canvas height (req'd for displaying the chart)
 
 		# appends the chart => to a box => to a notebook
-		self.graphTab = Gtk.Box()
+		self.graphTab = Gtk.Box() # create box instance
 		self.graphTab.add(self.canvas) # add plt figure canvas to the newly created gtkBox
 		notebook.append_page(self.graphTab, Gtk.Label('Graph')) # add the gtkBox to the notebook
 
@@ -69,23 +69,25 @@ class Chart():
 		self.x_max = 105
 		self.y_min = 0
 		self.y_max = 105
-		self.axes.set_xlim(self.x_min, self.x_max)
-		self.axes.set_xticks(ticks)
-		self.axes.set_ylim(self.y_min, self.y_max)
-		self.axes.set_yticks(ticks)
+		self.ticks = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
+		self.axes.set_xlim(self.x_min, self.x_max) # x-axis min/max values
+		self.axes.set_ylim(self.y_min, self.y_max) # y-axis min/max values
+		self.axes.set_xticks(self.ticks) # x-axis ticks
+		self.axes.set_yticks(self.ticks) # y-axis ticks
 		self.axes.tick_params(colors='0.7', which='both', labelsize=12)
 		self.axes.grid(linestyle='-', linewidth='0.1', color='grey') # background lines (thin and grey)
 
 		# misc. chart configurations
-		self.axes.axhline(y=10, xmin=0, xmax=1, linewidth=1, color='red') # red line across @ (10, 0) to represent lowest value
-		self.axes.set_title("GPU Fan Controller", fontsize=16)
-		for axis in ['bottom','left']: self.axes.spines[axis].set_color('0.1')
-		self.plot.setp(self.axes.spines.values(), linewidth=0.2)
+		self.axes.axhline(y=10, xmin=0, xmax=1, linewidth=1, color='red') # red line to represent lowest value (10,0)
+		self.axes.set_title("GPU Fan Controller", fontsize=16) # Chart's title
+		for axis in ['bottom','left']: self.axes.spines[axis].set_color('0.1') # adds spines to x and y axes
+		self.plot.setp(self.axes.spines.values(), linewidth=0.2) # sets both spines' line widths
 		# self.fig.patch.set_facecolor('0.15') # sets background color
 
 		# creates curve w/ options: color=blue, s=squares, picker=max distance for selection
 		line, = axes.plot(self.x_values, self.y_values, linestyle='-',  marker='s', markersize=4.5, color='b', picker=5, linewidth=1.5)
 
+		# drag handler and curve instances
 		self.dragHandler = dragController.DragHandler(self) # handles the mouse clicks on the curve
 		dataController = curveController.DataController(self.x_values, self.y_values) # handles updating curve data
 
@@ -97,8 +99,8 @@ class Chart():
 		update_stats = chartDataActions.getUpdateStatus()
 		if (update_stats):
 			try:
-				current_temp = nvFspd.NvidiaFanController().checkGPUTemp() # grabs current temp from NvidiaFanController
-				current_fan_speed = nvFspd.NvidiaFanController().checkFanSpeed() # grabs current fspd from NvidiaFanController
+				current_temp = nvFspd.NvidiaFanController().checkGPUTemp() # grabs current temp
+				current_fan_speed = nvFspd.NvidiaFanController().checkFanSpeed() # grabs current fspd
 
 				# check to see if values are present
 				if not current_temp or not current_fan_speed: raise ValueError('Missing temp and/or fan speed')
@@ -124,7 +126,7 @@ def clickedDataReset():
 
 # attempts to open and load a config file
 def clickedOpenFile():
-	chartDataActions.initValuesFromFile(nvidiaController, line)
+	chartDataActions.initValuesFromOpenFile(nvidiaController, line)
 
 # attempts to save a config file
 def clickedSaveToFile():

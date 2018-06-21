@@ -1,5 +1,6 @@
 from messageController import displayErrorBox
 
+
 class Data(object):
 	def __init__(self, xdata, ydata):
 		self.setData(xdata, ydata)

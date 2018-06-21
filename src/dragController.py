@@ -1,6 +1,9 @@
 from messageController import displayErrorBox
 
+
+""" Global Variables """
 isActive = True
+""" --------------- """
 
 class DragHandler(object):
 	def __init__(self, chartObj):
