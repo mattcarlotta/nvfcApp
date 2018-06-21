@@ -1,3 +1,4 @@
+import matplotlib.pyplot as plt
 from os import path
 from messageController import displayDialogBox
 import nvFspd

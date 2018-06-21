@@ -83,11 +83,9 @@ class GUI:
 		Gtk.main_quit()
 
 	def on_nvfcAbout_delete_event(self, widget, data):
-		self.aboutWindow.set_sensitive(False)
 		self.aboutWindow.hide()
 
 	def on_aboutButton_activate(self, widget):
-		self.aboutWindow.set_sensitive(True)
 		self.aboutWindow.show()
 		self.aboutWindow.run()
 

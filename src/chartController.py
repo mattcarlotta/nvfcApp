@@ -7,7 +7,6 @@ from gi.repository import Gtk
 import csv
 import matplotlib.pyplot as plt
 from matplotlib.figure import Figure
-from matplotlib.widgets import Button
 from matplotlib import animation, style
 from os import path
 import sys
