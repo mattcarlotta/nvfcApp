@@ -1,7 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Generated with glade 3.22.1 -->
 <interface>
-  <requires lib="gtk+" version="3.22"/>
+  <requires lib="gtk+" version="3.18"/>
+  <object class="GtkBox" id="graphBox">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="orientation">vertical</property>
+    <child>
+      <placeholder/>
+    </child>
+  </object>
   <object class="GtkWindow" id="nvfcApp">
     <property name="name">nvfcApp</property>
     <property name="visible">True</property>
@@ -260,7 +268,7 @@
           </packing>
         </child>
         <child>
-          <object class="GtkBox" id="pageContainer">
+          <object class="GtkBox" id="viewContainer">
             <property name="name">chart_box</property>
             <property name="width_request">600</property>
             <property name="height_request">400</property>
@@ -339,6 +347,7 @@ See the &lt;a href="https://www.gnu.org/licenses/gpl-3.0.html"&gt;GNU General Pu
         <property name="spacing">2</property>
         <child internal-child="action_area">
           <object class="GtkButtonBox">
+            <property name="sensitive">False</property>
             <property name="can_focus">False</property>
             <property name="layout_style">end</property>
             <child>

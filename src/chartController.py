@@ -42,7 +42,7 @@ axes = fig.add_subplot(1,1,1) # add a subplot to the figure
 
 
 class Chart():
-	def __init__(self, notebook):
+	def __init__(self, graphBox):
 		global nvidiaController
 		global dataController
 		global line
@@ -55,10 +55,8 @@ class Chart():
 		self.canvas = FigureCanvas(self.fig) # add fig instance to a figure canvas
 		self.canvas.set_size_request(800, 600) # set default canvas height (req'd for displaying the chart)
 
-		# appends the chart => to a box => to a notebook
-		self.graphTab = Gtk.Box() # create box instance
-		self.graphTab.add(self.canvas) # add plt figure canvas to the newly created gtkBox
-		notebook.append_page(self.graphTab, Gtk.Label('Graph')) # add the gtkBox to the notebook
+		# appends the figure => to the graphBox => to the notebook
+		graphBox.add(self.canvas)
 
 		# updates chart with GPU stats every 1000ms
 		self.anim = animation.FuncAnimation(self.fig, self.updateLabelStats, interval=1000)
@@ -95,17 +93,17 @@ class Chart():
 		nvidiaController.start()
 
 	def updateLabelStats(self, i):
-		update_stats = chartDataActions.getUpdateStatus()
-		if (update_stats):
+		self.update_stats = chartDataActions.getUpdateStatus()
+		if (self.update_stats):
 			try:
-				current_temp = nvFspd.NvidiaFanController().checkGPUTemp() # grabs current temp
-				current_fan_speed = nvFspd.NvidiaFanController().checkFanSpeed() # grabs current fspd
+				self.current_temp = nvFspd.NvidiaFanController().checkGPUTemp() # grabs current temp
+				self.current_fan_speed = nvFspd.NvidiaFanController().checkFanSpeed() # grabs current fspd
 
 				# check to see if values are present
-				if not current_temp or not current_fan_speed: raise ValueError('Missing temp and/or fan speed')
+				if not self.current_temp or not self.current_fan_speed: raise ValueError('Missing temp and/or fan speed')
 
 				# updates chart labels
-				setAxesLabels(current_temp, current_fan_speed)
+				setAxesLabels(self.current_temp, self.current_fan_speed)
 			except ValueError:
 				chartDataActions.stopControllingGPU(nvidiaController, axes)
 				displayErrorBox("There was an error when attempting to read GPU statistics. Please make sure you're using the proprietary Nvidia drivers and that they're currently in use.")

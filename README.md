@@ -1,5 +1,5 @@
 # Nvidia GPU Fan Controller (nvfcApp)
-a GTK GUI application that creates a modifiable 2D curve of [temp, speed] points that are used to control a Nvidia GPU fan within a Linux environment.
+a GTK3 (v3.18) application that creates a modifiable 2D curve of [temp, fanspeed] points that automatically control a Nvidia GPU's fan speed according to the GPU's temp within a Linux environment.
 
 ![nvfc.png](https://code.mattcarlotta.io/root/nvfcApp/raw/master/nvfcApp.png)
 
@@ -59,6 +59,11 @@ a GTK GUI application that creates a modifiable 2D curve of [temp, speed] points
 
 * Temperature - Current GPU temperature (°C)
 * Fan Speed - Current GPU fan speed (%)
+
+## Known Application Quirks
+
+* If after loading a configuration and a curve has been altered, applied and invalidated, it will revert back to the last curve position prior to loading the curve.
+* The application will appear and function differently across Linux distros. For example, in Ubuntu 18 LTS, the About menu will not display a "close" button, however the "credits" tab will be clickable/viewable. In Linux Mint 18, the "credits" and "close" buttons will be displayed as disabled and unclickable.
 
 ## Notes
 ⚠️ On start up, this application only looks for a `default.csv` file within the application's directory. If missing, it'll load a pre-configured curve.

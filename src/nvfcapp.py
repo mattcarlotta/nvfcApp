@@ -24,8 +24,8 @@ import signal
 import sys
 from chartController import *
 from gpuControlActions import *
-from styleProvider import styles
-styles()
+# from styleProvider import styles
+# styles()
 
 #Comment the first line and uncomment the second before installing
 #or making the tarball (alternatively, use project variables)
@@ -46,6 +46,11 @@ class GUI:
 		self.appWindow = self.builder.get_object('nvfcApp')
 		self.appWindow.set_position(Gtk.WindowPosition.CENTER_ALWAYS)
 
+		# append current OS theme to toolbar
+		self.appMenu = self.builder.get_object('appMenu')
+		self.menuStyle = self.appMenu.get_style_context()
+		self.menuStyle.add_class(Gtk.STYLE_CLASS_PRIMARY_TOOLBAR)
+
 		# about window (hidden)
 		self.aboutWindow = self.builder.get_object('nvfcAbout')
 
@@ -56,8 +61,10 @@ class GUI:
 		driverInUse = check_output("lspci -k | grep -EA3 'VGA|3D|Display' | grep 'use' |  sed 's/.*: //'", shell=True).decode('utf-8').strip()
 		if driverInUse == 'nvidia': self.enable_curve_buttons()
 
-		# appends chart graph to tab 1
-		Chart(self.notebook)
+		# GPU graph controller
+		self.graph = self.builder.get_object('graphBox')
+		Chart(self.graph)
+		self.notebook.append_page(self.graph, Gtk.Label('Graph'))
 
 		self.page2 = Gtk.Box()
 		self.page2.set_border_width(10)

@@ -88,25 +88,25 @@ class NvidiaFanController(StoppableThread):
 
 	def checkFanSpeed(self): return current_fan_speed
 
+	# grabs the GPU driver as a string and returns a float
 	def getDriverVersion(self):
-		# grabs the GPU driver as a string and returns a float
 		try:
-			driver_version = check_output("nvidia-smi | sed -n -e 's/^.*Version: //p' | head -c 6", shell=True)
-			return float(driver_version)
+			driver_version = check_output("nvidia-smi --query-gpu=driver_version --format=csv | tail -n +2", shell=True)
+			return float(driver_version[:-4])
 		except:
 			return None
 
+	# grab current fan speed
 	def getFanSpeed(self):
-		# grab current fan speed
 		try:
-			output = check_output("nvidia-smi --query-gpu=fan.speed --format=csv,noheader | head -c 3", shell=True)
-			current_fan_speed = int(output)
+			output = check_output("nvidia-smi --query-gpu=fan.speed --format=csv,noheader", shell=True)
+			current_fan_speed = int(output[:3])
 			return current_fan_speed
 		except:
 			return None
 
+	# grab current temp
 	def getTemp(self):
-		# grab current temp
 		try:
 			output = check_output("nvidia-smi --query-gpu=temperature.gpu --format=csv,noheader", shell=True)
 			current_temp = int(output)
@@ -114,12 +114,12 @@ class NvidiaFanController(StoppableThread):
 		except:
 			return None
 
+	# if app is running, control GPU fan
 	def run(self):
-		# if app is running, control GPU fan
 		while(not self.stopped()):
 			if (updated_curve):
 				time.sleep(1.0)
-				continue # pause loop to update curve points
+				continue # pause loop to update curve points or disable chart
 			else:
 				self.updateFan() # update fan if needed
 				time.sleep(1.0)
