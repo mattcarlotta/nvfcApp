@@ -26,11 +26,11 @@ except:
 	# python2
 	from matplotlib.backends.backend_gtkcairo import FigureCanvasGTKCairo as FigureCanvas
 
+from chartDataActions import applyData, initChartValues, getUpdateStatus, resetData, setUpdateStats, stopControllingGPU
 from dataController import *
 from dragHandler import *
 from messageController import displayDialogBox, displayErrorBox
 from nvFspd import *
-
 
 style.use(['fivethirtyeight']) # current plot theme
 
@@ -38,21 +38,21 @@ style.use(['fivethirtyeight']) # current plot theme
 fig = plt.figure(num="Nvidia Fan Controller", figsize=(12, 9)) # create a figure (one figure per window)
 fig.subplots_adjust(left=0.11, bottom=0.15, right=0.94, top=0.89, wspace=0.2, hspace=0)
 axes = fig.add_subplot(1,1,1) # add a subplot to the figure. axes is of type Axes which contains most of the figure elements
-update_stats = True # sets flag for updating chart with GPU stats
 ticks = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100] # ticks across x and y axes
 # default curve values
-x_values = [0, 	11, 23, 34, 45, 55, 65, 74, 81, 88, 94, 100]
-y_values = [10, 15, 21, 27, 34, 41, 50, 59, 68, 78, 88, 100]
 loadedConfigDir = None # stores an opened config file path in case the curve is reset
 """ --------------- """
 
 class Chart():
 	def __init__(self, notebook):
+		# global x_values
+		# global y_values
 		global nvidiaController
 		global dataController
 		global line
 
-		initChartValues()
+		x_values, y_values = initChartValues()
+
 		self.plot = plt # add plt instance
 		self.fig = fig # add plt.figure instance
 		self.axes = axes # add a subplot instance to the figure
@@ -103,39 +103,12 @@ def close():
 	plt.close('all')
 	nvidiaController.stop()
 
-def applyData():
-	xdata = line.get_xdata() # grabs current curve y data
-	ydata = line.get_ydata() # grabs current curve y data
-	is_valid_curve = dataController.setData(xdata, ydata) # checks if curve is exponentially growing (returns bool)
+def clickedApplyData():
+	applyData(dataController, nvidiaController, line)
 
-	if is_valid_curve:
-		updateChart(xdata, ydata) # updates nvFspd.NvidiaFanController() with new curve data
-		displayDialogBox('Successfully applied the current curve to the fan settings!')
-	else:
-		xdata, ydata = dataController.getData() # gets previous data
-		line.set_data([xdata, ydata]) # resets line to previous curve
-
-def disableGPUControl():
-	setLabelColor('grey', 'grey') # sets label colors
-	setAxesLabels(0,0) # 0's GPU stats
-	setUpdateStats(False) # stops live GPU updates
-	updatedCurve(True) # temporarily pauses the nvFspd run loop
-	disableFanControl() # resets fan back to auto
-	setCurveControl(False) # disables curve points
-	displayDialogBox("Disabled GPU curve fan control. Reverted back to driver control.")
-
-def enableGPUControl():
-	setLabelColor('black', 'blue')
-	setUpdateStats(True) # enables live GPU updates
-	updatedCurve(False) # unpauses the nvFspd run loop
-	enableFanControl() # resets old_fan_speed to trigger a curve update
-	setCurveControl(True) # allows curve points to be moved
-	displayDialogBox("Enabled GPU fan control.")
-
-def initChartValues():
-	file = loadedConfigDir or "default.csv"
-	# loads configuration array [temp, fspd] from csv
-	if path.exists(file): setDataFromFile(file)
+def clickedDataReset():
+	x_values, y_values = initChartValues() # reset to initial values
+	resetData(nvidiaController, line, x_values, y_values)
 
 def openFile():
 	global loadedConfigDir
@@ -153,10 +126,6 @@ def openFile():
 		updateChart(x_values, y_values) # update chart to reflect values
 		loadedConfigDir = file
 
-def resetData():
-	initChartValues() # reset to initial values
-	line.set_data([x_values, y_values]) # update curve with values
-	updateChart(x_values, y_values) # update chart to reflect values
 
 def saveToFile():
 	config = '' # initialize config variable
@@ -178,29 +147,29 @@ def saveToFile():
 	file.close() # close instance
 	displayDialogBox('Successfully saved the current curve configuration!')
 
-def setDataFromFile(file):
-	global x_values
-	global y_values
-
-	try:
-		cfg_x = []
-		cfg_y = []
-		with open(file, 'r') as csvfile:
-			config = csv.reader(csvfile, delimiter=',')
-			for row in config:
-				cfg_x.append(int(row[0]))
-				cfg_y.append(int(row[1]))
-
-		# check if arrays contain 12 curve positions
-		if len(cfg_x) != 12 or len(cfg_y) != 12: raise Exception('Invalid config')
-
-		# updates default curve values with config array
-		x_values = cfg_x #temp
-		y_values = cfg_y #speed
-		return cfg_x, cfg_y
-	except:
-		displayErrorBox("Failed to load configuration file.")
-		return None, None
+# def setDataFromFile(file):
+# 	global x_values
+# 	global y_values
+#
+# 	try:
+# 		cfg_x = []
+# 		cfg_y = []
+# 		with open(file, 'r') as csvfile:
+# 			config = csv.reader(csvfile, delimiter=',')
+# 			for row in config:
+# 				cfg_x.append(int(row[0]))
+# 				cfg_y.append(int(row[1]))
+#
+# 		# check if arrays contain 12 curve positions
+# 		if len(cfg_x) != 12 or len(cfg_y) != 12: raise Exception('Invalid config')
+#
+# 		# updates default curve values with config array
+# 		x_values = cfg_x #temp
+# 		y_values = cfg_y #speed
+# 		return cfg_x, cfg_y
+# 	except:
+# 		displayErrorBox("Failed to load configuration file.")
+# 		return None, None
 
 def setLabelColor(c1,c2):
 	axes.title.set_color(c1)
@@ -213,28 +182,30 @@ def setAxesLabels(currtmp,currfspd):
 	axes.set_xlabel("Temperature "+ "(" + str(currtmp) + u"°C)", fontsize=12, labelpad=20)
 	axes.set_ylabel("Fan Speed " + "(" + str(currfspd) + u"%)", fontsize=12, labelpad=10)
 
-def setUpdateStats(bool):
-	global update_stats
-	update_stats = bool # whether or not to update GPU stats
+# def setUpdateStats(bool):
+# 	global update_stats
+# 	update_stats = bool # whether or not to update GPU stats
 
-def stopControllingGPU():
-	setUpdateStats(False)
-	nvidiaController.stop()
-	plt.cla()
-	axes.set_title("GPU Fan Controller", fontsize=16, color='grey', pad=20)
+# def stopControllingGPU():
+	# stopControllingGPU(nvidiaController, axes)
+	# setUpdateStats(False)
+	# nvidiaController.stop()
+	# plt.cla()
+	# axes.set_title("GPU Fan Controller", fontsize=16, color='grey', pad=20)
 
 def stopAndClearChart():
-	stopControllingGPU()
+	stopControllingGPU(nvidiaController, axes)
 	displayErrorBox("There was an error when attempting to read GPU statistics. Please make sure you're using the proprietary Nvidia drivers and that they're currently in use.")
 
-def updateChart(xdata, ydata):
-	setUpdateStats(False) # temporarily stops live GPU updates
-	updatedCurve(True) # pauses the nvFspd run loop
-	nvidiaController.setCurve(xdata, ydata) # updates curve with new x and y data
-	updatedCurve(False) # resumes nvFspd loop
-	setUpdateStats(True) # enables live GPU updates
+# def updateChart(xdata, ydata):
+# 	setUpdateStats(False) # temporarily stops live GPU updates
+# 	updatedCurve(True) # pauses the nvFspd run loop
+# 	nvidiaController.setCurve(xdata, ydata) # updates curve with new x and y data
+# 	updatedCurve(False) # resumes nvFspd loop
+# 	setUpdateStats(True) # enables live GPU updates
 
 def updateLabelStats(i):
+	update_stats = getUpdateStatus()
 	if (update_stats):
 		try:
 			current_temp = NvidiaFanController().checkGPUTemp() # grabs current temp from NvidiaFanController
