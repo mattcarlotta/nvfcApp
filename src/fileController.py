@@ -7,29 +7,23 @@ except ImportError:
 import csv
 from messageController import displayDialogBox, displayErrorBox
 
-"""Global Variables"""
-loadedConfigDir = None # stores an opened config file path in case the curve is reset
-""" --------------- """
-
-def getLoadedConfigDir(): return loadedConfigDir
-
 def openFile():
-	global loadedConfigDir
+	cfg_x = []
+	cfg_y = []
 
 	file = filedialog.askopenfilename(
 		title="Select configuration",
 		filetypes=[('csv files', ".csv")])
 
-	if not file: return # if dialog is canceled
+	if not file: return False, False, False # if dialog is canceled
 
-	xdata, ydata = setDataFromFile(file) # returns read csv xdata/ydata
+	cfg_x, cfg_y = setDataFromFile(file) # returns read csv xdata/ydata
 
-	if xdata and ydata:
-		line.set_data([xdata, ydata]) # update curve with values
-		updateChart(x_values, y_values) # update chart to reflect values
-		loadedConfigDir = file
+	if not (cfg_x or cfg_y): return False, False, False
+	elif len(cfg_x) != 12 or len(cfg_y) != 12: return False, False, False
+	else: return cfg_x, cfg_y, file
 
-def saveToFile():
+def saveToFile(dataController):
 	config = '' # initialize config variable
 	xdata, ydata = dataController.getData() # get current curve points
 
@@ -66,4 +60,4 @@ def setDataFromFile(file):
 		return cfg_x, cfg_y
 	except Exception as error:
 		displayErrorBox("Failed to load configuration file.")
-		return None, None
+		return False, False

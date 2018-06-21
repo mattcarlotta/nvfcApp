@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 from chartController import setLabelColor, setAxesLabels
 from chartDataActions import setUpdateStats
-from dragHandler import setCurveControl
+from dragController import setCurveControl
 from nvFspd import enableFanControl, disableFanControl, updatedCurve
 from messageController import displayDialogBox
 

@@ -103,13 +103,13 @@ class GUI:
 		enableGPUControl()
 
 	def on_openButton_clicked(self, widget):
-		openFile()
+		clickedOpenFile()
 
 	def on_resetButton_clicked(self, widget):
 		clickedDataReset()
 
 	def on_saveButton_clicked(self, widget):
-		saveToFile()
+		clickedSaveToFile()
 
 	def on_quitButton_clicked(self, widget):
 		self.on_nvfcApp_destroy()
