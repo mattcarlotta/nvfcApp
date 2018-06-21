@@ -29,16 +29,16 @@ styles()
 
 #Comment the first line and uncomment the second before installing
 #or making the tarball (alternatively, use project variables)
-UI_WINDOWS = ["nvfcapp.ui"]
-#UI_FILE = "/usr/local/share/nvfcapp/ui/nvfcapp.ui"
+APP_WINDOW = "nvfcapp.ui"
+#APP_WINDOW= "/usr/local/share/nvfcapp/ui/nvfcapp.ui"
 
 class GUI:
 	def __init__(self):
 		self.builder = Gtk.Builder()
 		try:
-			for window in UI_WINDOWS: self.builder.add_from_file(window)
+			self.builder.add_from_file(APP_WINDOW)
 		except:
-			for window in UI_WINDOWS: self.builder.add_from_file("src/" + window)
+			self.builder.add_from_file("src/" + APP_WINDOW)
 
 		self.builder.connect_signals(self)
 
@@ -82,11 +82,14 @@ class GUI:
 		close()
 		Gtk.main_quit()
 
-	def	on_aboutOkButton_clicked(self, widget):
-		self.aboutWindow.destroy()
+	def on_nvfcAbout_delete_event(self, widget, data):
+		self.aboutWindow.set_sensitive(False)
+		self.aboutWindow.hide()
 
 	def on_aboutButton_activate(self, widget):
-		self.aboutWindow.show_all()
+		self.aboutWindow.set_sensitive(True)
+		self.aboutWindow.show()
+		self.aboutWindow.run()
 
 	def on_applyButton_clicked(self, widget):
 		clickedApplyData()

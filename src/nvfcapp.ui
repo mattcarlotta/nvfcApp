@@ -321,10 +321,14 @@
     <property name="copyright" translatable="yes">Copyright (C) 2018 </property>
     <property name="website">https://code.mattcarlotta.io/root/nvfcApp</property>
     <property name="website_label" translatable="yes">Website</property>
+    <property name="license" translatable="yes">This program comes with absolutely no warranty.
+See the &lt;a href="https://www.gnu.org/licenses/gpl-3.0.html"&gt;GNU General Public License, version 3 or later&lt;/a&gt; for details.</property>
     <property name="authors">Matt Carlotta
 </property>
     <property name="logo">../nvfcApp_128x128.png</property>
+    <property name="wrap_license">True</property>
     <property name="license_type">gpl-3-0</property>
+    <signal name="delete-event" handler="on_nvfcAbout_delete_event" swapped="no"/>
     <child>
       <placeholder/>
     </child>
@@ -334,25 +338,11 @@
         <property name="orientation">vertical</property>
         <property name="spacing">2</property>
         <child internal-child="action_area">
-          <object class="GtkButtonBox" id="okButtonContainer">
+          <object class="GtkButtonBox">
             <property name="can_focus">False</property>
             <property name="layout_style">end</property>
             <child>
-              <object class="GtkButton" id="aboutOkButton">
-                <property name="label" translatable="yes">Close</property>
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="receives_default">True</property>
-                <signal name="clicked" handler="on_aboutOkButton_clicked" swapped="no"/>
-                <style>
-                  <class name="about_ok_button"/>
-                </style>
-              </object>
-              <packing>
-                <property name="expand">True</property>
-                <property name="fill">True</property>
-                <property name="position">0</property>
-              </packing>
+              <placeholder/>
             </child>
           </object>
           <packing>
@@ -360,9 +350,6 @@
             <property name="fill">False</property>
             <property name="position">0</property>
           </packing>
-        </child>
-        <child>
-          <placeholder/>
         </child>
       </object>
     </child>
