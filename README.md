@@ -68,6 +68,8 @@ a GTK3 (v3.18) application that creates a modifiable 2D curve of [temp, fanspeed
 * libcanberra-gtk3
 * proprietary Nvidia driver
 
+## Credits:
+
 Based on the work of Luke Frisken and Mister Pup:  
 * https://code.google.com/p/nvidia-fanspeed/
 * https://github.com/MisterPup/Nvidia-Dynamic-Fan-Control
