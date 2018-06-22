@@ -1,4 +1,4 @@
-from messageController import displayErrorBox
+from msgController import displayErrorBox
 
 
 class Data(object):

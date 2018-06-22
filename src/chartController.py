@@ -1,22 +1,8 @@
-#! /usr/bin/env python3.4
-# -*- coding: utf-8 -*-
-
 import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
-import csv
 import matplotlib.pyplot as plt
-from matplotlib.figure import Figure
 from matplotlib import animation, style
-from os import path
-import sys
-
-try:
-	# python3
-	from tkinter import filedialog
-except ImportError:
-	# python2
-	import tkFileDialog as filedialog
 
 try:
 	# python3
@@ -26,16 +12,15 @@ except:
 	from matplotlib.backends.backend_gtkcairo import FigureCanvasGTKCairo as FigureCanvas
 
 from chartDataActions import ChartActionController
-import curveController
-import dragController
-from messageController import displayDialogBox, displayErrorBox
-import fileController
-from nvFspd import NvidiaFanController
+from curveController import DataController
+from dragController import DragHandler
+from fileController import FileController
+from fanController import NvidiaFanController
+from msgController import displayDialogBox, displayErrorBox
 
 style.use(['fivethirtyeight']) # current plot theme
 
 class Chart():
-
 	""" Class Variables """
 	fig = plt.figure(num="Nvidia Fan Controller", figsize=(12, 9)) # create a figure (one figure per window)
 	fig.subplots_adjust(left=0.11, bottom=0.15, right=0.94, top=0.89, wspace=0.2, hspace=0) # adjusts Chart's window
@@ -85,8 +70,8 @@ class Chart():
 		line, = Chart.axes.plot(self.x_values, self.y_values, linestyle='-',  marker='s', markersize=4.5, color='b', picker=5, linewidth=1.5)
 
 		# drag handler and curve instances
-		self.dragHandler = dragController.DragHandler(self) # handles the mouse clicks on the curve
-		dataController = curveController.DataController(self.x_values, self.y_values) # handles updating curve data
+		self.dragHandler = DragHandler(self) # handles the mouse clicks on the curve
+		dataController = DataController(self.x_values, self.y_values) # handles updating curve data
 
 		# starts a stoppable thread (loop that looks for temp changes and updates accordingly)
 		nvidiaController = NvidiaFanController(self.x_values, self.y_values)
@@ -107,7 +92,7 @@ class Chart():
 	def handleOpenFile(): ChartActionController.initValuesFromOpenFile(nvidiaController, line)
 
 	# attempts to save a config file
-	def handleSaveToFile(): fileController.saveToFile(dataController)
+	def handleSaveToFile(): FileController.saveToFile(dataController)
 
 	# updates Chart's label colors (enabled / disabled)
 	def setLabelColor(c1,c2):

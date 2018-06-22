@@ -1,12 +1,11 @@
 import matplotlib.pyplot as plt
 from os import path
-from messageController import displayDialogBox
-from nvFspd import NvidiaFanController
-import fileController
+from fanController import NvidiaFanController
+from fileController import FileController
+from msgController import displayDialogBox
 
 
 class ChartActionController():
-
 	""" Class Variables """
 	loadedConfig = None # stores an opened config file path in case the curve is reset
 	update_stats = True # sets flag for updating chart with GPU stats
@@ -19,7 +18,7 @@ class ChartActionController():
 		is_valid_curve = dataController.setData(xdata, ydata) # checks if curve is exponentially growing (returns bool)
 
 		if is_valid_curve:
-			ChartActionController.updateChart(nvidiaController, xdata, ydata) # updates nvFspd.NvidiaFanController() with new curve data
+			ChartActionController.updateChart(nvidiaController, xdata, ydata) # updates NvidiaFanController() with new curve data
 			displayDialogBox('Successfully applied the current curve to the fan settings!')
 		else:
 			xdata, ydata = dataController.getData() # gets previous data
@@ -34,7 +33,7 @@ class ChartActionController():
 		file = ChartActionController.loadedConfig or "default.csv" # load from default or a previously loaded configuration
 		# loads configuration array [temp, fspd] from csv
 		if path.exists(file):
-			cfg_x, cfg_y = fileController.setDataFromFile(file)
+			cfg_x, cfg_y = FileController.setDataFromFile(file)
 
 			# if setDataFromFile returns [False, False], revert back to global x/y values
 			if not cfg_x or not cfg_y: return x_values, y_values
@@ -48,7 +47,7 @@ class ChartActionController():
 	# attempts to open and load configuration files
 	def initValuesFromOpenFile(nvidiaController, line):
 		# attempt to gather curve config data from file
-		xdata, ydata, file = fileController.openFile()
+		xdata, ydata, file = FileController.openFile()
 
 		# if xdata and ydata are present
 		if xdata and ydata:
@@ -75,7 +74,7 @@ class ChartActionController():
 	# updates chart curve
 	def updateChart(nvidiaController, xdata, ydata):
 		ChartActionController.setUpdateStats(False) # temporarily stops live GPU updates
-		NvidiaFanController.pauseUpdates(True) # pauses the nvFspd run loop
+		NvidiaFanController.pauseUpdates(True) # pauses the run loop
 		nvidiaController.setCurve(xdata, ydata) # updates curve with new x and y data
-		NvidiaFanController.pauseUpdates(False) # resumes nvFspd loop
+		NvidiaFanController.pauseUpdates(False) # resumes loop
 		ChartActionController.setUpdateStats(True) # enables live GPU updates

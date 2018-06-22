@@ -35,6 +35,7 @@ APP_WINDOW = "nvfcapp.ui"
 class GUI:
 	def __init__(self):
 		self.builder = Gtk.Builder()
+		
 		try:
 			self.builder.add_from_file(APP_WINDOW)
 		except:
@@ -85,6 +86,23 @@ class GUI:
 
 		self.appWindow.show_all()
 
+	def curve_button_options(self, arr, bool):
+		for label in arr:
+			button = self.builder.get_object(label)
+			button.set_sensitive(bool)
+
+	def enable_curve_buttons(self):
+		arr1 = ['enableButton']
+		arr2 = ['disableButton','applyButton', 'resetButton', 'openButton', 'saveButton']
+		self.curve_button_options(arr1, False)
+		self.curve_button_options(arr2, True)
+
+	def disable_curve_buttons(self):
+		arr1 = ['enableButton']
+		arr2 = ['disableButton', 'applyButton', 'resetButton', 'openButton', 'saveButton']
+		self.curve_button_options(arr1, True)
+		self.curve_button_options(arr2, False)
+
 	def on_nvfcApp_destroy(s=None, w=None, d=None):
 		Chart.close()
 		Gtk.main_quit()
@@ -121,23 +139,6 @@ class GUI:
 
 	def on_quitButton_clicked(self, widget):
 		self.on_nvfcApp_destroy()
-
-	def curve_button_options(self, arr, bool):
-		for label in arr:
-			button = self.builder.get_object(label)
-			button.set_sensitive(bool)
-
-	def enable_curve_buttons(self):
-		arr1 = ['enableButton']
-		arr2 = ['disableButton','applyButton', 'resetButton', 'openButton', 'saveButton']
-		self.curve_button_options(arr1, False)
-		self.curve_button_options(arr2, True)
-
-	def disable_curve_buttons(self):
-		arr1 = ['enableButton']
-		arr2 = ['disableButton', 'applyButton', 'resetButton', 'openButton', 'saveButton']
-		self.curve_button_options(arr1, True)
-		self.curve_button_options(arr2, False)
 
 def main():
 	app = GUI()

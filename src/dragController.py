@@ -1,8 +1,7 @@
-from messageController import displayErrorBox
+from msgController import displayErrorBox
 
 
 class DragHandler(object):
-
 	""" Class Variables """
 	isActive = True
 	""" --------------- """
