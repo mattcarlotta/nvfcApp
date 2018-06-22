@@ -1,10 +1,4 @@
-try:
-	# python3
-	from tkinter import filedialog
-except ImportError:
-	# python2
-	import tkFileDialog as filedialog
-
+from tkinter import filedialog
 import csv
 from msgController import displayDialogBox, displayErrorBox
 

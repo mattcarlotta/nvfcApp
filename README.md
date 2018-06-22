@@ -3,28 +3,7 @@ a GTK3 (v3.18) application that creates a modifiable 2D curve of [temp, fanspeed
 
 ![nvfc.png](https://code.mattcarlotta.io/root/nvfcApp/raw/master/nvfcApp.png)
 
-## Quickstart for running python 2.7:
-
-* Install python:  
-  `sudo apt-get install python`
-* Install matplotlib:  
-  `sudo apt-get install python-matplotlib`
-* Install Tkinter:  
-  `sudo apt-get install python-tk`
-* Install pyGTK:  
-  `sudo apt-get install libgtk-2-dev`
-* Install cairocffi:  
-  `sudo apt-get install python-cairocffi`  
-* Install libcanberra-gtk:  
-  `sudo apt-get install libcanberra-gtk-module`
-* Allow the Nvidia card's fan to be controlled:  
-  `sudo nvidia-xconfig --enable-all-gpus` and `sudo nvidia-xconfig --cool-bits=28`
-* Reboot your computer for the GPU settings to take effect:  
-  `sudo reboot`
-* Open a terminal in the folder containing nvfc.py, then execute:  
-  `python nvfcapp.py`
-
-## Quickstart for running python 3.6:
+## Linux Quickstart:
 
 * Install python3:  
   `sudo apt-get install python3.6`
@@ -81,12 +60,12 @@ a GTK3 (v3.18) application that creates a modifiable 2D curve of [temp, fanspeed
 
 ## Dependencies:
 
-* python
-* matplotlib
-* Tkinter
-* pyGTK
-* cairocffi
-* libcanberra-gtk
+* python3 (python3.6)
+* matplotlib (python3-matplotlib)
+* Tkinter (python3-tk)
+* pyGTK (libgtk-3-dev)
+* cairocffi (python3-cairocffi)
+* libcanberra-gtk3
 * proprietary Nvidia driver
 
 Based on the work of Luke Frisken and Mister Pup:  

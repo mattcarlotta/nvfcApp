@@ -3,14 +3,7 @@ gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
 import matplotlib.pyplot as plt
 from matplotlib import animation, style
-
-try:
-	# python3
-	from matplotlib.backends.backend_gtk3cairo import FigureCanvasGTK3Cairo as FigureCanvas
-except:
-	# python2
-	from matplotlib.backends.backend_gtkcairo import FigureCanvasGTKCairo as FigureCanvas
-
+from matplotlib.backends.backend_gtk3cairo import FigureCanvasGTK3Cairo as FigureCanvas
 from chartDataActions import ChartActionController
 from curveController import DataController
 from dragController import DragHandler

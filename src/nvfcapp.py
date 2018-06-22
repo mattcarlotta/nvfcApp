@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- Mode: Python; coding: utf-8; indent-tabs-mode: t; c-basic-offset: 4; tab-width: 4 -*-
 #
 # main.py
@@ -35,7 +35,7 @@ APP_WINDOW = "nvfcapp.ui"
 class GUI:
 	def __init__(self):
 		self.builder = Gtk.Builder()
-		
+
 		try:
 			self.builder.add_from_file(APP_WINDOW)
 		except:

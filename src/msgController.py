@@ -1,12 +1,5 @@
-try:
-	# python3
-	import tkinter as tk
-	from tkinter.messagebox import showinfo, showerror
-except ImportError:
-	# python2
-	import Tkinter as tk
-	from tkMessageBox import showinfo, showerror
-
+import tkinter as tk
+from tkinter.messagebox import showinfo, showerror
 
 def destroy(root):
 	root.destroy()
