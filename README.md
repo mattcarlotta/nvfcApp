@@ -3,10 +3,7 @@ a GTK3 (v3.18) application that creates a modifiable 2D curve of [temp, fanspeed
 
 ![nvfc.png](https://code.mattcarlotta.io/root/nvfcApp/raw/master/nvfcApp.png)
 
-## Linux Quickstart Guides:
-
-<details>
-<summary>Quickstart for running on python 2.7</summary>
+## Quickstart for running python 2.7:
 
 * Install python:  
   `sudo apt-get install python`
@@ -26,10 +23,8 @@ a GTK3 (v3.18) application that creates a modifiable 2D curve of [temp, fanspeed
   `sudo reboot`
 * Open a terminal in the folder containing nvfc.py, then execute:  
   `python nvfcapp.py`
-</details>
 
-<details>
-<summary>Quickstart for running on python 3.6</summary>
+## Quickstart for running python 3.6:
 
 * Install python3:  
   `sudo apt-get install python3.6`
@@ -49,7 +44,6 @@ a GTK3 (v3.18) application that creates a modifiable 2D curve of [temp, fanspeed
   `sudo reboot`
 * Open a terminal in the folder containing nvfc.py, then execute:  
   `python3 nvfcapp.py`
-</details>
 
 ## Button Actions
 
@@ -65,6 +59,7 @@ a GTK3 (v3.18) application that creates a modifiable 2D curve of [temp, fanspeed
 
 * Temperature - Current GPU temperature (°C)
 * Fan Speed - Current GPU fan speed (%)
+
 
 ## Notes
 ⚠️ On start up, this application only looks for a `default.csv` file within the application's directory. If missing, it'll load a pre-configured curve.
@@ -92,7 +87,7 @@ a GTK3 (v3.18) application that creates a modifiable 2D curve of [temp, fanspeed
 * pyGTK
 * cairocffi
 * libcanberra-gtk
-* proprietary Nvidia drivers
+* proprietary Nvidia driver
 
 Based on the work of Luke Frisken and Mister Pup:  
 * https://code.google.com/p/nvidia-fanspeed/
