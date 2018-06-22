@@ -1,11 +1,12 @@
 from messageController import displayErrorBox
 
 
-""" Global Variables """
-isActive = True
-""" --------------- """
-
 class DragHandler(object):
+
+	""" Class Variables """
+	isActive = True
+	""" --------------- """
+
 	def __init__(self, chartObj):
 		self.dragged = None
 		self.chartObj = chartObj
@@ -13,7 +14,7 @@ class DragHandler(object):
 		self.chartObj.fig.canvas.mpl_connect("button_release_event", self.on_release_event)
 
 	def on_pick_event(self, event):
-		if isActive:
+		if DragHandler.isActive:
 			self.dragged = event.artist #Line2D
 			self.pick_pos = (event.mouseevent.xdata, event.mouseevent.ydata)
 			self.ind = event.ind
@@ -48,6 +49,4 @@ class DragHandler(object):
 			self.dragged = None
 			self.chartObj.fig.canvas.draw()
 
-def setCurveControl(bool):
-	global isActive
-	isActive = bool
+	def setCurveControl(bool): DragHandler.isActive = bool

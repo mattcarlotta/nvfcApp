@@ -22,8 +22,8 @@ from gi.repository import Gtk, GdkPixbuf, Gio, Gdk
 from subprocess import *
 import signal
 import sys
-from chartController import *
-from gpuControlActions import *
+from chartController import Chart
+from gpuControlActions import GPUController
 # from styleProvider import styles
 # styles()
 
@@ -72,7 +72,7 @@ class GUI:
 		self.notebook.append_page(
 			self.page2,
 			Gtk.Image.new_from_icon_name(
-			    "help-about",
+			    "dialog-information",
 			    Gtk.IconSize.MENU
 			)
 		)
@@ -86,7 +86,7 @@ class GUI:
 		self.appWindow.show_all()
 
 	def on_nvfcApp_destroy(s=None, w=None, d=None):
-		close()
+		Chart.close()
 		Gtk.main_quit()
 
 	def on_nvfcAbout_delete_event(self, widget, data):
@@ -97,27 +97,27 @@ class GUI:
 		self.aboutWindow.run()
 
 	def on_applyButton_clicked(self, widget):
-		clickedApplyData()
+		Chart.handleApplyData()
 
 	def on_disableButton_clicked(self, widget):
 		self.disable_curve_buttons()
-		disableGPUControl()
+		GPUController.disableGPUControl()
 
 	def on_fileButton_activate(self, widget):
 		self.on_nvfcApp_destroy()
 
 	def on_enableButton_clicked(self, widget):
 		self.enable_curve_buttons()
-		enableGPUControl()
+		GPUController.enableGPUControl()
 
 	def on_openButton_clicked(self, widget):
-		clickedOpenFile()
+		Chart.handleOpenFile()
 
 	def on_resetButton_clicked(self, widget):
-		clickedDataReset()
+		Chart.handleDataReset()
 
 	def on_saveButton_clicked(self, widget):
-		clickedSaveToFile()
+		Chart.handleSaveToFile()
 
 	def on_quitButton_clicked(self, widget):
 		self.on_nvfcApp_destroy()

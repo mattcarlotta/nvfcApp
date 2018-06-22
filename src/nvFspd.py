@@ -1,20 +1,9 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
 from subprocess import *
 import time
 import os
 import threading
 from messageController import displayDialogBox, displayErrorBox
 
-
-""" Global Variables """
-current_temp = 0
-current_fan_speed = 0
-drv_ver = 0
-old_fan_speed = 0
-updated_curve = False
-""" --------------- """
 
 class Curve():
 	def __init__(self, *args, **kwargs):
@@ -71,10 +60,16 @@ class StoppableThread(threading.Thread):
 
 class NvidiaFanController(StoppableThread):
 
+	""" Class Variables """
 	DRIVER_VERSION_CHANGE = 352.09 #from this version on, we need to use a different method to change fan speed
 	DRIVER_VERSIONS_ERROR = [349.16, 349.12] #cannot control fan speed in these driver versions
+	drv_ver = 0
+	fanspeed = 0
+	old_fanspeed = 0
+	pause_updates = False
+	temp = 0
+	""" --------------- """
 
-	"""Room here for arguments to implement multigpu fan control"""
 	def __init__(self, *args, **kwargs):
 		super(NvidiaFanController, self).__init__()
 		self.curve_lock = threading.Lock()
@@ -84,9 +79,8 @@ class NvidiaFanController(StoppableThread):
 		if len(args) == 2: #[[temp0, temp1, temp2], [speed0, speed1, speed2]]
 			self.curve = Curve(args[0], args[1])
 
-	def checkGPUTemp(self): return current_temp
-
-	def checkFanSpeed(self): return current_fan_speed
+	def disableFanControl(self=None):
+		process = Popen("nvidia-settings -a [gpu:0]/GPUFanControlState=0", shell=True, stdin=PIPE, stdout=PIPE)
 
 	# grabs the GPU driver as a string and returns a float
 	def getDriverVersion(self):
@@ -100,8 +94,8 @@ class NvidiaFanController(StoppableThread):
 	def getFanSpeed(self):
 		try:
 			output = check_output("nvidia-smi --query-gpu=fan.speed --format=csv,noheader", shell=True)
-			current_fan_speed = int(output[:3])
-			return current_fan_speed
+			curr_fspd = int(output[:3])
+			return curr_fspd
 		except:
 			return None
 
@@ -109,15 +103,19 @@ class NvidiaFanController(StoppableThread):
 	def getTemp(self):
 		try:
 			output = check_output("nvidia-smi --query-gpu=temperature.gpu --format=csv,noheader", shell=True)
-			current_temp = int(output)
-			return current_temp
+			curr_temp = int(output)
+			return curr_temp
 		except:
 			return None
+
+	def pauseUpdates(bool): NvidiaFanController.pause_updates = bool
+
+	def resetFanControl(): NvidiaFanController.old_fanspeed = 0
 
 	# if app is running, control GPU fan
 	def run(self):
 		while(not self.stopped()):
-			if (updated_curve):
+			if (NvidiaFanController.pause_updates):
 				time.sleep(1.0)
 				continue # pause loop to update curve points or disable chart
 			else:
@@ -125,7 +123,7 @@ class NvidiaFanController(StoppableThread):
 				time.sleep(1.0)
 
 		# exit app and reset GPU to auto
-		disableFanControl()
+		self.disableFanControl()
 		return
 
 	def setCurve(self, *args, **kwargs):
@@ -141,9 +139,8 @@ class NvidiaFanController(StoppableThread):
 		self.curve_lock.release()
 
 	def setFanSpeed(self, speed):
-		global drv_ver
-
-		drv_ver = self.getDriverVersion()
+		NvidiaFanController.drv_ver = self.getDriverVersion()
+		drv_ver = NvidiaFanController.drv_ver
 
 		if not drv_ver:
 			self.stop()
@@ -162,35 +159,25 @@ class NvidiaFanController(StoppableThread):
 			process = Popen("nvidia-settings -a [gpu:0]/GPUFanControlState=1 -a [fan:0]/GPUCurrentFanSpeed={0}".format(speed), shell=True, stdin=PIPE, stdout=PIPE)
 
 	def updateFan(self):
-		global current_fan_speed
-		global current_temp
-		global old_fan_speed
+		old_fspd = NvidiaFanController.old_fanspeed
 
-		self.curve_lock.acquire() # get Curve
+		self.curve_lock.acquire() # get Curve thread
 
-		current_temp = self.getTemp() # get current GPU temp
-		current_fan_speed = self.curve.evaluate(current_temp) # set temp based upon curve fspd point
+		NvidiaFanController.temp = self.getTemp() # get current GPU temp
+		curr_temp = NvidiaFanController.temp
+
+		NvidiaFanController.fanspeed = self.curve.evaluate(curr_temp) # set temp based upon curve fspd point
+		curr_fspd = NvidiaFanController.fanspeed
 
 		"""
 		Check if the fspd needs to be updated because of temp change or because of curve point update
 		No need to hammer the GPU with updates if nothing has changed
 		"""
-		if (old_fan_speed != current_fan_speed):
-			self.setFanSpeed(current_fan_speed) # sets new fan speed according to curve points
-			old_fan_speed = current_fan_speed # updates an old fspd to compare against an incoming new fspd
+		if (old_fspd != curr_fspd):
+			self.setFanSpeed(curr_fspd) # sets new fan speed according to curve points
+			NvidiaFanController.old_fanspeed = curr_fspd # updates an old fspd to compare against an incoming new fspd
 
 		self.curve_lock.release()
-
-def disableFanControl():
-	process = Popen("nvidia-settings -a [gpu:0]/GPUFanControlState=0", shell=True, stdin=PIPE, stdout=PIPE)
-
-def enableFanControl():
-	global old_fan_speed
-	old_fan_speed = 0
-
-def updatedCurve(bool):
-	global updated_curve
-	updated_curve = bool
 
 if __name__ == "__main__":
 	print ("Please launch nvda-contrl.py")

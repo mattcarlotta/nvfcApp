@@ -25,33 +25,33 @@ except:
 	# python2
 	from matplotlib.backends.backend_gtkcairo import FigureCanvasGTKCairo as FigureCanvas
 
-import chartDataActions
+from chartDataActions import ChartActionController
 import curveController
 import dragController
 from messageController import displayDialogBox, displayErrorBox
 import fileController
-import nvFspd
+from nvFspd import NvidiaFanController
 
 style.use(['fivethirtyeight']) # current plot theme
 
-""" Global Variables """
-fig = plt.figure(num="Nvidia Fan Controller", figsize=(12, 9)) # create a figure (one figure per window)
-fig.subplots_adjust(left=0.11, bottom=0.15, right=0.94, top=0.89, wspace=0.2, hspace=0) # adjusts Chart's window
-axes = fig.add_subplot(1,1,1) # add a subplot to the figure
-""" --------------- """
-
-
 class Chart():
+
+	""" Class Variables """
+	fig = plt.figure(num="Nvidia Fan Controller", figsize=(12, 9)) # create a figure (one figure per window)
+	fig.subplots_adjust(left=0.11, bottom=0.15, right=0.94, top=0.89, wspace=0.2, hspace=0) # adjusts Chart's window
+	axes = fig.add_subplot(1,1,1) # add a subplot to the figure
+	""" --------------- """
+
 	def __init__(self, graphBox):
 		global nvidiaController
 		global dataController
 		global line
 
-		self.x_values, self.y_values = chartDataActions.initChartValues() # intialize x and y curve values
+		self.x_values, self.y_values = ChartActionController.initChartValues() # intialize x and y curve values
 
 		self.plot = plt # add plt instance
-		self.fig = fig # add plt.figure instance
-		self.axes = axes # add a subplot instance to the figure
+		self.fig = Chart.fig # add plt.figure instance
+		self.axes = Chart.axes # add a subplot instance to the figure
 		self.canvas = FigureCanvas(self.fig) # add fig instance to a figure canvas
 		self.canvas.set_size_request(800, 600) # set default canvas height (req'd for displaying the chart)
 
@@ -82,64 +82,60 @@ class Chart():
 		# self.fig.patch.set_facecolor('0.15') # sets background color
 
 		# creates curve w/ options: color=blue, s=squares, picker=max distance for selection
-		line, = axes.plot(self.x_values, self.y_values, linestyle='-',  marker='s', markersize=4.5, color='b', picker=5, linewidth=1.5)
+		line, = Chart.axes.plot(self.x_values, self.y_values, linestyle='-',  marker='s', markersize=4.5, color='b', picker=5, linewidth=1.5)
 
 		# drag handler and curve instances
 		self.dragHandler = dragController.DragHandler(self) # handles the mouse clicks on the curve
 		dataController = curveController.DataController(self.x_values, self.y_values) # handles updating curve data
 
 		# starts a stoppable thread (loop that looks for temp changes and updates accordingly)
-		nvidiaController = nvFspd.NvidiaFanController(self.x_values, self.y_values)
+		nvidiaController = NvidiaFanController(self.x_values, self.y_values)
 		nvidiaController.start()
 
+	# closes Chart and stops GPU updating
+	def close():
+		plt.close('all')
+		nvidiaController.stop()
+
+	# applies Chart's current curve data
+	def handleApplyData(): ChartActionController.applyData(dataController, nvidiaController, line)
+
+	# resets Chart's current curve data
+	def handleDataReset(): ChartActionController.resetData(nvidiaController, line)
+
+	# attempts to open and load a config file
+	def handleOpenFile(): ChartActionController.initValuesFromOpenFile(nvidiaController, line)
+
+	# attempts to save a config file
+	def handleSaveToFile(): fileController.saveToFile(dataController)
+
+	# updates Chart's label colors (enabled / disabled)
+	def setLabelColor(c1,c2):
+		Chart.axes.title.set_color(c1)
+		Chart.axes.xaxis.label.set_color(c1)
+		Chart.axes.yaxis.label.set_color(c1)
+		plt.setp(line, color=c2)
+
+	# updates Chart's GPU stats axes labels
+	def setAxesLabels(currtmp, currfspd):
+		Chart.axes.set_xlabel("Temperature "+ "(" + str(currtmp) + u"°C)", fontsize=12, labelpad=20)
+		Chart.axes.set_ylabel("Fan Speed " + "(" + str(currfspd) + u"%)", fontsize=12, labelpad=10)
+
 	def updateLabelStats(self, i):
-		self.update_stats = chartDataActions.getUpdateStatus()
-		if (self.update_stats):
+		update_stats = ChartActionController.update_stats
+		if (update_stats):
 			try:
-				self.current_temp = nvFspd.NvidiaFanController().checkGPUTemp() # grabs current temp
-				self.current_fan_speed = nvFspd.NvidiaFanController().checkFanSpeed() # grabs current fspd
+				curr_temp = NvidiaFanController.temp # grabs current temp
+				curr_fspd = NvidiaFanController.fanspeed # grabs current fspd
 
 				# check to see if values are present
-				if not self.current_temp or not self.current_fan_speed: raise ValueError('Missing temp and/or fan speed')
+				if not curr_temp or not curr_fspd: raise ValueError('Missing temp and/or fan speed')
 
 				# updates chart labels
-				setAxesLabels(self.current_temp, self.current_fan_speed)
+				Chart.setAxesLabels(curr_temp, curr_fspd)
 			except ValueError:
-				chartDataActions.stopControllingGPU(nvidiaController, axes)
+				ChartActionController.stopControllingGPU(nvidiaController, Chart.axes)
 				displayErrorBox("There was an error when attempting to read GPU statistics. Please make sure you're using the proprietary Nvidia drivers and that they're currently in use.")
-
-# closes Chart and stops GPU updating
-def close():
-	plt.close('all')
-	nvidiaController.stop()
-
-# applies Chart's current curve data
-def clickedApplyData():
-	chartDataActions.applyData(dataController, nvidiaController, line)
-
-# resets Chart's current curve data
-def clickedDataReset():
-	chartDataActions.resetData(nvidiaController, line)
-
-# attempts to open and load a config file
-def clickedOpenFile():
-	chartDataActions.initValuesFromOpenFile(nvidiaController, line)
-
-# attempts to save a config file
-def clickedSaveToFile():
-	fileController.saveToFile(dataController)
-
-# updates Chart's label colors (enabled / disabled)
-def setLabelColor(c1,c2):
-	axes.title.set_color(c1)
-	axes.xaxis.label.set_color(c1)
-	axes.yaxis.label.set_color(c1)
-	plt.setp(line, color=c2)
-
-# updates Chart's GPU stats axes labels
-def setAxesLabels(currtmp,currfspd):
-	axes.set_xlabel("Temperature "+ "(" + str(currtmp) + u"°C)", fontsize=12, labelpad=20)
-	axes.set_ylabel("Fan Speed " + "(" + str(currfspd) + u"%)", fontsize=12, labelpad=10)
 
 if __name__ == '__main__':
 	print ('Please launch GUI')
