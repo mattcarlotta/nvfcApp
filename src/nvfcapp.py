@@ -64,7 +64,7 @@ class GUI:
 
 		# GPU graph controller
 		self.graph = self.builder.get_object('graphBox')
-		Chart(self.graph)
+		Chart(self.appWindow, self.graph)
 		self.notebook.append_page(self.graph, Gtk.Label('Graph'))
 
 		self.page2 = Gtk.Box()
@@ -115,27 +115,27 @@ class GUI:
 		self.aboutWindow.run()
 
 	def on_applyButton_clicked(self, widget):
-		Chart.handleApplyData()
+		Chart.handleApplyData(self)
 
 	def on_disableButton_clicked(self, widget):
 		self.disable_curve_buttons()
-		GPUController.disableGPUControl()
+		GPUController.disableGPUControl(self)
 
 	def on_fileButton_activate(self, widget):
 		self.on_nvfcApp_destroy()
 
 	def on_enableButton_clicked(self, widget):
 		self.enable_curve_buttons()
-		GPUController.enableGPUControl()
+		GPUController.enableGPUControl(self)
 
 	def on_openButton_clicked(self, widget):
-		Chart.handleOpenFile()
+		Chart.handleOpenFile(self)
 
 	def on_resetButton_clicked(self, widget):
-		Chart.handleDataReset()
+		Chart.handleDataReset(self)
 
 	def on_saveButton_clicked(self, widget):
-		Chart.handleSaveToFile()
+		Chart.handleSaveToFile(self)
 
 	def on_quitButton_clicked(self, widget):
 		self.on_nvfcApp_destroy()

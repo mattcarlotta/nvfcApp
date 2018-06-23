@@ -11,6 +11,7 @@ from fileController import FileController
 from fanController import NvidiaFanController
 from msgController import displayDialogBox, displayErrorBox
 
+
 style.use(['fivethirtyeight']) # current plot theme
 
 class Chart():
@@ -20,12 +21,12 @@ class Chart():
 	axes = fig.add_subplot(1,1,1) # add a subplot to the figure
 	""" --------------- """
 
-	def __init__(self, graphBox):
+	def __init__(self, parent, graphBox):
 		global nvidiaController
 		global dataController
 		global line
 
-		self.x_values, self.y_values = ChartActionController.initChartValues() # intialize x and y curve values
+		self.x_values, self.y_values = ChartActionController.initChartValues(parent) # intialize x and y curve values
 
 		self.plot = plt # add plt instance
 		self.fig = Chart.fig # add plt.figure instance
@@ -76,16 +77,16 @@ class Chart():
 		nvidiaController.stop()
 
 	# applies Chart's current curve data
-	def handleApplyData(): ChartActionController.applyData(dataController, nvidiaController, line)
+	def handleApplyData(parent): ChartActionController.applyData(parent.appWindow, dataController, nvidiaController, line)
 
 	# resets Chart's current curve data
-	def handleDataReset(): ChartActionController.resetData(nvidiaController, line)
+	def handleDataReset(parent): ChartActionController.resetData(parent, nvidiaController, line)
 
 	# attempts to open and load a config file
-	def handleOpenFile(): ChartActionController.initValuesFromOpenFile(nvidiaController, line)
+	def handleOpenFile(parent): ChartActionController.initValuesFromOpenFile(parent.appWindow, nvidiaController, line)
 
 	# attempts to save a config file
-	def handleSaveToFile(): FileController.saveToFile(dataController)
+	def handleSaveToFile(parent): FileController.saveToFile(parent.appWindow, dataController)
 
 	# updates Chart's label colors (enabled / disabled)
 	def setLabelColor(c1,c2):
