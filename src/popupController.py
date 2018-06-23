@@ -13,7 +13,7 @@ class ErrorDialogBox():
 # displays message dialog box
 class MessageDialogBox():
     def __init__(self, parent, message):
-        dialog = Gtk.MessageDialog(parent, 0, Gtk.MessageType.INFO, Gtk.ButtonsType.OK, "Fan Controller Update")
+        dialog = Gtk.MessageDialog(parent, 0, Gtk.MessageType.INFO, Gtk.ButtonsType.OK, "Information")
         dialog.format_secondary_text(message)
         dialog.run()
         dialog.destroy()

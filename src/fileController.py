@@ -1,5 +1,6 @@
 from tkinter import filedialog
 import csv
+from curveController import validateData
 from popupController import ErrorDialogBox, FileChooserBox, FileSaveBox, MessageDialogBox
 
 
@@ -16,8 +17,17 @@ class FileController():
 
 		cfg_x, cfg_y = FileController.setDataFromFile(parent, file) # returns read csv xdata/ydata
 
+		# if x or y data not present
 		if not (cfg_x or cfg_y): return False, False, False
+
+		# if x or y data not 12 points
 		elif len(cfg_x) != 12 or len(cfg_y) != 12: return False, False, False
+
+		# if x or y data does not pass validation
+		elif validateData(parent, cfg_x, cfg_y):
+			FileChooserBox.dir = None
+			return False, False, False
+
 		else: return cfg_x, cfg_y, file
 
 	# attempts to save a configuration file
@@ -26,9 +36,9 @@ class FileController():
 		xdata, ydata = dataController.getData() # get current curve points
 
 		for index in range(0, len(xdata)):
-			config += str(xdata[index]) + "," + str(ydata[index]) + "\n" # combines x and y curve data: (x, y) (x, y)
+			config += str(xdata[index]) + "," + str(ydata[index]) + "\n" # combines x and y curve data: [x, y] [x, y]...
 
-		# attempts to save current config to file, returns file path string if not canceled
+		# opens a file dialog to save current config to file, returns a temporary file path string if not canceled
 		filename = FileSaveBox(parent).getFile()
 
 		if filename is None: return # if dialog is canceled

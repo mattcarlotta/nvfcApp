@@ -1,7 +1,6 @@
 from subprocess import *
 import time
 import threading
-from msgController import displayDialogBox, displayErrorBox
 
 
 class Curve():
@@ -59,6 +58,7 @@ class StoppableThread(threading.Thread):
 
 class NvidiaFanController(StoppableThread):
 	""" Class Variables """
+	drv_ver = None
 	fanspeed = 0
 	old_fanspeed = 0
 	pause_updates = False
@@ -70,6 +70,7 @@ class NvidiaFanController(StoppableThread):
 		self.curve_lock = threading.Lock()
 
 		self.drv_ver = self.getDriverVersion() # sets current driver version
+		NvidiaFanController.drv_ver = self.drv_ver
 		self.drv_ver_change = 352.09 # from this version on, we need to use a different method to change fan speed
 		self.drv_ver_regressions = [349.16, 349.12] # can't control fan speed in these driver versions
 
@@ -87,6 +88,7 @@ class NvidiaFanController(StoppableThread):
 		try:
 			driver_version = check_output("nvidia-smi --query-gpu=driver_version --format=csv | tail -n +2", shell=True)
 			return float(driver_version[:-4])
+			# return 349.16
 		except:
 			return None
 
@@ -139,17 +141,12 @@ class NvidiaFanController(StoppableThread):
 
 	# determines how to set the GPU fan speed according to driver
 	def setFanSpeed(self, speed):
-		# if missing driver version, kill fan control
-		if not self.drv_ver: self.stop()
+		# if missing driver version or if driver version is 349.16 or 349.12, kill fan control
+		if not self.drv_ver or self.drv_ver in self.drv_ver_regressions: self.stop()
 
 		# check if driver version is later than 352.09
 		elif self.drv_ver >= self.drv_ver_change:
 			process = Popen("nvidia-settings -a [gpu:0]/GPUFanControlState=1 -a [fan:0]/GPUTargetFanSpeed={0}".format(speed), shell=True, stdin=PIPE, stdout=PIPE)
-
-		# if driver is 349.16 or 349.12 exit app
-		elif self.drv_ver in self.drv_ver_regressions:
-			displayDialogBox("Can't control fan speed in driver version {0}. Please update your driver to use this app.".format(self.drv_ver))
-			self.stop()
 
 		# else use alternative update GPU control method (GPUCurrent (old) =>  GPUTarget (newer))
 		else:
@@ -165,14 +162,16 @@ class NvidiaFanController(StoppableThread):
 		NvidiaFanController.temp = self.getTemp()
 		curr_temp = NvidiaFanController.temp
 
-		# set temp based upon curve fspd point
-		NvidiaFanController.fanspeed = self.curve.evaluate(curr_temp)
-		curr_fspd = NvidiaFanController.fanspeed
+		# check to see if driver version is present and not regressed
+		if self.drv_ver and not self.drv_ver in self.drv_ver_regressions:
+			# set temp based upon curve fspd point
+			NvidiaFanController.fanspeed = self.curve.evaluate(curr_temp)
+			curr_fspd = NvidiaFanController.fanspeed
 
-		# checks if the current temp has changed from the stored temp
-		if (old_fspd != curr_fspd):
-			self.setFanSpeed(curr_fspd) # sets new fan speed according to curve points
-			NvidiaFanController.old_fanspeed = curr_fspd # updates an old fspd to compare against an incoming new fspd
+			# checks if the current temp has changed from the stored temp
+			if (old_fspd != curr_fspd):
+				self.setFanSpeed(curr_fspd) # sets new fan speed according to curve points
+				NvidiaFanController.old_fanspeed = curr_fspd # updates an old fspd to compare against an incoming new fspd
 
 		self.curve_lock.release()
 

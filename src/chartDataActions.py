@@ -29,7 +29,6 @@ class ChartActionController():
 		y_values = [10, 15, 21, 27, 34, 41, 50, 59, 68, 78, 88, 100]
 
 		file = FileChooserBox.dir or "default.csv" # load from default or a previously loaded configuration
-		print(file)
 
 		# loads configuration array [temp, fspd] from csv
 		if path.exists(file):
@@ -45,13 +44,14 @@ class ChartActionController():
 		return x_values, y_values
 
 	# attempts to open and load configuration files
-	def initValuesFromOpenFile(parent, nvidiaController, line):
+	def initValuesFromOpenFile(parent, nvidiaController, dataController, line):
 		# attempt to gather curve config data from file
 		xdata, ydata, file = FileController.openFile(parent)
 
 		# if xdata and ydata are present
 		if xdata and ydata:
 			line.set_data([xdata, ydata]) # update curve with values
+			dataController.setData(xdata, ydata)
 			ChartActionController.updateChart(nvidiaController, xdata, ydata) # update chart to reflect values
 
 	# resets curve to initial values
@@ -62,10 +62,16 @@ class ChartActionController():
 
 	# clears and disables chart -- triggered when the nvidia settings haven't been configured correctly
 	def stopControllingGPU(nvidiaController, axes):
-		setUpdateStats(False)
-		nvidiaController.stop()
-		plt.cla()
-		axes.set_title("GPU Fan Controller", fontsize=16, color='grey', pad=20)
+		ChartActionController.setUpdateStats(False) # stops GPU stat updates
+		nvidiaController.stop() # stops GPU fan updates
+		plt.cla() # clears chart
+
+		# resets axes labels to appear inactive
+		axes.set_title("Fan Controller", fontsize=16, color='grey', pad=20)
+		axes.set_xlabel(u"Temperature (0°C)", fontsize=12, labelpad=20)
+		axes.set_ylabel(u"Fan Speed (0%)", fontsize=12, labelpad=10)
+		axes.xaxis.label.set_color('grey')
+		axes.yaxis.label.set_color('grey')
 
 	# determines whether or not the graph will be updating GPU stats
 	def setUpdateStats(bool): ChartActionController.update_stats = bool
