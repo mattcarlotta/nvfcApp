@@ -7,10 +7,10 @@ a GTK3 (v3.18) application that creates a modifiable 2D curve of [temp, fanspeed
 
 * Install python3:  
   `sudo apt-get install python3.6`
+* Install pip3:  
+  `sudo apt-get install python3-pip`
 * Install matplotlib:  
-  `sudo apt-get install python3-matplotlib`
-* Install Tkinter:  
-  `sudo apt-get install python3-tk`
+  `python3 -mpip install matplotlib`
 * Install pyGTK:  
   `sudo apt-get install libgtk-3-dev`
 * Install cairocffi:  
@@ -62,7 +62,7 @@ a GTK3 (v3.18) application that creates a modifiable 2D curve of [temp, fanspeed
 
 * python3 (python3.6)
 * matplotlib (python3-matplotlib)
-* Tkinter (python3-tk)
+* pip3
 * pyGTK (libgtk-3-dev)
 * cairocffi (python3-cairocffi)
 * libcanberra-gtk3
