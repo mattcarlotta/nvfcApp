@@ -1,21 +1,22 @@
 from tkinter import filedialog
 import csv
-from curveController import validateData
 from popupController import ErrorDialogBox, FileChooserBox, FileSaveBox, MessageDialogBox
-
+from curveController import DataController
 
 class FileController():
 	# attempts to open, then read a configuration file
-	def openFile(appWindow):
+	def openFile(appWindow, dataController):
 		cfg_x = []
 		cfg_y = []
 
 		FileChooserBox(appWindow)
 		file = FileChooserBox.dir
 
-		if not file: return False, False, False # if dialog is canceled
+		# if dialog is canceled
+		if not file: return False, False, False
 
-		cfg_x, cfg_y = FileController.setDataFromFile(appWindow, file) # returns read csv xdata/ydata
+		# returns read csv xdata/ydata
+		cfg_x, cfg_y = FileController.setDataFromFile(appWindow, file)
 
 		# if x or y data not present
 		if not (cfg_x or cfg_y): return False, False, False
@@ -24,7 +25,7 @@ class FileController():
 		elif len(cfg_x) != 12 or len(cfg_y) != 12: return False, False, False
 
 		# if x or y data does not pass validation
-		elif validateData(appWindow, cfg_x, cfg_y):
+		elif dataController.validate(cfg_x, cfg_y) == False:
 			FileChooserBox.dir = None
 			return False, False, False
 
@@ -32,7 +33,7 @@ class FileController():
 
 	# attempts to save a configuration file
 	def saveToFile(appWindow, dataController):
-		config = '' # initialize config variable
+		config = '' # initialize config string variable
 		xdata, ydata = dataController.getData() # get current curve points
 
 		for index in range(0, len(xdata)):
@@ -61,11 +62,14 @@ class FileController():
 					cfg_y.append(int(row[1]))
 
 			# check if arrays contain 12 curve point positions
-			if len(cfg_x) != 12 or len(cfg_y) != 12: raise Exception('Invalid config')
+			if len(cfg_x) != 12 or len(cfg_y) != 12: raise Exception('It does not contain 24 curve points!')
+
+			# check if x or y data doesn't pass validation
+			elif DataController(appWindow, cfg_x, cfg_y).validate(cfg_x, cfg_y) == False: raise Exception('It does not meet the curve requirements!')
 
 			# updates default curve values with config array
 			return cfg_x, cfg_y
 		except Exception as error:
-			ErrorDialogBox(appWindow, "Failed to load configuration file.")
+			ErrorDialogBox(appWindow, "Failed to load the configuration file: {0}".format(error))
 			FileChooserBox.dir = None
 			return False, False

@@ -45,7 +45,7 @@ class ChartActionController():
 
 	# attempts to open and load configuration files
 	def initValuesFromOpenFile(appWindow, nvidiaController, dataController, line):
-		xdata, ydata, file = FileController.openFile(appWindow) # attempt to gather curve config data from file
+		xdata, ydata, file = FileController.openFile(appWindow, dataController) # attempt to gather curve config data from file
 
 		# if xdata and ydata are present
 		if xdata and ydata:

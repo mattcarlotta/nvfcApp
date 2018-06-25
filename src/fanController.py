@@ -5,24 +5,21 @@ import threading
 
 class Curve():
 	def __init__(self, *args, **kwargs):
-		if len(args) == 1: #[[temp0, speed0], [temp1, speed1], [temp2, speed2]]
-			self.cpa = list(args[0])
-		if len(args) == 2: #[[temp0, temp1, temp2], [speed0, speed1, speed2]]
-			self.convertIntoMatrix(args[0], args[1])
+		if len(args) == 1: self.cpa = list(args[0]) #[[temp0, speed0], [temp1, speed1], [temp2, speed2]]
+		if len(args) == 2: self.convertIntoMatrix(args[0], args[1]) #[[temp0, temp1, temp2], [speed0, speed1, speed2]]
 
 	def convertIntoMatrix(self, x_values, y_values):
 		self.cpa = list()
 		x_temp = list(x_values)
 		y_speed = list(y_values)
-		for index in range(0, len(x_temp)):
-			self.cpa.append([x_temp[index], y_speed[index]])
+		for index in range(0, len(x_temp)): self.cpa.append([x_temp[index], y_speed[index]])
 
 	def evaluate(self, x):
-		point_i = 0
-		while(point_i < len(self.cpa) - 1 and x):
-			if(self.cpa[point_i][0] <= x and self.cpa[point_i + 1][0] > x):
-				point_1 = self.cpa[point_i]
-				point_2 = self.cpa[point_i + 1]
+		index = 0
+		while(index < len(self.cpa) - 1 and x):
+			if(self.cpa[index][0] <= x and self.cpa[index + 1][0] > x):
+				point_1 = self.cpa[index]
+				point_2 = self.cpa[index + 1]
 				delta_x = point_2[0] - point_1[0]
 				delta_y = point_2[1] - point_1[1]
 
@@ -33,28 +30,22 @@ class Curve():
 				y = point_1[1] + y_bit
 				return y
 
-			point_i += 1
+			index += 1
 
 	def setCurve(self, *args, **kwargs):
-		if len(args) == 1:
-			self.cpa = list(args[0])
-		if len(args) == 2:
-			self.convertIntoMatrix(args[0], args[1])
+		if len(args) == 1: self.cpa = list(args[0])
+		if len(args) == 2: self.convertIntoMatrix(args[0], args[1])
 
 
+# a thread class with a stop() method -- the thread itself has to check regularly for the stopped() condition.
 class StoppableThread(threading.Thread):
-    """Thread class with a stop() method. The thread itself has to check
-    regularly for the stopped() condition."""
-
     def __init__(self):
         super(StoppableThread, self).__init__()
         self.stop_thread = threading.Event()
 
-    def stop(self):
-        self.stop_thread.set()
+    def stop(self): self.stop_thread.set()
 
-    def stopped(self):
-        return self.stop_thread.isSet()
+    def stopped(self): return self.stop_thread.isSet()
 
 class NvidiaFanController(StoppableThread):
 	""" Class Variables """
@@ -74,10 +65,8 @@ class NvidiaFanController(StoppableThread):
 		self.drv_ver_change = 352.09 # from this version on, we need to use a different method to change fan speed
 		self.drv_ver_regressions = [349.16, 349.12] # can't control fan speed in these driver versions
 
-		if len(args) == 1: #[[temp0, speed0], [temp1, speed1], [temp2, speed2]]
-			self.curve = Curve(args[0])
-		if len(args) == 2: #[[temp0, temp1, temp2], [speed0, speed1, speed2]]
-			self.curve = Curve(args[0], args[1])
+		if len(args) == 1: self.curve = Curve(args[0]) #[[temp0, speed0], [temp1, speed1], [temp2, speed2]]
+		if len(args) == 2: self.curve = Curve(args[0], args[1]) #[[temp0, temp1, temp2], [speed0, speed1, speed2]]
 
 	# resets fan control back to driver
 	def disableFanControl(self=None):
@@ -88,7 +77,6 @@ class NvidiaFanController(StoppableThread):
 		try:
 			driver_version = check_output("nvidia-smi --query-gpu=driver_version --format=csv | tail -n +2", shell=True)
 			return float(driver_version[:-4])
-			# return 349.16
 		except:
 			return None
 
@@ -131,11 +119,8 @@ class NvidiaFanController(StoppableThread):
 	def setCurve(self, *args, **kwargs):
 		self.curve_lock.acquire()
 
-		if len(args) == 1:
-			self.curve.setCurve(args[0])
-
-		if len(args) == 2:
-			self.curve.setCurve(args[0], args[1])
+		if len(args) == 1: self.curve.setCurve(args[0])
+		if len(args) == 2: self.curve.setCurve(args[0], args[1])
 
 		self.curve_lock.release()
 

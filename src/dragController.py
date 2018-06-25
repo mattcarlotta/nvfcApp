@@ -42,11 +42,6 @@ class DragHandler(object):
 				ErrorDialogBox(self.appWindow, "Can't move point {0} off of the chart!".format(index[0]))
 				return
 
-			# can't move point [",index[0],"] outside of chart"
-			# if event.xdata <= chartObj.x_min or event.xdata >= chartObj.x_max or event.ydata <= chartObj.y_min or event.ydata >= chartObj.y_max:
-				# ErrorDialogBox(self.appWindow, "Can't move point {0} off of the chart!".format(index[0]))
-				# return
-
 			xdata[index[0]] = int(xdata[index[0]] + event.xdata - self.pick_pos[0]) #truncate towards zero
 			ydata[index[0]] = int(ydata[index[0]] + event.ydata - self.pick_pos[1])
 			#print 'new point:', xdata[index], ydata[index]
