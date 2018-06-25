@@ -6,16 +6,16 @@ from popupController import ErrorDialogBox, FileChooserBox, FileSaveBox, Message
 
 class FileController():
 	# attempts to open, then read a configuration file
-	def openFile(parent):
+	def openFile(appWindow):
 		cfg_x = []
 		cfg_y = []
 
-		FileChooserBox(parent)
+		FileChooserBox(appWindow)
 		file = FileChooserBox.dir
 
 		if not file: return False, False, False # if dialog is canceled
 
-		cfg_x, cfg_y = FileController.setDataFromFile(parent, file) # returns read csv xdata/ydata
+		cfg_x, cfg_y = FileController.setDataFromFile(appWindow, file) # returns read csv xdata/ydata
 
 		# if x or y data not present
 		if not (cfg_x or cfg_y): return False, False, False
@@ -24,14 +24,14 @@ class FileController():
 		elif len(cfg_x) != 12 or len(cfg_y) != 12: return False, False, False
 
 		# if x or y data does not pass validation
-		elif validateData(parent, cfg_x, cfg_y):
+		elif validateData(appWindow, cfg_x, cfg_y):
 			FileChooserBox.dir = None
 			return False, False, False
 
 		else: return cfg_x, cfg_y, file
 
 	# attempts to save a configuration file
-	def saveToFile(parent, dataController):
+	def saveToFile(appWindow, dataController):
 		config = '' # initialize config variable
 		xdata, ydata = dataController.getData() # get current curve points
 
@@ -39,17 +39,17 @@ class FileController():
 			config += str(xdata[index]) + "," + str(ydata[index]) + "\n" # combines x and y curve data: [x, y] [x, y]...
 
 		# opens a file dialog to save current config to file, returns a temporary file path string if not canceled
-		filename = FileSaveBox(parent).getFile()
+		filename = FileSaveBox(appWindow).getFile()
 
 		if filename is None: return # if dialog is canceled
 
 		file = open(filename, "w+") # open file path
 		file.write(config) # write config to file path
 		file.close() # close instance
-		MessageDialogBox(parent, 'Successfully saved the current curve configuration!')
+		MessageDialogBox(appWindow, 'Successfully saved the current curve configuration!')
 
 	# attempts to read a configuration file
-	def setDataFromFile(parent, file):
+	def setDataFromFile(appWindow, file):
 		try:
 			cfg_x = []
 			cfg_y = []
@@ -66,6 +66,6 @@ class FileController():
 			# updates default curve values with config array
 			return cfg_x, cfg_y
 		except Exception as error:
-			ErrorDialogBox(parent, "Failed to load configuration file.")
+			ErrorDialogBox(appWindow, "Failed to load configuration file.")
 			FileChooserBox.dir = None
 			return False, False

@@ -115,27 +115,27 @@ class GUI:
 		self.aboutWindow.run()
 
 	def on_applyButton_clicked(self, widget):
-		Chart.handleApplyData(self)
+		Chart.handleApplyData(self.appWindow)
 
 	def on_disableButton_clicked(self, widget):
 		self.disable_curve_buttons()
-		GPUController.disableGPUControl(self)
+		GPUController.disableGPUControl(self.appWindow)
 
 	def on_fileButton_activate(self, widget):
 		self.on_nvfcApp_destroy()
 
 	def on_enableButton_clicked(self, widget):
 		self.enable_curve_buttons()
-		GPUController.enableGPUControl(self)
+		GPUController.enableGPUControl(self.appWindow)
 
 	def on_openButton_clicked(self, widget):
-		Chart.handleOpenFile(self)
+		Chart.handleOpenFile(self.appWindow)
 
 	def on_resetButton_clicked(self, widget):
-		Chart.handleDataReset(self)
+		Chart.handleDataReset(self.appWindow)
 
 	def on_saveButton_clicked(self, widget):
-		Chart.handleSaveToFile(self)
+		Chart.handleSaveToFile(self.appWindow)
 
 	def on_quitButton_clicked(self, widget):
 		self.on_nvfcApp_destroy()

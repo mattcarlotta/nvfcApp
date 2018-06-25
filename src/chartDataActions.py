@@ -10,20 +10,20 @@ class ChartActionController():
 	""" --------------- """
 
 	# updates or reverts curve from current curve x/y values
-	def applyData(parent, dataController, nvidiaController, line):
+	def applyData(appWindow, dataController, nvidiaController, line):
 		xdata = line.get_xdata() # grabs current curve y data
 		ydata = line.get_ydata() # grabs current curve y data
 		is_valid_curve = dataController.setData(xdata, ydata) # checks if curve is exponentially growing (returns bool)
 
 		if is_valid_curve:
 			ChartActionController.updateChart(nvidiaController, xdata, ydata) # updates NvidiaFanController() with new curve data
-			MessageDialogBox(parent, 'Successfully applied the current curve to the fan settings!')
+			MessageDialogBox(appWindow, 'Successfully applied the current curve to the fan settings!')
 		else:
 			xdata, ydata = dataController.getData() # gets previous data
 			line.set_data([xdata, ydata]) # resets line to previous curve
 
 	# initializes values based upon global x/y values (will always return good x/y coords)
-	def initChartValues(parent):
+	def initChartValues(appWindow):
 		# pre-configured curve
 		x_values = [0, 	11, 23, 34, 45, 55, 65, 74, 81, 88, 94, 100]
 		y_values = [10, 15, 21, 27, 34, 41, 50, 59, 68, 78, 88, 100]
@@ -32,7 +32,7 @@ class ChartActionController():
 
 		# loads configuration array [temp, fspd] from csv
 		if path.exists(file):
-			cfg_x, cfg_y = FileController.setDataFromFile(parent, file)
+			cfg_x, cfg_y = FileController.setDataFromFile(appWindow, file)
 
 			# if setDataFromFile returns [False, False], revert back to global x/y values
 			if not cfg_x or not cfg_y: return x_values, y_values
@@ -44,21 +44,21 @@ class ChartActionController():
 		return x_values, y_values
 
 	# attempts to open and load configuration files
-	def initValuesFromOpenFile(parent, nvidiaController, dataController, line):
-		# attempt to gather curve config data from file
-		xdata, ydata, file = FileController.openFile(parent)
+	def initValuesFromOpenFile(appWindow, nvidiaController, dataController, line):
+		xdata, ydata, file = FileController.openFile(appWindow) # attempt to gather curve config data from file
 
 		# if xdata and ydata are present
 		if xdata and ydata:
-			line.set_data([xdata, ydata]) # update curve with values
-			dataController.setData(xdata, ydata)
+			line.set_data([xdata, ydata]) # update curve values
+			dataController.setData(xdata, ydata) # store curve values
 			ChartActionController.updateChart(nvidiaController, xdata, ydata) # update chart to reflect values
 
 	# resets curve to initial values
-	def resetData(parent, nvidiaController, line):
-		cfg_x, cfg_y = ChartActionController.initChartValues(parent) # reset to initial values
-		line.set_data([cfg_x, cfg_y]) # update curve with values
-		ChartActionController.updateChart(nvidiaController, cfg_x, cfg_y) # update chart to reflect values
+	def resetData(appWindow, dataController, nvidiaController, line):
+		xdata, ydata = ChartActionController.initChartValues(appWindow) # reset to initial values
+		line.set_data([xdata, ydata]) # update curve values
+		dataController.setData(xdata, ydata) # store curve values
+		ChartActionController.updateChart(nvidiaController, xdata, ydata) # update chart to reflect values
 
 	# clears and disables chart -- triggered when the nvidia settings haven't been configured correctly
 	def stopControllingGPU(nvidiaController, axes):

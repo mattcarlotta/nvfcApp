@@ -22,14 +22,14 @@ class Chart():
 	axes = fig.add_subplot(1,1,1) # add a subplot to the figure
 	""" --------------- """
 
-	def __init__(self, parent, graphBox):
+	def __init__(self, appWindow, graphBox):
 		global nvidiaController
 		global dataController
 		global line
 
-		self.parent = parent # an instance of appWindow
+		self.appWindow = appWindow # an instance of appWindow
 
-		self.x_values, self.y_values = ChartActionController.initChartValues(self.parent) # intialize x and y curve values
+		self.x_values, self.y_values = ChartActionController.initChartValues(self.appWindow) # intialize x and y curve values
 
 		self.plot = plt # add plt instance
 		self.fig = Chart.fig # add plt.figure instance
@@ -67,8 +67,8 @@ class Chart():
 		line, = Chart.axes.plot(self.x_values, self.y_values, linestyle='-',  marker='s', markersize=4.5, color='b', picker=5, linewidth=1.5)
 
 		# drag handler and curve instances
-		self.dragHandler = DragHandler(self, self.parent) # handles the mouse clicks on the curve
-		dataController = DataController(self.parent, self.x_values, self.y_values) # handles updating curve data
+		self.dragHandler = DragHandler(self, self.appWindow) # handles the mouse clicks on the curve
+		dataController = DataController(self.appWindow, self.x_values, self.y_values) # handles updating curve data
 
 		# starts a stoppable thread (loop that looks for temp changes and updates accordingly)
 		nvidiaController = NvidiaFanController(self.x_values, self.y_values)
@@ -80,16 +80,16 @@ class Chart():
 		nvidiaController.stop()
 
 	# applies Chart's current curve data
-	def handleApplyData(parent): ChartActionController.applyData(parent.appWindow, dataController, nvidiaController, line)
+	def handleApplyData(appWindow): ChartActionController.applyData(appWindow, dataController, nvidiaController, line)
 
 	# resets Chart's current curve data
-	def handleDataReset(parent): ChartActionController.resetData(parent.appWindow, nvidiaController, line)
+	def handleDataReset(appWindow): ChartActionController.resetData(appWindow, dataController, nvidiaController, line)
 
 	# attempts to open and load a config file
-	def handleOpenFile(parent): ChartActionController.initValuesFromOpenFile(parent.appWindow, nvidiaController, dataController, line)
+	def handleOpenFile(appWindow): ChartActionController.initValuesFromOpenFile(appWindow, nvidiaController, dataController, line)
 
 	# attempts to save a config file
-	def handleSaveToFile(parent): FileController.saveToFile(parent.appWindow, dataController)
+	def handleSaveToFile(appWindow): FileController.saveToFile(appWindow, dataController)
 
 	# updates Chart's label colors (enabled / disabled)
 	def setLabelColor(c1,c2):
@@ -118,7 +118,7 @@ class Chart():
 			except ValueError:
 				ChartActionController.stopControllingGPU(nvidiaController, Chart.axes)
 				driver_version = NvidiaFanController.drv_ver
-				ErrorDialogBox(self.parent, "There was an error when attempting to read/set GPU statistics. Please make sure that you're using the proprietary Nvidia drivers and that they're currently in use. The current Nvidia driver in use is: {0}.".format(driver_version))
+				ErrorDialogBox(self.appWindow, "There was an error when attempting to read/set GPU statistics. Please make sure that you're using the proprietary Nvidia drivers and that they're currently in use. The current Nvidia driver in use is: {0}.".format(driver_version))
 
 if __name__ == '__main__':
 	print ('Please launch GUI')

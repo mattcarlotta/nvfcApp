@@ -6,9 +6,9 @@ class DragHandler(object):
 	isActive = True
 	""" --------------- """
 
-	def __init__(self, chartObj, parent):
+	def __init__(self, chartObj, appWindow):
 		self.dragged = None
-		self.parent = parent
+		self.appWindow = appWindow
 		self.chartObj = chartObj
 		self.chartObj.fig.canvas.mpl_connect("pick_event", self.on_pick_event)
 		self.chartObj.fig.canvas.mpl_connect("button_release_event", self.on_release_event)
@@ -22,12 +22,12 @@ class DragHandler(object):
 			# can't modify first point
 			if self.ind[0] == 0:
 				self.dragged = None
-				ErrorDialogBox(self.parent, "Can't modify the first point!")
+				ErrorDialogBox(self.appWindow, "Can't modify the first point!")
 
 			# can't modify last point
 			elif self.ind[0] == len(self.dragged.get_xdata()) - 1:
 				self.dragged = None
-				ErrorDialogBox(self.parent, "Can't modify the last point!")
+				ErrorDialogBox(self.appWindow, "Can't modify the last point!")
 
 
 	def on_release_event(self, event):
@@ -39,12 +39,12 @@ class DragHandler(object):
 
 			# can't move point ["index[0]"] outside of chart
 			if not event.xdata or not event.ydata:
-				ErrorDialogBox(self.parent, "Can't move point {0} off of the chart!".format(index[0]))
+				ErrorDialogBox(self.appWindow, "Can't move point {0} off of the chart!".format(index[0]))
 				return
 
 			# can't move point [",index[0],"] outside of chart"
 			# if event.xdata <= chartObj.x_min or event.xdata >= chartObj.x_max or event.ydata <= chartObj.y_min or event.ydata >= chartObj.y_max:
-				# ErrorDialogBox(self.parent, "Can't move point {0} off of the chart!".format(index[0]))
+				# ErrorDialogBox(self.appWindow, "Can't move point {0} off of the chart!".format(index[0]))
 				# return
 
 			xdata[index[0]] = int(xdata[index[0]] + event.xdata - self.pick_pos[0]) #truncate towards zero
