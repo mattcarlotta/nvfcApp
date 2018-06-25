@@ -64,7 +64,7 @@ class GUI:
 
 		# GPU graph controller
 		self.graph = self.builder.get_object('graphBox')
-		Chart(self.appWindow, self.graph)
+		Chart(self.appWindow, self.graph, self.disable_app_buttons)
 		self.notebook.append_page(self.graph, Gtk.Label('Graph'))
 
 		self.page2 = Gtk.Box()
@@ -96,6 +96,10 @@ class GUI:
 		arr2 = ['disableButton','applyButton', 'resetButton', 'openButton', 'saveButton']
 		self.curve_button_options(arr1, False)
 		self.curve_button_options(arr2, True)
+
+	def disable_app_buttons(self):
+		arr = ['enableButton', 'disableButton','applyButton', 'resetButton', 'openButton', 'saveButton']
+		self.curve_button_options(arr, False)
 
 	def disable_curve_buttons(self):
 		arr1 = ['enableButton']

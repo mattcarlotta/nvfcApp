@@ -6,7 +6,7 @@ from matplotlib import animation, style
 from matplotlib.backends.backend_gtk3cairo import FigureCanvasGTK3Cairo as FigureCanvas
 from subprocess import check_output
 from chartDataActions import ChartActionController
-from curveController import DataController
+from dataController import DataController
 from dragController import DragHandler
 from fileController import FileController
 from fanController import NvidiaFanController
@@ -22,12 +22,13 @@ class Chart():
 	axes = fig.add_subplot(1,1,1) # add a subplot to the figure
 	""" --------------- """
 
-	def __init__(self, appWindow, graphBox):
+	def __init__(self, appWindow, graphBox, disableAppButtons):
 		global nvidiaController
 		global dataController
 		global line
 
 		self.appWindow = appWindow # an instance of appWindow
+		self.disableAppButtons = disableAppButtons # an instand of disable_all_buttons
 
 		self.x_values, self.y_values = ChartActionController.initChartValues(self.appWindow) # intialize x and y curve values
 
@@ -116,6 +117,7 @@ class Chart():
 				# updates chart labels
 				Chart.setAxesLabels(curr_temp, curr_fspd)
 			except ValueError:
+				self.disableAppButtons()
 				ChartActionController.stopControllingGPU(nvidiaController, Chart.axes)
 				driver_version = NvidiaFanController.drv_ver
 				ErrorDialogBox(self.appWindow, "There was an error when attempting to read/set GPU statistics. Please make sure that you're using the proprietary Nvidia drivers and that they're currently in use. The current Nvidia driver in use is: {0}.".format(driver_version))

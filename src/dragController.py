@@ -51,4 +51,4 @@ class DragHandler(object):
 			self.dragged = None
 			self.chartObj.fig.canvas.draw()
 
-	def setCurveControl(bool): DragHandler.isActive = bool
+	def setDragControl(bool): DragHandler.isActive = bool

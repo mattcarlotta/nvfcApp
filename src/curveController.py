@@ -1,55 +1,36 @@
 from popupController import ErrorDialogBox
 
+class Curve():
+	def __init__(self, *args, **kwargs):
+		if len(args) == 1: self.curve = list(args[0]) # ([temp0, fspd0], [temp1, fspd1], [temp2, fspd2] ...etc)
+		if len(args) == 2: self.convertIntoMatrix(args[0], args[1]) # (arr[...temp], arr[...fspd])
 
-class DataController(object):
-	def __init__(self, appWindow, xdata, ydata):
-		self.setDataList(xdata, ydata) # initializes x/y data
-		self.appWindow = appWindow
+	# appends individual x and y data pairs into a single array [ [temp0, fspd0], [temp1, fspd1], [temp2, fspd2] ...etc ]
+	def convertIntoMatrix(self, x_values, y_values):
+		self.curve = list()
+		x_temp = list(x_values)
+		y_speed = list(y_values)
+		for index in range(0, len(x_temp)): self.curve.append([x_temp[index], y_speed[index]])
 
-	# returns x and y coords (for resetting or saving curve)
-	def getData(self): return list(self.xdata), list(self.ydata)
+	# used to calculate fan speed based upon GPU temp
+	def evaluate(self, x):
+		index = 0
+		while(index < len(self.curve) - 1 and x):
+			if(self.curve[index][0] <= x and self.curve[index + 1][0] > x):
+				point_1 = self.curve[index]
+				point_2 = self.curve[index + 1]
+				delta_x = point_2[0] - point_1[0]
+				delta_y = point_2[1] - point_1[1]
 
-	# attempts to validate and update the curve, then return true or false if successful
-	def setData(self, xdata, ydata): return self.setDataList(xdata, ydata) if self.validate(xdata, ydata) == True else False
+				gradient = float(delta_y)/float(delta_x)
 
-	# initializes/updates x and y data lists
-	def setDataList(self, xdata, ydata):
-		self.xdata = list(xdata)
-		self.ydata = list(ydata)
-		return True
+				x_bit = x - point_1[0]
+				y_bit = int(float(x_bit) * gradient)
+				y = point_1[1] + y_bit
+				return y
 
-	# validates the set/updated curve
-	def validate(self, xdata, ydata):
-		invalid = self.validateData(xdata, ydata) # checks if temp and speed are growing exponentially
-		return False if invalid else True # return false if curve is invalid, else return true
+			index += 1
 
-	# verifies x,y coords, if invalid, returns true else false
-	def validateData(self, xdata, ydata):
-		first = [0,10]
-		last = [100,100]
-
-		# first point temperature must be min.x
-		if xdata[0] != first[0]:
-			ErrorDialogBox(self.appWindow, "Invalid curve. The first point's temperature (x-value) must be {0}, instead it was {1}.".format(first[0], xdata[0]))
-			return True
-
-		# first point speed must be min.y
-		if ydata[0] != first[1]:
-			ErrorDialogBox(self.appWindow, "Invalid curve. The first point's speed (y-value) must be {0}, instead it was {1}.".format(first[1], ydata[0]))
-			return True
-
-		# last point temperature must be lower than max.x
-		if xdata[len(xdata) - 1] > last[0]:
-			ErrorDialogBox(self.appWindow,"Invalid curve. The last point's temperature (x-value) must be at most {0}, instead it was {1}.".format(last[0], xdata[len(xdata)-1]))
-			return True
-
-		# last point speed must be lower than max.y
-		if ydata[len(ydata) - 1] > last[1]:
-			ErrorDialogBox(self.appWindow, "Invalid curve. The last point's speed (y-value) must be at most {0}, instead it was {1}.".format(last[1], ydata[len(ydata)-1]))
-			return True
-
-		# curve must increasing across x,y planes
-		for index in range(1, len(xdata)):
-			if xdata[index] <= xdata[index - 1] or ydata[index] <= ydata[index - 1]:
-				ErrorDialogBox(self.appWindow, "Invalid curve configuration. The curve must be growing linearly or exponentially.")
-				return True
+	def set(self, *args, **kwargs):
+		if len(args) == 1: self.curve = list(args[0])
+		if len(args) == 2: self.convertIntoMatrix(args[0], args[1])

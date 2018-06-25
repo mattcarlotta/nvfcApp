@@ -12,7 +12,7 @@ class GPUController():
 		ChartActionController.setUpdateStats(False) # stops live GPU updates
 		NvidiaFanController.pauseUpdates(True) # temporarily pauses the run loop
 		NvidiaFanController.disableFanControl() # resets fan back to auto
-		DragHandler.setCurveControl(False) # disables curve points
+		DragHandler.setDragControl(False) # disables dragging curve points
 		MessageDialogBox(appWindow, "Disabled GPU fan control.")
 
 	# triggered by "Enable" button
@@ -21,5 +21,5 @@ class GPUController():
 		ChartActionController.setUpdateStats(True) # enables live GPU updates
 		NvidiaFanController.pauseUpdates(False) # unpauses the run loop
 		NvidiaFanController.resetFanControl() # resets old_fan_speed to trigger a curve update
-		DragHandler.setCurveControl(True) # allows curve points to be moved
+		DragHandler.setDragControl(True) # allows curve points to be dragged
 		MessageDialogBox(appWindow, "Enabled GPU fan control.")
