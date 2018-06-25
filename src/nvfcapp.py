@@ -67,16 +67,25 @@ class GUI:
 		Chart(self.appWindow, self.graph, self.disable_app_buttons)
 		self.notebook.append_page(self.graph, Gtk.Label('Graph'))
 
-		self.page2 = Gtk.Box()
-		self.page2.set_border_width(10)
-		self.page2.add(Gtk.Label('A page with an image for a Title.'))
+		self.gpuInfo = self.builder.get_object('infoBox')
+		self.nogpuInfo = self.builder.get_object('noinfoBox')
+		self.showgpuInfo = self.gpuInfo if driverInUse == 'nvidia' else self.nogpuInfo
 		self.notebook.append_page(
-			self.page2,
+			self.showgpuInfo,
 			Gtk.Image.new_from_icon_name(
 			    "dialog-information",
 			    Gtk.IconSize.MENU
-			)
-		)
+			))
+		# self.page2 = Gtk.Box()
+		# self.page2.set_border_width(10)
+		# self.page2.add(Gtk.Label('A page with an image for a Title.'))
+		# self.notebook.append_page(
+		# 	self.page2,
+		# 	Gtk.Image.new_from_icon_name(
+		# 	    "dialog-information",
+		# 	    Gtk.IconSize.MENU
+		# 	)
+		# )
 
 		# signal traps
 		signal.signal(signal.SIGINT, self.on_nvfcApp_destroy) #CTRL-C

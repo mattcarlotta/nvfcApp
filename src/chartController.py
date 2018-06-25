@@ -60,9 +60,9 @@ class Chart():
 		# misc. chart configurations
 		self.axes.axhline(y=10, xmin=0, xmax=1, linewidth=1, color='red') # red line to represent lowest value (10,0)
 		self.axes.set_title("Fan Controller", fontsize=16) # Chart's title
-		for axis in ['bottom','left']: self.axes.spines[axis].set_color('0.1') # adds spines to x and y axes
+		for axis in ['bottom','left', 'top', 'right']: self.axes.spines[axis].set_color('0.1') # adds spines to x and y axes
 		self.plot.setp(self.axes.spines.values(), linewidth=0.2) # sets both spines' line widths
-		# self.fig.patch.set_facecolor('0.15') # sets background color
+		self.fig.patch.set_fc('white') # sets background color
 
 		# creates curve w/ options: color=blue, s=squares, picker=max distance for selection
 		line, = Chart.axes.plot(self.x_values, self.y_values, linestyle='-',  marker='s', markersize=4.5, color='b', picker=5, linewidth=1.5)
