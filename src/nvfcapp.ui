@@ -60,6 +60,7 @@
             <child>
               <object class="GtkLabel" id="osLabel">
                 <property name="width_request">175</property>
+                <property name="height_request">20</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="label" translatable="yes">Operation System:</property>
@@ -77,6 +78,7 @@
             <child>
               <object class="GtkLabel" id="codenameLabel">
                 <property name="width_request">175</property>
+                <property name="height_request">20</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="label" translatable="yes">Codename:</property>
@@ -94,6 +96,7 @@
             <child>
               <object class="GtkLabel" id="distroLabel">
                 <property name="width_request">175</property>
+                <property name="height_request">20</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="label" translatable="yes">Distro-like:</property>
@@ -109,8 +112,44 @@
               </packing>
             </child>
             <child>
+              <object class="GtkLabel" id="archLabel">
+                <property name="width_request">175</property>
+                <property name="height_request">20</property>
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">Architecture:</property>
+                <property name="justify">fill</property>
+                <property name="xalign">0.95999997854232788</property>
+                <attributes>
+                  <attribute name="font-desc" value="Sans 10"/>
+                </attributes>
+              </object>
+              <packing>
+                <property name="left_attach">0</property>
+                <property name="top_attach">4</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="kernelLabel">
+                <property name="width_request">175</property>
+                <property name="height_request">20</property>
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">Kernel:</property>
+                <property name="xalign">0.95999997854232788</property>
+                <attributes>
+                  <attribute name="font-desc" value="Sans 10"/>
+                </attributes>
+              </object>
+              <packing>
+                <property name="left_attach">0</property>
+                <property name="top_attach">3</property>
+              </packing>
+            </child>
+            <child>
               <object class="GtkLabel" id="userOSLabel">
                 <property name="width_request">215</property>
+                <property name="height_request">20</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="label" translatable="yes">N/A</property>
@@ -127,6 +166,7 @@
             <child>
               <object class="GtkLabel" id="userCodenameLabel">
                 <property name="width_request">215</property>
+                <property name="height_request">20</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="label" translatable="yes">N/A</property>
@@ -143,6 +183,7 @@
             <child>
               <object class="GtkLabel" id="userDistroLabel">
                 <property name="width_request">215</property>
+                <property name="height_request">20</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="label" translatable="yes">N/A</property>
@@ -157,25 +198,9 @@
               </packing>
             </child>
             <child>
-              <object class="GtkLabel" id="archLabel">
-                <property name="width_request">175</property>
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="label" translatable="yes">Architecture:</property>
-                <property name="justify">fill</property>
-                <property name="xalign">0.95999997854232788</property>
-                <attributes>
-                  <attribute name="font-desc" value="Sans 10"/>
-                </attributes>
-              </object>
-              <packing>
-                <property name="left_attach">0</property>
-                <property name="top_attach">4</property>
-              </packing>
-            </child>
-            <child>
               <object class="GtkLabel" id="userArchLabel">
                 <property name="width_request">215</property>
+                <property name="height_request">20</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="label" translatable="yes">N/A</property>
@@ -190,24 +215,9 @@
               </packing>
             </child>
             <child>
-              <object class="GtkLabel" id="kernelLabel">
-                <property name="width_request">175</property>
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="label" translatable="yes">Kernel:</property>
-                <property name="xalign">0.95999997854232788</property>
-                <attributes>
-                  <attribute name="font-desc" value="Sans 10"/>
-                </attributes>
-              </object>
-              <packing>
-                <property name="left_attach">0</property>
-                <property name="top_attach">3</property>
-              </packing>
-            </child>
-            <child>
               <object class="GtkLabel" id="userKernelLabel">
                 <property name="width_request">215</property>
+                <property name="height_request">20</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="label" translatable="yes">N/A</property>
@@ -280,6 +290,7 @@
             <child>
               <object class="GtkLabel" id="processorLabel">
                 <property name="width_request">150</property>
+                <property name="height_request">20</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="label" translatable="yes">Processor:</property>
@@ -297,6 +308,7 @@
             <child>
               <object class="GtkLabel" id="pciBwLabel">
                 <property name="width_request">150</property>
+                <property name="height_request">20</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="label" translatable="yes">PCI Bandwidth:</property>
@@ -314,6 +326,7 @@
             <child>
               <object class="GtkLabel" id="totalMemLabel">
                 <property name="width_request">150</property>
+                <property name="height_request">20</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="label" translatable="yes">Total Memory:</property>
@@ -331,6 +344,7 @@
             <child>
               <object class="GtkLabel" id="vbiosLabel">
                 <property name="width_request">150</property>
+                <property name="height_request">20</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="label" translatable="yes">VBIOS Version:</property>
@@ -348,6 +362,7 @@
             <child>
               <object class="GtkLabel" id="driverLabel">
                 <property name="width_request">150</property>
+                <property name="height_request">20</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="label" translatable="yes">Driver Version:</property>
@@ -360,6 +375,8 @@
             </child>
             <child>
               <object class="GtkLabel" id="userProcLabel">
+                <property name="width_request">150</property>
+                <property name="height_request">20</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="label" translatable="yes">N/A</property>
@@ -375,6 +392,8 @@
             </child>
             <child>
               <object class="GtkLabel" id="userDriverLabel">
+                <property name="width_request">150</property>
+                <property name="height_request">20</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="label" translatable="yes">N/A</property>
@@ -390,6 +409,8 @@
             </child>
             <child>
               <object class="GtkLabel" id="userVbiosLabel">
+                <property name="width_request">150</property>
+                <property name="height_request">20</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="label" translatable="yes">N/A</property>
@@ -405,6 +426,8 @@
             </child>
             <child>
               <object class="GtkLabel" id="userTotMemLabel">
+                <property name="width_request">150</property>
+                <property name="height_request">20</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="label" translatable="yes">N/A</property>
@@ -420,6 +443,8 @@
             </child>
             <child>
               <object class="GtkLabel" id="userPciBwLabel">
+                <property name="width_request">150</property>
+                <property name="height_request">20</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="label" translatable="yes">N/A</property>
@@ -537,15 +562,6 @@
                 <property name="top_attach">2</property>
               </packing>
             </child>
-            <child>
-              <placeholder/>
-            </child>
-            <child>
-              <placeholder/>
-            </child>
-            <child>
-              <placeholder/>
-            </child>
           </object>
           <packing>
             <property name="expand">True</property>
@@ -649,15 +665,6 @@
                 <property name="left_attach">0</property>
                 <property name="top_attach">2</property>
               </packing>
-            </child>
-            <child>
-              <placeholder/>
-            </child>
-            <child>
-              <placeholder/>
-            </child>
-            <child>
-              <placeholder/>
             </child>
           </object>
           <packing>
