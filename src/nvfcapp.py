@@ -24,6 +24,7 @@ import signal
 import sys
 from chartController import Chart
 from gpuControlActions import GPUController
+from sysInformation import SystemInformation
 # from styleProvider import styles
 # styles()
 
@@ -65,27 +66,25 @@ class GUI:
 		# GPU graph controller
 		self.graph = self.builder.get_object('graphBox')
 		Chart(self.appWindow, self.graph, self.disable_app_buttons)
-		self.notebook.append_page(self.graph, Gtk.Label('Graph'))
+		self.chartsvg = GdkPixbuf.Pixbuf.new_from_file_at_scale("/home/m6d/Documents/nvfcApp/chart_512x512.png", 32, 32, True)
+		self.chartIcon = Gtk.Image()
+		self.chartIcon.set_from_pixbuf(self.chartsvg)
+		self.notebook.append_page(self.graph, self.chartIcon)
 
+		# system info / gpu info
 		self.gpuInfo = self.builder.get_object('infoBox')
 		self.nogpuInfo = self.builder.get_object('noinfoBox')
-		self.showgpuInfo = self.gpuInfo if driverInUse == 'nvidia' else self.nogpuInfo
-		self.notebook.append_page(
-			self.showgpuInfo,
-			Gtk.Image.new_from_icon_name(
-			    "dialog-information",
-			    Gtk.IconSize.MENU
-			))
-		# self.page2 = Gtk.Box()
-		# self.page2.set_border_width(10)
-		# self.page2.add(Gtk.Label('A page with an image for a Title.'))
-		# self.notebook.append_page(
-		# 	self.page2,
-		# 	Gtk.Image.new_from_icon_name(
-		# 	    "dialog-information",
-		# 	    Gtk.IconSize.MENU
-		# 	)
-		# )
+
+		if driverInUse == 'nvidia':
+			SystemInformation(self.builder)
+			self.showgpuInfo = self.gpuInfo
+
+		else: self.showgpuInfo = self.nogpuInfo
+
+		self.infosvg = GdkPixbuf.Pixbuf.new_from_file_at_scale("/home/m6d/Documents/nvfcApp/info_512x512.png", 32, 32, True)
+		self.infoIcon = Gtk.Image()
+		self.infoIcon.set_from_pixbuf(self.infosvg)
+		self.notebook.append_page(self.showgpuInfo, self.infoIcon)
 
 		# signal traps
 		signal.signal(signal.SIGINT, self.on_nvfcApp_destroy) #CTRL-C
