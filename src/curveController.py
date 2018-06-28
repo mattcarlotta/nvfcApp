@@ -2,8 +2,7 @@ from popupController import ErrorDialogBox
 
 class Curve():
 	def __init__(self, *args, **kwargs):
-		if len(args) == 1: self.curve = list(args[0]) # ([temp0, fspd0], [temp1, fspd1], [temp2, fspd2] ...etc)
-		if len(args) == 2: self.convertIntoMatrix(args[0], args[1]) # (arr[...temp], arr[...fspd])
+		self.convertIntoMatrix(args[0], args[1]) # (arr[...temp], arr[...fspd])
 
 	# appends individual x and y data pairs into a single array [ [temp0, fspd0], [temp1, fspd1], [temp2, fspd2] ...etc ]
 	def convertIntoMatrix(self, x_values, y_values):
@@ -31,6 +30,7 @@ class Curve():
 
 			index += 1
 
-	def set(self, *args, **kwargs):
-		if len(args) == 1: self.curve = list(args[0])
-		if len(args) == 2: self.convertIntoMatrix(args[0], args[1])
+	# sets curve based on args
+	def set(self, *args):
+		if len(args) == 1: self.curve = list(args[0]) # 1 arr with temp + speed : ([ ...temp], ...fspd])
+		if len(args) == 2: self.convertIntoMatrix(args[0], args[1]) # 2 arrs of temp & speed: ([...temp], [...fspd])

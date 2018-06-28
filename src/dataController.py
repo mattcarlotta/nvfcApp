@@ -25,34 +25,21 @@ class DataController(object):
 
 	# verifies x,y coords, if invalid, returns true else false
 	def validateData(self, xdata, ydata):
-		first = [0,10]
-		last = [100,100]
-
 		# checks if curve has been supplied 24 points
 		if len(xdata) != 12 or len(ydata) != 12:
-			curve_pts = len(xdata) + len(ydata)
-			ErrorDialogBox(self.appWindow, "Invalid curve. The curve must have 12 temperature and 12 fan speed points. Instead, received: {0}.".format(curve_pts))
+			ErrorDialogBox(self.appWindow, "Invalid curve. The curve must have 12 temperature and 12 fan speed points. Instead, received: {0}.".format(len(xdata) + len(ydata)))
 			return True
 
-		# first point temperature must be min.x
-		if xdata[0] != first[0]:
-			ErrorDialogBox(self.appWindow, "Invalid curve. The first point's temperature (x-value) must be {0}, instead it was {1}.".format(first[0], xdata[0]))
-			return True
-
-		# first point speed must be min.y
-		if ydata[0] != first[1]:
-			ErrorDialogBox(self.appWindow, "Invalid curve. The first point's speed (y-value) must be {0}, instead it was {1}.".format(first[1], ydata[0]))
-			return True
-
-		# last point temperature must be lower than max.x
-		if xdata[len(xdata) - 1] > last[0]:
-			ErrorDialogBox(self.appWindow,"Invalid curve. The last point's temperature (x-value) must be at most {0}, instead it was {1}.".format(last[0], xdata[len(xdata)-1]))
-			return True
-
-		# last point speed must be lower than max.y
-		if ydata[len(ydata) - 1] > last[1]:
-			ErrorDialogBox(self.appWindow, "Invalid curve. The last point's speed (y-value) must be at most {0}, instead it was {1}.".format(last[1], ydata[len(ydata)-1]))
-			return True
+		# first and last point's [temp,fspd] must be: [0, 10] and [100, 100]
+		for args in [
+			[ xdata[0], 0, 'temperature (x-value)', 'first'], # temp [x, 10] = 0
+			[ ydata[0], 10, 'speed (y-value)', 'first' ], # fspd [0, x] = 10
+			[ xdata[len(xdata) - 1], 100, 'temperature (x-value)', 'last' ], # temp [x, 100] = 100
+			[ ydata[len(ydata) - 1], 100, 'speed (y-value)', 'last' ] # fspd [100, x] = 100
+		]:
+			if args[0] != args[1]:
+				ErrorDialogBox(self.appWindow, "Invalid curve. The {0} point's {1} must be {2}, instead it was {3}.".format(args[3], args[2], args[1], args[0]))
+				return True
 
 		# curve must increasing across x,y planes
 		for index in range(1, len(xdata)):

@@ -69,8 +69,8 @@ class NvidiaFanController(StoppableThread):
 			try:
 				self.updateFan() # update fan if needed
 				self.lock.release() # releases the thread
-			finally:
-				time.sleep(1.0) # sleeps for 1s
+			except: pass # sometimes self.lock.release triggers runtime error if stopped prematurely
+			finally: time.sleep(1.0) # sleeps for 1s
 
 		# if thread is stopped, exit app and reset GPU to auto
 		self.disableFanControl()
@@ -92,9 +92,9 @@ class NvidiaFanController(StoppableThread):
 
 	# stops any locked event threading
 	def stopUpdates(self):
+		self.stop() # stops thread
 		self.lock.acquire(False) # override and unlock any thread blocking
 		self.lock.release() # release the thread to be stopped
-		self.stop() # stops thread
 
 	# updates temp and fanspeed only on temp change or applied curve updates
 	def updateFan(self):

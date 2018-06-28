@@ -62,7 +62,7 @@ class ChartActionController():
 
 	# clears and disables chart -- triggered when the nvidia settings haven't been configured correctly
 	def stopControllingGPU(nvidiaController, axes):
-		ChartActionController.setUpdateStats(False) # stops GPU stat updates
+		ChartActionController.setUpdateStats() # stops GPU stat updates
 		nvidiaController.stopUpdates() # stops GPU controlling
 		plt.cla() # clears chart
 
@@ -74,7 +74,7 @@ class ChartActionController():
 		axes.yaxis.label.set_color('grey')
 
 	# determines whether or not the graph will be updating GPU stats
-	def setUpdateStats(bool): ChartActionController.update_stats = bool
+	def setUpdateStats(): ChartActionController.update_stats = not ChartActionController.update_stats
 
 	# updates chart curve
 	def updateChart(nvidiaController, xdata, ydata):

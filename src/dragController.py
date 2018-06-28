@@ -48,4 +48,4 @@ class DragHandler(object):
 			self.dragged = None
 			self.chartObj.fig.canvas.draw()
 
-	def setDragControl(self, bool): self.isActive = bool
+	def setDragControl(self): self.isActive = not self.isActive

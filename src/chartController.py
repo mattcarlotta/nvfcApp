@@ -87,19 +87,19 @@ class Chart():
 	def handleDisableGPUControl(appWindow):
 		Chart.setLabelColor('grey', 'grey') # sets label colors
 		Chart.setAxesLabels(0,0) # 0's GPU stats
-		ChartActionController.setUpdateStats(False) # stops live GPU updates
+		ChartActionController.setUpdateStats() # stops live GPU updates
 		nvidiaController.pause()
 		nvidiaController.disableFanControl()
-		dragHandler.setDragControl(False) # disables dragging curve points
+		dragHandler.setDragControl() # disables dragging curve points
 		MessageDialogBox(appWindow, "Disabled GPU fan control.")
 
 	# handles GPU control enabling
 	def handleEnableGPUControl(appWindow):
 		Chart.setLabelColor('black', 'blue')
-		ChartActionController.setUpdateStats(True) # enables live GPU updates
+		ChartActionController.setUpdateStats() # enables live GPU updates
 		nvidiaController.resume()
 		nvidiaController.resetFanControl()
-		dragHandler.setDragControl(True) # allows curve points to be dragged
+		dragHandler.setDragControl() # allows curve points to be dragged
 		MessageDialogBox(appWindow, "Enabled GPU fan control.")
 
 	# resets Chart's current curve data
