@@ -64,7 +64,8 @@ class GUI:
 
 		# GPU graph controller
 		self.graph = self.builder.get_object('graphBox')
-		self.chart = Chart(self.appWindow, self.graph, self.disable_app_buttons)
+		# self.chart = Chart(self.appWindow, self.graph, self.disable_app_buttons)
+		self.chart = Chart(self)
 		self.chartsvg = GdkPixbuf.Pixbuf.new_from_file_at_scale("/home/m6d/Documents/nvfcApp/chart_512x512.png", 32, 32, True)
 		self.chartIcon = Gtk.Image()
 		self.chartIcon.set_from_pixbuf(self.chartsvg)

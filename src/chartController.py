@@ -16,20 +16,21 @@ style.use(['fivethirtyeight']) # current plot theme
 
 
 class Chart():
-	def __init__(self, appWindow, graphBox, disableAppButtons):
-		self.appWindow = appWindow # an instance of appWindow
-		self.disableAppButtons = disableAppButtons # an instand of disable_all_buttons
+	def __init__(self, parent):
+		self.appWindow = parent.appWindow # an instance of appWindow
+		self.disableAppButtons = parent.disable_app_buttons # an instance of disable_all_buttons
+		self.plt = plt # instance of plt
+		self.chartActions = ChartActionController(self) # an instance of chart actions
+		self.x_values, self.y_values = self.chartActions.initChartValues() # intialize x and y curve values
 
-		self.x_values, self.y_values = ChartActionController.initChartValues(self.appWindow) # intialize x and y curve values
-
-		self.fig = plt.figure(num="Fan Controller", figsize=(12, 9)) # add plt.figure instance
+		self.fig = self.plt.figure(num="Fan Controller", figsize=(12, 9)) # add plt.figure instance
 		self.fig.subplots_adjust(left=0.11, bottom=0.15, right=0.94, top=0.89, wspace=0.2, hspace=0) # adjusts Chart's window
 		self.axes = self.fig.add_subplot(1,1,1) # add a subplot instance to the figure
 		self.canvas = FigureCanvas(self.fig) # add fig instance to a figure canvas
 		self.canvas.set_size_request(800, 600) # set default canvas height (req'd for displaying the chart)
 
 		# appends the figure => to the graphBox => to the notebook
-		graphBox.add(self.canvas)
+		parent.graph.add(self.canvas)
 
 		# updates chart with GPU stats every 1000ms
 		self.anim = animation.FuncAnimation(self.fig, self.updateLabelStats, interval=1000)
@@ -51,7 +52,7 @@ class Chart():
 		self.axes.axhline(y=10, xmin=0, xmax=1, linewidth=1, color='red') # red line to represent lowest value (10,0)
 		self.axes.set_title("Fan Controller", fontsize=16) # Chart's title
 		for axis in ['bottom','left', 'top', 'right']: self.axes.spines[axis].set_color('0.1') # adds spines to x and y axes
-		plt.setp(self.axes.spines.values(), linewidth=0.2) # sets both spines' line widths
+		self.plt.setp(self.axes.spines.values(), linewidth=0.2) # sets both spines' line widths
 		self.fig.patch.set_fc('white') # sets background color
 
 		# creates curve w/ options: color=blue, s=squares, picker=max distance for selection
@@ -72,13 +73,13 @@ class Chart():
 
 	# applies Chart's current curve data
 	def handleApplyData(self):
-		ChartActionController.applyData(self.appWindow, self.dataController, self.fanController, self.line)
+		self.chartActions.applyData(self.dataController, self.fanController, self.line)
 
 	# handles GPU control disabling
 	def handleDisableGPUControl(self):
 		self.setLabelColor('grey', 'grey') # sets label colors
 		self.setAxesLabels(0,0) # 0's GPU stats
-		ChartActionController.setUpdateStats() # stops live GPU updates
+		self.chartActions.setUpdateStats() # stops live GPU updates
 		self.fanController.pause()
 		self.fanController.disableFanControl()
 		self.dragHandler.setDragControl() # disables dragging curve points
@@ -87,7 +88,7 @@ class Chart():
 	# handles GPU control enabling
 	def handleEnableGPUControl(self):
 		self.setLabelColor('black', 'blue')
-		ChartActionController.setUpdateStats() # enables live GPU updates
+		self.chartActions.setUpdateStats() # enables live GPU updates
 		self.fanController.resume()
 		self.fanController.resetFanControl()
 		self.dragHandler.setDragControl() # allows curve points to be dragged
@@ -95,11 +96,11 @@ class Chart():
 
 	# resets Chart's current curve data
 	def handleDataReset(self):
-		ChartActionController.resetData(self.appWindow, self.dataController, self.fanController, self.line)
+		self.chartActions.resetData(self.dataController, self.fanController, self.line)
 
 	# attempts to open and load a config file
 	def handleOpenFile(self):
-		ChartActionController.initValuesFromOpenFile(self.appWindow, self.fanController, self.dataController, self.line)
+		self.chartActions.initValuesFromOpenFile(self.fanController, self.dataController, self.line)
 
 	# attempts to save a config file
 	def handleSaveToFile(self): FileController.saveToFile(self.appWindow, self.dataController)
@@ -109,7 +110,7 @@ class Chart():
 		self.axes.title.set_color(c1)
 		self.axes.xaxis.label.set_color(c1)
 		self.axes.yaxis.label.set_color(c1)
-		plt.setp(self.line, color=c2)
+		self.plt.setp(self.line, color=c2)
 
 	# updates Chart's GPU stats axes labels
 	def setAxesLabels(self, currtmp, currfspd):
@@ -117,17 +118,15 @@ class Chart():
 		self.axes.set_ylabel("Fan Speed " + "(" + str(currfspd) + u"%)", fontsize=12, labelpad=10)
 
 	def updateLabelStats(self, i):
-		if (ChartActionController.update_stats):
+		if (self.chartActions.getUpdatesState()):
 			try:
 				curr_temp = FanController.temp # grabs current temp
 				curr_fspd = FanController.fanspeed # grabs current fspd
-				# check to see if values are present
-				if not curr_temp or not curr_fspd: raise ValueError('Missing temp and/or fan speed')
-				# updates chart labels
-				self.setAxesLabels(curr_temp, curr_fspd)
+				if not curr_temp or not curr_fspd: raise ValueError('Missing temp and/or fan speed') # see if values are present
+				self.setAxesLabels(curr_temp, curr_fspd) # updates chart labels
 			except ValueError:
 				self.disableAppButtons()
-				ChartActionController.stopControllingGPU(self.fanController, self.axes)
+				self.chartActions.stopControllingGPU(self.fanController, self.axes)
 				ErrorDialogBox(self.appWindow, "There was an error when attempting to read/set GPU stats. Please make sure that you're using the proprietary Nvidia drivers and that they're currently in use. The current Nvidia driver in use is: {0}.".format(self.fanController.getLoadedDriver()))
 
 if __name__ == '__main__':

@@ -1,88 +1,84 @@
-import matplotlib.pyplot as plt
 from os import path
 from fanController import FanController
 from fileController import FileController
 from popupController import FileChooserBox, MessageDialogBox
 
+
 class ChartActionController():
-	""" Class Variables """
-	update_stats = True # sets flag for updating chart with GPU stats
-	valid_config = True # valid config file
-	""" --------------- """
+	def __init__(self, parent):
+		super().__init__()
+		self.appWindow = parent.appWindow
+		self.plt = parent.plt
+		self.updates = True
+		self.valid_config = True
 
 	# updates or reverts curve from current curve x/y values
-	def applyData(appWindow, dataController, fanController, line):
+	def applyData(self, dataController, fanController, line):
 		xdata = line.get_xdata() # grabs current curve y data
 		ydata = line.get_ydata() # grabs current curve y data
 		is_valid_curve = dataController.setData(xdata, ydata) # checks if curve is exponentially growing (returns bool)
 
 		if is_valid_curve:
-			ChartActionController.updateChart(fanController, xdata, ydata) # updates FanController() with new curve data
-			MessageDialogBox(appWindow, 'Successfully applied the current curve to the fan settings!')
+			self.updateChart(fanController, xdata, ydata) # updates FanController() with new curve data
+			MessageDialogBox(self.appWindow, 'Successfully applied the current curve to the fan settings!')
 		else:
 			xdata, ydata = dataController.getData() # gets previous data
 			line.set_data([xdata, ydata]) # resets line to previous curve
 
-	# initializes values based upon global x/y values (will always return good x/y coords)
-	def initChartValues(appWindow):
-		# pre-configured curve
-		x_values = [0, 	11, 23, 34, 45, 55, 65, 74, 81, 88, 94, 100]
-		y_values = [10, 15, 21, 27, 34, 41, 50, 59, 68, 78, 88, 100]
+	# returns update status (T/F)
+	def getUpdatesState(self): return self.updates
 
-		# if ChartActionController.valid_config:
-		file = FileChooserBox.dir or "default.csv" if ChartActionController.valid_config else ''# load from default or a previously loaded configuration
+	# initializes x/y values values from file or preconfigured (will always return good x/y points)
+	def initChartValues(self):
+		x_values = [0, 11, 23, 34, 45, 55, 65, 74, 81, 88, 94, 100] # pre-configured temp points
+		y_values = [10, 15, 21, 27, 34, 41, 50, 59, 68, 78, 88, 100] # pre-configured speed points
 
-		# loads configuration array [temp, fspd] from csv
+		file = FileChooserBox.dir or "default.csv" if self.valid_config else '' # load from default or a previously loaded configuration
+		#  check if configuration.csv file still exists
 		if path.exists(file):
-			cfg_x, cfg_y = FileController.setDataFromFile(appWindow, file)
+			cfg_x, cfg_y = FileController.setDataFromFile(self.appWindow, file) # attempt to load config x,y values
+			if not cfg_x or not cfg_y: # if setDataFromFile returns [False, False], revert back to global x/y values
+				self.valid_config = False # set default.csv/ loaded *.csv to invalid
+				return x_values, y_values # return preconfigured values
+			else: return cfg_x, cfg_y # returns data from loaded .csv file
 
-			# if setDataFromFile returns [False, False], revert back to global x/y values
-			if not cfg_x or not cfg_y: return x_values, y_values
-
-			# returns data from loaded file
-			return cfg_x, cfg_y
-
-		# returns default values
+		# no default.csv present, returns default values
 		return x_values, y_values
 
 	# attempts to open and load configuration files
-	def initValuesFromOpenFile(appWindow, fanController, dataController, line):
-		xdata, ydata, file = FileController.openFile(appWindow, dataController) # attempt to gather curve config data from file
-
-		# if xdata and ydata are present
-		if xdata and ydata:
+	def initValuesFromOpenFile(self, fanController, dataController, line):
+		xdata, ydata, file = FileController.openFile(self.appWindow, dataController) # attempt to gather curve config data from file
+		if xdata and ydata: # if xdata and ydata are present
 			line.set_data([xdata, ydata]) # update curve values
 			dataController.setData(xdata, ydata) # store curve values
-			ChartActionController.updateChart(fanController, xdata, ydata) # update chart to reflect values
-			ChartActionController.setValidConfig(True)
+			self.updateChart(fanController, xdata, ydata) # update chart to reflect values
+			self.valid_config = True # config is valid, OK to use for curve resetting
 		else:
-			ChartActionController.setValidConfig(False) # config is invalid set this false to prevent invalid curve resetting
+			self.valid_config = False # config is invalid => set this false to prevent invalid curve resetting
 
 	# resets curve to initial values
-	def resetData(appWindow, dataController, fanController, line):
-		xdata, ydata = ChartActionController.initChartValues(appWindow) # reset to initial values
+	def resetData(self, dataController, fanController, line):
+		xdata, ydata = self.initChartValues() # reset to initial values
 		line.set_data([xdata, ydata]) # update curve values
 		dataController.setData(xdata, ydata) # store curve values
-		ChartActionController.updateChart(fanController, xdata, ydata) # update chart to reflect values
+		self.updateChart(fanController, xdata, ydata) # update chart to reflect values
 
-	def setValidConfig(bool): ChartActionController.valid_config = bool
-
-	# clears and disables chart -- triggered when the nvidia settings haven't been configured correctly
-	def stopControllingGPU(fanController, axes):
-		ChartActionController.setUpdateStats() # stops GPU stat updates
+	# clears and disables chart -- triggered when the driver settings haven't been configured correctly
+	def stopControllingGPU(self, fanController, axes):
+		self.setUpdateStats() # stops GPU stat updates
 		fanController.stopUpdates() # stops GPU controlling
-		plt.cla() # clears chart
+		self.plt.cla() # clears chart
 
 		# resets axes labels to appear inactive
-		axes.set_title("Fan Controller", fontsize=16, color='grey', pad=20)
-		axes.set_xlabel(u"Temperature (0°C)", fontsize=12, labelpad=20)
-		axes.set_ylabel(u"Fan Speed (0%)", fontsize=12, labelpad=10)
-		axes.xaxis.label.set_color('grey')
-		axes.yaxis.label.set_color('grey')
+		axes.set_title("Fan Controller", fontsize=16, color='grey', pad=20) # main title
+		axes.set_xlabel(u"Temperature (0°C)", fontsize=12, labelpad=20) # x-axis title
+		axes.set_ylabel(u"Fan Speed (0%)", fontsize=12, labelpad=10) # y-axis title
+		axes.xaxis.label.set_color('grey') # x-axis title color
+		axes.yaxis.label.set_color('grey') # y-axis title color
 
 	# determines whether or not the graph will be updating GPU stats
-	def setUpdateStats(): ChartActionController.update_stats = not ChartActionController.update_stats
+	def setUpdateStats(self): self.updates = not self.updates
 
 	# updates chart curve
-	def updateChart(fanController, xdata, ydata):
+	def updateChart(self, fanController, xdata, ydata):
 		fanController.setCurve(xdata, ydata) # updates curve with new x and y data
