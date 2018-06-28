@@ -10,10 +10,10 @@ from dataController import DataController
 from dragController import DragHandler
 from fileController import FileController
 from fanController import NvidiaFanController
-from popupController import ErrorDialogBox
-
+from popupController import ErrorDialogBox, MessageDialogBox
 
 style.use(['fivethirtyeight']) # current plot theme
+
 
 class Chart():
 	""" Class Variables """
@@ -23,8 +23,9 @@ class Chart():
 	""" --------------- """
 
 	def __init__(self, appWindow, graphBox, disableAppButtons):
-		global nvidiaController
 		global dataController
+		global dragHandler
+		global nvidiaController
 		global line
 
 		self.appWindow = appWindow # an instance of appWindow
@@ -32,7 +33,6 @@ class Chart():
 
 		self.x_values, self.y_values = ChartActionController.initChartValues(self.appWindow) # intialize x and y curve values
 
-		self.plot = plt # add plt instance
 		self.fig = Chart.fig # add plt.figure instance
 		self.axes = Chart.axes # add a subplot instance to the figure
 		self.canvas = FigureCanvas(self.fig) # add fig instance to a figure canvas
@@ -61,14 +61,14 @@ class Chart():
 		self.axes.axhline(y=10, xmin=0, xmax=1, linewidth=1, color='red') # red line to represent lowest value (10,0)
 		self.axes.set_title("Fan Controller", fontsize=16) # Chart's title
 		for axis in ['bottom','left', 'top', 'right']: self.axes.spines[axis].set_color('0.1') # adds spines to x and y axes
-		self.plot.setp(self.axes.spines.values(), linewidth=0.2) # sets both spines' line widths
+		plt.setp(self.axes.spines.values(), linewidth=0.2) # sets both spines' line widths
 		self.fig.patch.set_fc('white') # sets background color
 
 		# creates curve w/ options: color=blue, s=squares, picker=max distance for selection
 		line, = Chart.axes.plot(self.x_values, self.y_values, linestyle='-',  marker='s', markersize=4.5, color='b', picker=5, linewidth=1.5)
 
 		# drag handler and curve instances
-		self.dragHandler = DragHandler(self, self.appWindow) # handles the mouse clicks on the curve
+		dragHandler = DragHandler(self, self.appWindow) # handles the mouse clicks on the curve
 		dataController = DataController(self.appWindow, self.x_values, self.y_values) # handles updating curve data
 
 		# starts a stoppable thread (loop that looks for temp changes and updates accordingly)
@@ -78,10 +78,29 @@ class Chart():
 	# closes Chart and stops GPU updating
 	def close():
 		plt.close('all')
-		nvidiaController.stop()
+		nvidiaController.stopUpdates()
 
 	# applies Chart's current curve data
 	def handleApplyData(appWindow): ChartActionController.applyData(appWindow, dataController, nvidiaController, line)
+
+	# handles GPU control disabling
+	def handleDisableGPUControl(appWindow):
+		Chart.setLabelColor('grey', 'grey') # sets label colors
+		Chart.setAxesLabels(0,0) # 0's GPU stats
+		ChartActionController.setUpdateStats(False) # stops live GPU updates
+		nvidiaController.pause()
+		nvidiaController.disableFanControl()
+		dragHandler.setDragControl(False) # disables dragging curve points
+		MessageDialogBox(appWindow, "Disabled GPU fan control.")
+
+	# handles GPU control enabling
+	def handleEnableGPUControl(appWindow):
+		Chart.setLabelColor('black', 'blue')
+		ChartActionController.setUpdateStats(True) # enables live GPU updates
+		nvidiaController.resume()
+		nvidiaController.resetFanControl()
+		dragHandler.setDragControl(True) # allows curve points to be dragged
+		MessageDialogBox(appWindow, "Enabled GPU fan control.")
 
 	# resets Chart's current curve data
 	def handleDataReset(appWindow): ChartActionController.resetData(appWindow, dataController, nvidiaController, line)
@@ -119,8 +138,7 @@ class Chart():
 			except ValueError:
 				self.disableAppButtons()
 				ChartActionController.stopControllingGPU(nvidiaController, Chart.axes)
-				driver_version = NvidiaFanController.drv_ver
-				ErrorDialogBox(self.appWindow, "There was an error when attempting to read/set GPU statistics. Please make sure that you're using the proprietary Nvidia drivers and that they're currently in use. The current Nvidia driver in use is: {0}.".format(driver_version))
+				ErrorDialogBox(self.appWindow, "There was an error when attempting to read/set GPU statistics. Please make sure that you're using the proprietary Nvidia drivers and that they're currently in use. The current Nvidia driver in use is: {0}.".format(NvidiaFanController.drv_ver))
 
 if __name__ == '__main__':
 	print ('Please launch GUI')

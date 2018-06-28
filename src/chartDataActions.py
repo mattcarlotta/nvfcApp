@@ -63,7 +63,7 @@ class ChartActionController():
 	# clears and disables chart -- triggered when the nvidia settings haven't been configured correctly
 	def stopControllingGPU(nvidiaController, axes):
 		ChartActionController.setUpdateStats(False) # stops GPU stat updates
-		nvidiaController.stop() # stops GPU fan updates
+		nvidiaController.stopUpdates() # stops GPU controlling
 		plt.cla() # clears chart
 
 		# resets axes labels to appear inactive
@@ -78,8 +78,4 @@ class ChartActionController():
 
 	# updates chart curve
 	def updateChart(nvidiaController, xdata, ydata):
-		ChartActionController.setUpdateStats(False) # temporarily stops live GPU updates
-		NvidiaFanController.pauseUpdates(True) # pauses the run loop
 		nvidiaController.setCurve(xdata, ydata) # updates curve with new x and y data
-		NvidiaFanController.pauseUpdates(False) # resumes loop
-		ChartActionController.setUpdateStats(True) # enables live GPU updates

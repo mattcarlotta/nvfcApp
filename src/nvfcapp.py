@@ -23,7 +23,6 @@ from subprocess import *
 import signal
 import sys
 from chartController import Chart
-from gpuControlActions import GPUController
 from sysInformation import SystemInformation
 # from styleProvider import styles
 # styles()
@@ -131,14 +130,14 @@ class GUI:
 
 	def on_disableButton_clicked(self, widget):
 		self.disable_curve_buttons()
-		GPUController.disableGPUControl(self.appWindow)
+		Chart.handleDisableGPUControl(self.appWindow)
 
 	def on_fileButton_activate(self, widget):
 		self.on_nvfcApp_destroy()
 
 	def on_enableButton_clicked(self, widget):
 		self.enable_curve_buttons()
-		GPUController.enableGPUControl(self.appWindow)
+		Chart.handleEnableGPUControl(self.appWindow)
 
 	def on_openButton_clicked(self, widget):
 		Chart.handleOpenFile(self.appWindow)

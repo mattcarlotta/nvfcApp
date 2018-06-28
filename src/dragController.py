@@ -2,19 +2,16 @@ from popupController import ErrorDialogBox
 
 
 class DragHandler(object):
-	""" Class Variables """
-	isActive = True
-	""" --------------- """
-
 	def __init__(self, chartObj, appWindow):
 		self.dragged = None
 		self.appWindow = appWindow
 		self.chartObj = chartObj
 		self.chartObj.fig.canvas.mpl_connect("pick_event", self.on_pick_event)
 		self.chartObj.fig.canvas.mpl_connect("button_release_event", self.on_release_event)
+		self.isActive = True
 
 	def on_pick_event(self, event):
-		if DragHandler.isActive:
+		if self.isActive:
 			self.dragged = event.artist #Line2D
 			self.pick_pos = (event.mouseevent.xdata, event.mouseevent.ydata)
 			self.ind = event.ind
@@ -51,4 +48,4 @@ class DragHandler(object):
 			self.dragged = None
 			self.chartObj.fig.canvas.draw()
 
-	def setDragControl(bool): DragHandler.isActive = bool
+	def setDragControl(self, bool): self.isActive = bool

@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 from matplotlib import animation, style
 from matplotlib.backends.backend_gtk3cairo import FigureCanvasGTK3Cairo as FigureCanvas
 from subprocess import check_output
+import math
 import re
 
 class SystemInformation():
@@ -31,11 +32,12 @@ class SystemInformation():
 
 
 	def plotSysLabels(self, arr, info):
-		# arg[0] = pattern
-		# arg[1] = info
 		for args in arr:
-			res = re.search(args[0], info[0] if len(args) == 2 else info[1]).group(1) # searches thru info (string) looking for pattern
-			self.setLabel(args[1], res)
+			try:
+				res = re.search(args[0], info).group(1) # searches thru info (strings) looking for requested pattern
+				self.setLabel(args[1], res)
+			except:
+				continue
 
 	def setLabel(self, widget, res):
 		label = self.builder.get_object(widget)
@@ -43,7 +45,7 @@ class SystemInformation():
 
 	def systemInfo(self):
 		sysInfo = self.getSysInfo()
-		hostInfo = self.getHostInfo()
+		sysInfo += self.getHostInfo()
 		# OS, codename, distro-like, kernel and architecture
 		sysLabelArr = [[
 			'PRETTY_NAME="(.*?)"\n',
@@ -56,44 +58,39 @@ class SystemInformation():
 			'userDistroLabel',
 		],[
 			' Kernel: (.*?)\n',
-			'userKernelLabel',
-			2
+			'userKernelLabel'
 		],[
 			' Architecture: (.*?)\n',
-			'userArchLabel',
-			2
+			'userArchLabel'
 		]]
-		self.plotSysLabels(sysLabelArr, [sysInfo,hostInfo])
+		self.plotSysLabels(sysLabelArr, sysInfo)
 
 	def gpuInfo(self):
 		gpuInfo = self.getGPUInfo()
-		gpuInfoLabelArr = [[
-			'userProcLabel',
-			gpuInfo[0]
-		],[
-			'userDriverLabel',
-			gpuInfo[1]
-		],[
-			'userVbiosLabel',
-			gpuInfo[2]
-		],[
-			'userTotMemLabel',
-			gpuInfo[3]
-		],[
-			'userPciBwLabel',
-			'PCI Express {0}x'.format(gpuInfo[4])
-		]]
-		self.plotGPULabels(gpuInfoLabelArr)
+
+		if len(gpuInfo) == 5:
+			gpuInfoLabelArr = [[
+				'userProcLabel',
+				gpuInfo[0]
+			],[
+				'userDriverLabel',
+				gpuInfo[1]
+			],[
+				'userVbiosLabel',
+				gpuInfo[2]
+			],[
+				'userTotMemLabel',
+				'{0} (~{1}GB)'.format(gpuInfo[3], math.ceil(int(gpuInfo[3].split(" MiB")[0])/1024))
+			],[
+				'userPciBwLabel',
+				'PCI Express {0}x'.format(gpuInfo[4])
+			]]
+			self.plotGPULabels(gpuInfoLabelArr)
 
 
 	# closes Chart and stops GPU updating
 	def close():
 		plt.close('all')
-
-
-
-if __name__ == '__main__':
-	print ('Please launch GUI')
 
 if __name__ == '__main__':
 	print ('Please launch GUI')
