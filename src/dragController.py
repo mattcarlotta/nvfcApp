@@ -43,8 +43,7 @@ class DragHandler(object):
 			ydata[index[0]] = int(ydata[index[0]] + event.ydata - self.pick_pos[1])
 			#print 'new point:', xdata[index], ydata[index]
 
-			xydata = [xdata, ydata]
-			self.dragged.set_data(xydata)
+			self.dragged.set_data([xdata, ydata])
 			self.dragged = None
 			self.chartObj.fig.canvas.draw()
 

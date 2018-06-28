@@ -1,8 +1,8 @@
 from popupController import ErrorDialogBox
 
 class Curve():
-	def __init__(self, *args, **kwargs):
-		self.convertIntoMatrix(args[0], args[1]) # (arr[...temp], arr[...fspd])
+	def __init__(self, xdata, ydata):
+		self.set(xdata, ydata) # (arr[...temp], arr[...fspd])
 
 	# appends individual x and y data pairs into a single array [ [temp0, fspd0], [temp1, fspd1], [temp2, fspd2] ...etc ]
 	def convertIntoMatrix(self, x_values, y_values):

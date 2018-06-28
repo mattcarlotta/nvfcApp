@@ -6,9 +6,6 @@ from dataController import DataController
 class FileController():
 	# attempts to open, then read a configuration file
 	def openFile(appWindow, dataController):
-		cfg_x = []
-		cfg_y = []
-
 		FileChooserBox(appWindow) # displays file chooser, sets filename string to FileChooserBox.dir
 		file = FileChooserBox.dir # gets current filename dir
 
@@ -34,12 +31,10 @@ class FileController():
 		xdata, ydata = dataController.getData() # get current curve points
 
 		# combines x and y curve data: config = [x1, y1] [x2, y2] [x3, y3] ...etc
-		for index in range(0, len(xdata)): config += str(xdata[index]) + "," + str(ydata[index]) + "\n"
+		for index in range(0, len(xdata)): config += "{0},{1}\n".format(xdata[index],ydata[index])
 
-		# opens a file dialog to save current config to file, returns a temporary file path string
-		filename = FileSaveBox(appWindow).getFile()
-
-		if filename is None: return # if dialog is canceled
+		filename = FileSaveBox(appWindow).getFile() # opens a save config dialog, returns a temp file path string
+		if not filename: return # if dialog is canceled
 
 		file = open(filename, "w+") # open file path
 		file.write(config) # write config to file path

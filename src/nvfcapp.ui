@@ -1028,7 +1028,7 @@
     <property name="version">0.0.1 RC</property>
     <property name="copyright" translatable="yes">Copyright (C) 2018 </property>
     <property name="website">https://code.mattcarlotta.io/root/nvfcApp</property>
-    <property name="website_label" translatable="yes">Website</property>
+    <property name="website_label" translatable="yes">Support</property>
     <property name="license" translatable="yes">This program comes with absolutely no warranty.
 See the &lt;a href="https://www.gnu.org/licenses/gpl-3.0.html"&gt;GNU General Public License, version 3 or later&lt;/a&gt; for details.</property>
     <property name="authors">Matt Carlotta

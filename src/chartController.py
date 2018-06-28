@@ -9,32 +9,22 @@ from chartDataActions import ChartActionController
 from dataController import DataController
 from dragController import DragHandler
 from fileController import FileController
-from fanController import NvidiaFanController
+from fanController import FanController
 from popupController import ErrorDialogBox, MessageDialogBox
 
 style.use(['fivethirtyeight']) # current plot theme
 
 
 class Chart():
-	""" Class Variables """
-	fig = plt.figure(num="Fan Controller", figsize=(12, 9)) # create a figure (one figure per window)
-	fig.subplots_adjust(left=0.11, bottom=0.15, right=0.94, top=0.89, wspace=0.2, hspace=0) # adjusts Chart's window
-	axes = fig.add_subplot(1,1,1) # add a subplot to the figure
-	""" --------------- """
-
 	def __init__(self, appWindow, graphBox, disableAppButtons):
-		global dataController
-		global dragHandler
-		global nvidiaController
-		global line
-
 		self.appWindow = appWindow # an instance of appWindow
 		self.disableAppButtons = disableAppButtons # an instand of disable_all_buttons
 
 		self.x_values, self.y_values = ChartActionController.initChartValues(self.appWindow) # intialize x and y curve values
 
-		self.fig = Chart.fig # add plt.figure instance
-		self.axes = Chart.axes # add a subplot instance to the figure
+		self.fig = plt.figure(num="Fan Controller", figsize=(12, 9)) # add plt.figure instance
+		self.fig.subplots_adjust(left=0.11, bottom=0.15, right=0.94, top=0.89, wspace=0.2, hspace=0) # adjusts Chart's window
+		self.axes = self.fig.add_subplot(1,1,1) # add a subplot instance to the figure
 		self.canvas = FigureCanvas(self.fig) # add fig instance to a figure canvas
 		self.canvas.set_size_request(800, 600) # set default canvas height (req'd for displaying the chart)
 
@@ -65,80 +55,80 @@ class Chart():
 		self.fig.patch.set_fc('white') # sets background color
 
 		# creates curve w/ options: color=blue, s=squares, picker=max distance for selection
-		line, = Chart.axes.plot(self.x_values, self.y_values, linestyle='-',  marker='s', markersize=4.5, color='b', picker=5, linewidth=1.5)
+		self.line, = self.axes.plot(self.x_values, self.y_values, linestyle='-',  marker='s', markersize=4.5, color='b', picker=5, linewidth=1.5)
 
 		# drag handler and curve instances
-		dragHandler = DragHandler(self, self.appWindow) # handles the mouse clicks on the curve
-		dataController = DataController(self.appWindow, self.x_values, self.y_values) # handles updating curve data
+		self.dragHandler = DragHandler(self, self.appWindow) # handles the mouse clicks on the curve
+		self.dataController = DataController(self.appWindow, self.x_values, self.y_values) # handles updating curve data
 
 		# starts a stoppable thread (loop that looks for temp changes and updates accordingly)
-		nvidiaController = NvidiaFanController(self.x_values, self.y_values)
-		nvidiaController.start()
+		self.fanController = FanController(self.x_values, self.y_values)
+		self.fanController.start()
 
 	# closes Chart and stops GPU updating
-	def close():
+	def close(self):
 		plt.close('all')
-		nvidiaController.stopUpdates()
+		self.fanController.stopUpdates()
 
 	# applies Chart's current curve data
-	def handleApplyData(appWindow): ChartActionController.applyData(appWindow, dataController, nvidiaController, line)
+	def handleApplyData(self):
+		ChartActionController.applyData(self.appWindow, self.dataController, self.fanController, self.line)
 
 	# handles GPU control disabling
-	def handleDisableGPUControl(appWindow):
-		Chart.setLabelColor('grey', 'grey') # sets label colors
-		Chart.setAxesLabels(0,0) # 0's GPU stats
+	def handleDisableGPUControl(self):
+		self.setLabelColor('grey', 'grey') # sets label colors
+		self.setAxesLabels(0,0) # 0's GPU stats
 		ChartActionController.setUpdateStats() # stops live GPU updates
-		nvidiaController.pause()
-		nvidiaController.disableFanControl()
-		dragHandler.setDragControl() # disables dragging curve points
-		MessageDialogBox(appWindow, "Disabled GPU fan control.")
+		self.fanController.pause()
+		self.fanController.disableFanControl()
+		self.dragHandler.setDragControl() # disables dragging curve points
+		MessageDialogBox(self.appWindow, "Disabled GPU fan control.")
 
 	# handles GPU control enabling
-	def handleEnableGPUControl(appWindow):
-		Chart.setLabelColor('black', 'blue')
+	def handleEnableGPUControl(self):
+		self.setLabelColor('black', 'blue')
 		ChartActionController.setUpdateStats() # enables live GPU updates
-		nvidiaController.resume()
-		nvidiaController.resetFanControl()
-		dragHandler.setDragControl() # allows curve points to be dragged
-		MessageDialogBox(appWindow, "Enabled GPU fan control.")
+		self.fanController.resume()
+		self.fanController.resetFanControl()
+		self.dragHandler.setDragControl() # allows curve points to be dragged
+		MessageDialogBox(self.appWindow, "Enabled GPU fan control.")
 
 	# resets Chart's current curve data
-	def handleDataReset(appWindow): ChartActionController.resetData(appWindow, dataController, nvidiaController, line)
+	def handleDataReset(self):
+		ChartActionController.resetData(self.appWindow, self.dataController, self.fanController, self.line)
 
 	# attempts to open and load a config file
-	def handleOpenFile(appWindow): ChartActionController.initValuesFromOpenFile(appWindow, nvidiaController, dataController, line)
+	def handleOpenFile(self):
+		ChartActionController.initValuesFromOpenFile(self.appWindow, self.fanController, self.dataController, self.line)
 
 	# attempts to save a config file
-	def handleSaveToFile(appWindow): FileController.saveToFile(appWindow, dataController)
+	def handleSaveToFile(self): FileController.saveToFile(self.appWindow, self.dataController)
 
 	# updates Chart's label colors (enabled / disabled)
-	def setLabelColor(c1,c2):
-		Chart.axes.title.set_color(c1)
-		Chart.axes.xaxis.label.set_color(c1)
-		Chart.axes.yaxis.label.set_color(c1)
-		plt.setp(line, color=c2)
+	def setLabelColor(self, c1, c2):
+		self.axes.title.set_color(c1)
+		self.axes.xaxis.label.set_color(c1)
+		self.axes.yaxis.label.set_color(c1)
+		plt.setp(self.line, color=c2)
 
 	# updates Chart's GPU stats axes labels
-	def setAxesLabels(currtmp, currfspd):
-		Chart.axes.set_xlabel("Temperature "+ "(" + str(currtmp) + u"°C)", fontsize=12, labelpad=20)
-		Chart.axes.set_ylabel("Fan Speed " + "(" + str(currfspd) + u"%)", fontsize=12, labelpad=10)
+	def setAxesLabels(self, currtmp, currfspd):
+		self.axes.set_xlabel("Temperature "+ "(" + str(currtmp) + u"°C)", fontsize=12, labelpad=20)
+		self.axes.set_ylabel("Fan Speed " + "(" + str(currfspd) + u"%)", fontsize=12, labelpad=10)
 
 	def updateLabelStats(self, i):
-		update_stats = ChartActionController.update_stats
-		if (update_stats):
+		if (ChartActionController.update_stats):
 			try:
-				curr_temp = NvidiaFanController.temp # grabs current temp
-				curr_fspd = NvidiaFanController.fanspeed # grabs current fspd
-
+				curr_temp = FanController.temp # grabs current temp
+				curr_fspd = FanController.fanspeed # grabs current fspd
 				# check to see if values are present
 				if not curr_temp or not curr_fspd: raise ValueError('Missing temp and/or fan speed')
-
 				# updates chart labels
-				Chart.setAxesLabels(curr_temp, curr_fspd)
+				self.setAxesLabels(curr_temp, curr_fspd)
 			except ValueError:
 				self.disableAppButtons()
-				ChartActionController.stopControllingGPU(nvidiaController, Chart.axes)
-				ErrorDialogBox(self.appWindow, "There was an error when attempting to read/set GPU statistics. Please make sure that you're using the proprietary Nvidia drivers and that they're currently in use. The current Nvidia driver in use is: {0}.".format(NvidiaFanController.drv_ver))
+				ChartActionController.stopControllingGPU(self.fanController, self.axes)
+				ErrorDialogBox(self.appWindow, "There was an error when attempting to read/set GPU stats. Please make sure that you're using the proprietary Nvidia drivers and that they're currently in use. The current Nvidia driver in use is: {0}.".format(self.fanController.getLoadedDriver()))
 
 if __name__ == '__main__':
 	print ('Please launch GUI')

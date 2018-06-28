@@ -1,23 +1,25 @@
 import gi
 gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk, GdkPixbuf, Gio, Gdk
+from gi.repository import Gtk
 
 
-# displays error dialog box
+# creates error dialog box
 class ErrorDialogBox():
 	def __init__(self, appWindow, message):
-		dialog = Gtk.MessageDialog(appWindow, 0, Gtk.MessageType.ERROR, Gtk.ButtonsType.CANCEL, "An Error Occured")
-		dialog.format_secondary_text(message)
-		dialog.run()
-		dialog.destroy()
+		dialog = Gtk.MessageDialog(appWindow, 0, Gtk.MessageType.ERROR, Gtk.ButtonsType.OK, "An Error Occured")
+		runDialogBox(dialog, message)
 
-# displays message dialog box
+# creates message dialog box
 class MessageDialogBox():
 	def __init__(self, appWindow, message):
 		dialog = Gtk.MessageDialog(appWindow, 0, Gtk.MessageType.INFO, Gtk.ButtonsType.OK, "Information")
-		dialog.format_secondary_text(message)
-		dialog.run()
-		dialog.destroy()
+		runDialogBox(dialog, message)
+
+# displays/closes dialog box
+def runDialogBox(dialog, message):
+	dialog.format_secondary_text(message)
+	dialog.run()
+	dialog.destroy()
 
 # attempts to open a config file
 class FileChooserBox():
@@ -32,9 +34,7 @@ class FileChooserBox():
 			 Gtk.STOCK_OPEN, Gtk.ResponseType.OK))
 
 		dialog.set_default_size(800, 400) # default window size
-
 		add_filters(dialog) # CSV file filters
-
 		response = dialog.run() # runs dialog that will return a response (OK/CANCEL)
 
 		# if resp = OK, sets class dir variable
@@ -53,9 +53,7 @@ class FileSaveBox():
 		dialog.set_default_size(800, 400) # default window size
 		add_filters(dialog) # file filters
 		Gtk.FileChooser.set_do_overwrite_confirmation(dialog, True) # if file already exists, show popup before saving
-
 		self.dir = None # current instance file dir variable
-
 		response = dialog.run() # runs dialog that will return a response (ACCEPT/CANCEL)
 
 		# if resp = ACCEPT, sets self.dir variable -- storing it to a class variable is unnecessary, esp. if user cancels

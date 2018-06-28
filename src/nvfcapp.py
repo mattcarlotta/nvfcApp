@@ -64,7 +64,7 @@ class GUI:
 
 		# GPU graph controller
 		self.graph = self.builder.get_object('graphBox')
-		Chart(self.appWindow, self.graph, self.disable_app_buttons)
+		self.chart = Chart(self.appWindow, self.graph, self.disable_app_buttons)
 		self.chartsvg = GdkPixbuf.Pixbuf.new_from_file_at_scale("/home/m6d/Documents/nvfcApp/chart_512x512.png", 32, 32, True)
 		self.chartIcon = Gtk.Image()
 		self.chartIcon.set_from_pixbuf(self.chartsvg)
@@ -114,8 +114,8 @@ class GUI:
 		self.curve_button_options(arr1, True)
 		self.curve_button_options(arr2, False)
 
-	def on_nvfcApp_destroy(s=None, w=None, d=None):
-		Chart.close()
+	def on_nvfcApp_destroy(self, *args, **kwargs):
+		self.chart.close()
 		Gtk.main_quit()
 
 	def on_nvfcAbout_delete_event(self, widget, data):
@@ -126,27 +126,27 @@ class GUI:
 		self.aboutWindow.run()
 
 	def on_applyButton_clicked(self, widget):
-		Chart.handleApplyData(self.appWindow)
+		self.chart.handleApplyData()
 
 	def on_disableButton_clicked(self, widget):
 		self.disable_curve_buttons()
-		Chart.handleDisableGPUControl(self.appWindow)
+		self.chart.handleDisableGPUControl()
 
 	def on_fileButton_activate(self, widget):
 		self.on_nvfcApp_destroy()
 
 	def on_enableButton_clicked(self, widget):
 		self.enable_curve_buttons()
-		Chart.handleEnableGPUControl(self.appWindow)
+		self.chart.handleEnableGPUControl()
 
 	def on_openButton_clicked(self, widget):
-		Chart.handleOpenFile(self.appWindow)
+		self.chart.handleOpenFile()
 
 	def on_resetButton_clicked(self, widget):
-		Chart.handleDataReset(self.appWindow)
+		self.chart.handleDataReset()
 
 	def on_saveButton_clicked(self, widget):
-		Chart.handleSaveToFile(self.appWindow)
+		self.chart.handleSaveToFile()
 
 	def on_quitButton_clicked(self, widget):
 		self.on_nvfcApp_destroy()

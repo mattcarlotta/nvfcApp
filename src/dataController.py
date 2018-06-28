@@ -23,11 +23,14 @@ class DataController(object):
 		invalid = self.validateData(xdata, ydata) # checks if temp and speed are growing exponentially
 		return False if invalid else True # return false if curve is invalid, else return true
 
+	# shows error disalog box
+	def showError(self, message): ErrorDialogBox(self.appWindow, message)
+
 	# verifies x,y coords, if invalid, returns true else false
 	def validateData(self, xdata, ydata):
 		# checks if curve has been supplied 24 points
 		if len(xdata) != 12 or len(ydata) != 12:
-			ErrorDialogBox(self.appWindow, "Invalid curve. The curve must have 12 temperature and 12 fan speed points. Instead, received: {0}.".format(len(xdata) + len(ydata)))
+			self.showError("Invalid curve. The curve must have 12 temperature and 12 fan speed points. Instead, received: {0}.".format(len(xdata) + len(ydata)))
 			return True
 
 		# first and last point's [temp,fspd] must be: [0, 10] and [100, 100]
@@ -38,11 +41,11 @@ class DataController(object):
 			[ ydata[len(ydata) - 1], 100, 'speed (y-value)', 'last' ] # fspd [100, x] = 100
 		]:
 			if args[0] != args[1]:
-				ErrorDialogBox(self.appWindow, "Invalid curve. The {0} point's {1} must be {2}, instead it was {3}.".format(args[3], args[2], args[1], args[0]))
+				self.showError("Invalid curve. The {0} point's {1} must be {2}, instead it was {3}.".format(args[3], args[2], args[1], args[0]))
 				return True
 
 		# curve must increasing across x,y planes
 		for index in range(1, len(xdata)):
 			if xdata[index] <= xdata[index - 1] or ydata[index] <= ydata[index - 1]:
-				ErrorDialogBox(self.appWindow, "Invalid curve configuration. The curve must be growing linearly or exponentially.")
+				self.showError("Invalid curve configuration. The curve must be growing linearly or exponentially.")
 				return True
