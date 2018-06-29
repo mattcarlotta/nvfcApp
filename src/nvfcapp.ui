@@ -17,7 +17,7 @@
     <child>
       <object class="GtkBox" id="systemInfoContainer">
         <property name="width_request">390</property>
-        <property name="height_request">200</property>
+        <property name="height_request">220</property>
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <property name="border_width">5</property>
@@ -247,7 +247,7 @@
     <child>
       <object class="GtkBox" id="gpuInfoContainer">
         <property name="width_request">390</property>
-        <property name="height_request">200</property>
+        <property name="height_request">220</property>
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <property name="border_width">5</property>
@@ -306,60 +306,6 @@
               </packing>
             </child>
             <child>
-              <object class="GtkLabel" id="pciBwLabel">
-                <property name="width_request">150</property>
-                <property name="height_request">20</property>
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="label" translatable="yes">PCI Bandwidth:</property>
-                <property name="justify">right</property>
-                <property name="xalign">0.95999997854232788</property>
-                <attributes>
-                  <attribute name="font-desc" value="Sans 10"/>
-                </attributes>
-              </object>
-              <packing>
-                <property name="left_attach">0</property>
-                <property name="top_attach">4</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkLabel" id="totalMemLabel">
-                <property name="width_request">150</property>
-                <property name="height_request">20</property>
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="label" translatable="yes">Total Memory:</property>
-                <property name="justify">right</property>
-                <property name="xalign">0.95999997854232788</property>
-                <attributes>
-                  <attribute name="font-desc" value="Sans 10"/>
-                </attributes>
-              </object>
-              <packing>
-                <property name="left_attach">0</property>
-                <property name="top_attach">3</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkLabel" id="vbiosLabel">
-                <property name="width_request">150</property>
-                <property name="height_request">20</property>
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="label" translatable="yes">VBIOS Version:</property>
-                <property name="justify">right</property>
-                <property name="xalign">0.95999997854232788</property>
-                <attributes>
-                  <attribute name="font-desc" value="Sans 10"/>
-                </attributes>
-              </object>
-              <packing>
-                <property name="left_attach">0</property>
-                <property name="top_attach">2</property>
-              </packing>
-            </child>
-            <child>
               <object class="GtkLabel" id="driverLabel">
                 <property name="width_request">150</property>
                 <property name="height_request">20</property>
@@ -408,19 +354,20 @@
               </packing>
             </child>
             <child>
-              <object class="GtkLabel" id="userVbiosLabel">
+              <object class="GtkLabel" id="totalMemLabel">
                 <property name="width_request">150</property>
                 <property name="height_request">20</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="label" translatable="yes">N/A</property>
-                <property name="xalign">0</property>
+                <property name="label" translatable="yes">Total Memory:</property>
+                <property name="justify">right</property>
+                <property name="xalign">0.95999997854232788</property>
                 <attributes>
-                  <attribute name="style" value="italic"/>
+                  <attribute name="font-desc" value="Sans 10"/>
                 </attributes>
               </object>
               <packing>
-                <property name="left_attach">1</property>
+                <property name="left_attach">0</property>
                 <property name="top_attach">2</property>
               </packing>
             </child>
@@ -438,11 +385,93 @@
               </object>
               <packing>
                 <property name="left_attach">1</property>
+                <property name="top_attach">2</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="pciBwLabel">
+                <property name="width_request">150</property>
+                <property name="height_request">20</property>
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">PCI Bandwidth:</property>
+                <property name="justify">right</property>
+                <property name="xalign">0.95999997854232788</property>
+                <attributes>
+                  <attribute name="font-desc" value="Sans 10"/>
+                </attributes>
+              </object>
+              <packing>
+                <property name="left_attach">0</property>
                 <property name="top_attach">3</property>
               </packing>
             </child>
             <child>
               <object class="GtkLabel" id="userPciBwLabel">
+                <property name="width_request">150</property>
+                <property name="height_request">20</property>
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">N/A</property>
+                <property name="xalign">0</property>
+                <attributes>
+                  <attribute name="style" value="italic"/>
+                </attributes>
+              </object>
+              <packing>
+                <property name="left_attach">1</property>
+                <property name="top_attach">3</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="pwrDraLabel">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">Max Power Draw:</property>
+                <property name="xalign">0.95999997854232788</property>
+                <attributes>
+                  <attribute name="font-desc" value="Sans 10"/>
+                </attributes>
+              </object>
+              <packing>
+                <property name="left_attach">0</property>
+                <property name="top_attach">5</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="userPwrDrawLabel">
+                <property name="width_request">150</property>
+                <property name="height_request">20</property>
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">N/A</property>
+                <property name="xalign">0</property>
+                <attributes>
+                  <attribute name="style" value="italic"/>
+                </attributes>
+              </object>
+              <packing>
+                <property name="left_attach">1</property>
+                <property name="top_attach">5</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="maxClocksLabel">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">Max Clock:</property>
+                <property name="xalign">0.95999997854232788</property>
+                <attributes>
+                  <attribute name="font-desc" value="Sans 10"/>
+                </attributes>
+              </object>
+              <packing>
+                <property name="left_attach">0</property>
+                <property name="top_attach">4</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="userMaxClockLabel">
                 <property name="width_request">150</property>
                 <property name="height_request">20</property>
                 <property name="visible">True</property>
@@ -508,12 +537,67 @@
           </packing>
         </child>
         <child>
-          <object class="GtkBox" id="gpuUtilBox">
+          <object class="GtkBox" id="gpuUtilContainer">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="orientation">vertical</property>
             <child>
-              <placeholder/>
+              <object class="GtkBox" id="gpuUsageBox">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="orientation">vertical</property>
+                <child>
+                  <placeholder/>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkGrid">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <child>
+                  <object class="GtkBox" id="gpuClockBox">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="hexpand">True</property>
+                    <property name="vexpand">True</property>
+                    <property name="orientation">vertical</property>
+                    <child>
+                      <placeholder/>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="left_attach">0</property>
+                    <property name="top_attach">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkBox" id="gpuMemBox">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="hexpand">True</property>
+                    <property name="vexpand">True</property>
+                    <property name="orientation">vertical</property>
+                    <child>
+                      <placeholder/>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="left_attach">1</property>
+                    <property name="top_attach">0</property>
+                  </packing>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
             </child>
           </object>
           <packing>
@@ -565,12 +649,54 @@
           </packing>
         </child>
         <child>
-          <object class="GtkBox" id="gpuStatBox">
+          <object class="GtkBox" id="gpuStatContainer">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="orientation">vertical</property>
             <child>
-              <placeholder/>
+              <object class="GtkBox" id="gpuTempBox">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="orientation">vertical</property>
+                <child>
+                  <placeholder/>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkBox" id="gpuFspdBox">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="orientation">vertical</property>
+                <child>
+                  <placeholder/>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkBox" id="gpuPowerBox">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="orientation">vertical</property>
+                <child>
+                  <placeholder/>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">2</property>
+              </packing>
             </child>
           </object>
           <packing>

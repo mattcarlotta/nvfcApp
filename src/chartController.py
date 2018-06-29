@@ -68,7 +68,7 @@ class Chart():
 	# closes Chart and stops GPU updating
 	def close(self):
 		plt.close('all')
-		self.fanController.stopUpdates()
+		self.fanController.stop()
 
 	# applies Chart's current curve data
 	def handleApplyData(self):

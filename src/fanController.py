@@ -13,11 +13,11 @@ class FanController(StoppableThread):
 
 	def __init__(self, xdata, ydata):
 		super().__init__()
-		self.lock = threading.Lock() # intialize a lock object (allows more control over self.run() updates)
 		self.drv_ver = self.getDriverVersion() # sets current driver version
 		self.drv_ver_change = 352.09 # from this version on, we need to use a different method to change fan speed
 		self.drv_ver_regressions = [349.16, 349.12] # can't control fan speed in these driver versions
 		self.old_fspd = 0 # initialize an old fanspeed for later comparison
+		self.pause_updates = False # enable/disable updating GPU fspd
 		self.curve = Curve(xdata, ydata) #[[temp0, temp1, temp2], [speed0, speed1, speed2]]
 
 	# resets fan control back to driver
@@ -37,7 +37,7 @@ class FanController(StoppableThread):
 	def getLoadedDriver(self): return self.drv_ver
 
 	# grabs current temp
-	def getTemp(self):
+	def getTemp(self=None):
 		try:
 			curr_temp = check_output("nvidia-smi --query-gpu=temperature.gpu --format=csv,noheader", shell=True)
 			return int(curr_temp)
@@ -45,10 +45,10 @@ class FanController(StoppableThread):
 			return None
 
 	# pauses "run" loop
-	def pause(self): self.lock.acquire() # locks the thread (blocking any calls to acquire it)
+	def pause(self): self.pause_updates = True
 
 	# resumes "run" loop
-	def resume(self): self.lock.release() # unlocks the thread (unblocking any calls to acquire it)
+	def resume(self): self.pause_updates = False
 
 	# resets old fanspeed to 0 to intiate an update
 	def resetFanControl(self): self.old_fspd = 0
@@ -56,12 +56,12 @@ class FanController(StoppableThread):
 	# if app is running, control GPU fan
 	def run(self):
 		while(self.running()):
-			self.lock.acquire() # locks the thread (if thread is already locked, skips try)
-			try:
+			if (self.pause_updates):
+				time.sleep(1.0)
+				continue # pause loop to update curve points or disable chart
+			else:
 				self.updateFan() # update fan if needed
-				self.lock.release() # releases the thread
-			except: pass # sometimes self.lock.release triggers runtime error if stopped prematurely
-			finally: time.sleep(1.0) # sleeps for 1s
+				time.sleep(1.0)
 
 		# if thread is stopped, exit app and reset GPU to auto
 		self.disableFanControl()
@@ -73,12 +73,6 @@ class FanController(StoppableThread):
 	def setFanSpeed(self, speed):
 		gpuString = 'Target' if self.drv_ver >= self.drv_ver_change else 'Current' # dvr vers > 352.09 (use GPUTargetFanSpeed else GPUCurrentFanSpeed)
 		Popen("nvidia-settings -a [gpu:0]/GPUFanControlState=1 -a [fan:0]/GPU{0}FanSpeed={1}".format(gpuString, speed), shell=True, stdin=PIPE, stdout=PIPE)
-
-	# stops any locked event threading
-	def stopUpdates(self):
-		self.stop() # stops thread
-		self.lock.acquire(False) # override and unlock any thread blocking
-		self.lock.release() # release the thread to be stopped
 
 	# updates temp and fanspeed only on temp change or applied curve updates
 	def updateFan(self):
