@@ -23,8 +23,7 @@ class SystemInformation():
 			100,
 			'%',
 			[16,12],
-			[300, 275],
-			100
+			[300, 275]
 		)
 		self.gpuUtil2 = DonutChart(
 			self.builder.get_object("gpuClockBox"),
@@ -35,8 +34,7 @@ class SystemInformation():
 			int(self.gpuInfo[4].replace("MHz", '')),
 			'MHz',
 			[12,10],
-			[150, 170],
-			200
+			[150, 170]
 		)
 		self.gpuUtil3 = DonutChart(
 			self.builder.get_object("gpuMemBox"),
@@ -47,8 +45,7 @@ class SystemInformation():
 			int(self.gpuInfo[2].replace("MiB", '')),
 			'MiB',
 			[12,10],
-			[150, 170],
-			300
+			[150, 170]
 		)
 		self.gpuStat1 = DonutChart(
 			self.builder.get_object("gpuTempBox"),
@@ -59,8 +56,7 @@ class SystemInformation():
 			100,
 			'°C',
 			[14,10],
-			[300, 150],
-			400
+			[300, 150]
 		)
 		self.gpuStat2 = DonutChart(
 			self.builder.get_object("gpuTempBox"),
@@ -71,8 +67,7 @@ class SystemInformation():
 			100,
 			'%',
 			[14,10],
-			[300, 150],
-			500
+			[300, 150]
 		)
 		self.gpuStat3 = DonutChart(
 			self.builder.get_object("gpuPowerBox"),
@@ -83,8 +78,7 @@ class SystemInformation():
 			float(self.gpuInfo[5].replace("W", '')),
 			'W',
 			[14,10],
-			[300, 150],
-			600
+			[300, 150]
 		)
 
 	def getClock(self):
