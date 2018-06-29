@@ -23,9 +23,9 @@ class Chart():
 		self.chartActions = ChartActionController(self) # an instance of chart actions
 		self.x_values, self.y_values = self.chartActions.initChartValues() # intialize x and y curve values
 
-		self.fig = self.plt.figure(num="Fan Controller", figsize=(12, 9)) # add plt.figure instance
+		self.fig = self.plt.figure(num="Fan Controller", figsize=(12, 9), facecolor='white') # add plt.figure instance
 		self.fig.subplots_adjust(left=0.11, bottom=0.15, right=0.94, top=0.89, wspace=0.2, hspace=0) # adjusts Chart's window
-		self.axes = self.fig.add_subplot(1,1,1) # add a subplot instance to the figure
+		self.axes = self.fig.add_subplot(111) # add a subplot instance to the figure
 		self.canvas = FigureCanvas(self.fig) # add fig instance to a figure canvas
 		self.canvas.set_size_request(800, 700) # set default canvas height (req'd for displaying the chart)
 
@@ -53,7 +53,6 @@ class Chart():
 		self.axes.set_title("Fan Controller", fontsize=16) # Chart's title
 		for axis in ['bottom','left', 'top', 'right']: self.axes.spines[axis].set_color('0.1') # adds spines to x and y axes
 		self.plt.setp(self.axes.spines.values(), linewidth=0.2) # sets both spines' line widths
-		self.fig.patch.set_fc('white') # sets background color
 
 		# creates curve w/ options: color=blue, s=squares, picker=max distance for selection
 		self.line, = self.axes.plot(self.x_values, self.y_values, linestyle='-',  marker='s', markersize=4.5, color='b', picker=5, linewidth=1.5)

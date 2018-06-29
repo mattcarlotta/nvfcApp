@@ -19,6 +19,7 @@
 import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, GdkPixbuf, Gio, Gdk
+import matplotlib.pyplot as plt
 from subprocess import *
 import signal
 import sys
@@ -117,6 +118,7 @@ class GUI:
 
 	def on_nvfcApp_destroy(self, *args, **kwargs):
 		self.chart.close()
+		# plt.close('all')
 		Gtk.main_quit()
 
 	def on_nvfcAbout_delete_event(self, widget, data):

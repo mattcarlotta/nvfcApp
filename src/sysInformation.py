@@ -1,7 +1,7 @@
 import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
-import matplotlib.pyplot as plt
+import matplotlib.pylab as plt
 from matplotlib import animation, style
 from subprocess import check_output
 import math
@@ -13,7 +13,9 @@ class SystemInformation():
 		self.builder = builder
 		self.systemInfo()
 		self.gpuInfo()
-		self.pieChart = DonutChart(self.builder.get_object("gpuUtilBox"))
+		self.gpuStat1 = DonutChart(self.builder.get_object("gpuUtilBox"))
+		self.gpuStat2 = DonutChart(self.builder.get_object("gpuStatBox"))
+
 
 	def getGPUInfo(self):
 		gpuInfo = check_output(
