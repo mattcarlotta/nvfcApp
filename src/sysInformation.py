@@ -3,16 +3,17 @@ gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
 import matplotlib.pyplot as plt
 from matplotlib import animation, style
-from matplotlib.backends.backend_gtk3cairo import FigureCanvasGTK3Cairo as FigureCanvas
 from subprocess import check_output
 import math
 import re
+from donutChartController import DonutChart
 
 class SystemInformation():
 	def __init__(self, builder):
 		self.builder = builder
 		self.systemInfo()
 		self.gpuInfo()
+		self.pieChart = DonutChart(self.builder.get_object("gpuUtilBox"))
 
 	def getGPUInfo(self):
 		gpuInfo = check_output(

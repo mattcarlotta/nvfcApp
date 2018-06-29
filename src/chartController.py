@@ -27,7 +27,7 @@ class Chart():
 		self.fig.subplots_adjust(left=0.11, bottom=0.15, right=0.94, top=0.89, wspace=0.2, hspace=0) # adjusts Chart's window
 		self.axes = self.fig.add_subplot(1,1,1) # add a subplot instance to the figure
 		self.canvas = FigureCanvas(self.fig) # add fig instance to a figure canvas
-		self.canvas.set_size_request(800, 600) # set default canvas height (req'd for displaying the chart)
+		self.canvas.set_size_request(800, 700) # set default canvas height (req'd for displaying the chart)
 
 		# appends the figure => to the graphBox => to the notebook
 		parent.graph.add(self.canvas)
