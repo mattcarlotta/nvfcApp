@@ -1059,7 +1059,7 @@
 See the &lt;a href="https://www.gnu.org/licenses/gpl-3.0.html"&gt;GNU General Public License, version 3 or later&lt;/a&gt; for details.</property>
     <property name="authors">Matt Carlotta
 </property>
-    <property name="logo">../nvfcApp_128x128.png</property>
+    <property name="logo">./nvfcApp_128x128.png</property>
     <property name="wrap_license">True</property>
     <property name="license_type">gpl-3-0</property>
     <signal name="delete-event" handler="on_nvfcAbout_delete_event" swapped="no"/>

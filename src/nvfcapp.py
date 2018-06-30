@@ -23,27 +23,31 @@ import matplotlib.pyplot as plt
 from subprocess import *
 import signal
 import sys
+from os import path
 from chartController import Chart
 from sysInformation import SystemInformation
-# from styleProvider import styles
-# styles()
+
+# import external files
+def resource_path(relative_path):
+    try:
+        # PyInstaller creates a temp folder and stores path in _MEIPASS
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = path.abspath(".")
+
+    return path.join(base_path, relative_path)
 
 #Comment the first line and uncomment the second before installing
 #or making the tarball (alternatively, use project variables)
-APP_WINDOW = "nvfcapp.ui"
 #APP_WINDOW= "/usr/local/share/nvfcapp/ui/nvfcapp.ui"
-CHART_ICON = "chart_512x512.png"
-INFO_ICON = "info_512x512.png"
+APP_WINDOW = resource_path('nvfcapp.ui')
+CHART_ICON = resource_path('chart_32x32.png')
+INFO_ICON = resource_path('info_32x32.png')
 
 class GUI:
 	def __init__(self):
 		self.builder = Gtk.Builder()
-
-		try:
-			self.builder.add_from_file(APP_WINDOW)
-		except:
-			self.builder.add_from_file("src/{0}".format(APP_WINDOW))
-
+		self.builder.add_from_file(APP_WINDOW)
 		self.builder.connect_signals(self)
 
 		# main application window
@@ -70,10 +74,7 @@ class GUI:
 		# self.chart = Chart(self.appWindow, self.graph, self.disable_app_buttons)
 		self.chart = Chart(self)
 
-		try:
-			self.chartImg = GdkPixbuf.Pixbuf.new_from_file_at_scale(CHART_ICON)
-		except:
-			self.chartImg = GdkPixbuf.Pixbuf.new_from_file_at_scale("/home/m6d/Documents/nvfcApp/{0}".format(CHART_ICON), 32, 32, True)
+		self.chartImg = GdkPixbuf.Pixbuf.new_from_file_at_scale(CHART_ICON, 32, 32, True)
 
 		self.chartIcon = Gtk.Image()
 		self.chartIcon.set_from_pixbuf(self.chartImg)
@@ -89,10 +90,7 @@ class GUI:
 
 		else: self.showgpuInfo = self.nogpuInfo
 
-		try:
-			self.infoImg = GdkPixbuf.Pixbuf.new_from_file_at_scale(INFO_ICON, 32, 32, True)
-		except:
-			self.infoImg = GdkPixbuf.Pixbuf.new_from_file_at_scale("/home/m6d/Documents/nvfcApp/{0}".format(INFO_ICON), 32, 32, True)
+		self.infoImg = GdkPixbuf.Pixbuf.new_from_file_at_scale(INFO_ICON, 32, 32, True)
 
 		self.infoIcon = Gtk.Image()
 		self.infoIcon.set_from_pixbuf(self.infoImg)
@@ -129,7 +127,6 @@ class GUI:
 
 	def on_nvfcApp_destroy(self, *args, **kwargs):
 		self.chart.close()
-		# plt.close('all')
 		Gtk.main_quit()
 
 	def on_nvfcAbout_delete_event(self, widget, data):
@@ -164,6 +161,7 @@ class GUI:
 
 	def on_quitButton_clicked(self, widget):
 		self.on_nvfcApp_destroy()
+
 
 def main():
 	app = GUI()
