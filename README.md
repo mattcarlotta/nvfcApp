@@ -1,5 +1,5 @@
 # Nvidia GPU Fan Controller (nvfcApp)
-a GTK3 (v3.18) application that creates a modifiable 2D curve of [temp, fanspeed] points that automatically control a Nvidia GPU's fan speed according to the GPU's temp within a Linux environment.
+a GTK3 (v3.18) application that creates a modifiable 2D curve of [temp, fanspeed] points that automatically controls a Nvidia GPU's fan speed according to the GPU's temp within a Linux environment.
 
 ![nvfc.png](https://code.mattcarlotta.io/root/nvfcApp/raw/development/nvfcApp_512x512.png)
 
