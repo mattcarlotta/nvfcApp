@@ -39,6 +39,14 @@ a GTK3 (v3.18) application that creates a modifiable 2D curve of [temp, fanspeed
 * Temperature - Current GPU temperature (°C)
 * Fan Speed - Current GPU fan speed (%)
 
+## GPU Utilization and Statistics Updates
+
+* Clock - Current GPU shader clock (MHz)
+* Load - Current GPU load (%)
+* Fan Speed - Current GPU fan speed (%)
+* Memory - Current GPU memory usage (MiB)
+* Power - Current GPU power draw (W)
+* Temperature - Current GPU temperature (°C)
 
 ## Notes
 ⚠️ On start up, this application only looks for a `default.csv` file within the application's directory. If missing, it'll load a pre-configured curve.
