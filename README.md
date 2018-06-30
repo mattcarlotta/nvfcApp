@@ -21,7 +21,7 @@ a GTK3 (v3.18) application that creates a modifiable 2D curve of [temp, fanspeed
   `sudo nvidia-xconfig --enable-all-gpus` and `sudo nvidia-xconfig --cool-bits=28`
 * Reboot your computer for the GPU settings to take effect:  
   `sudo reboot`
-* Open a terminal in the folder containing nvfc.py, then execute:  
+* Open a terminal in the folder containing nvfcapp.py, then execute:  
   `python3 nvfcapp.py`
 
 ## Button Actions
