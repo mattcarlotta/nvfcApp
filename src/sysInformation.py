@@ -73,7 +73,7 @@ class SystemInformation():
 			self.builder.get_object("gpuPowerBox"),
 			[1.3, 0.1],
 			self.getFanSpeed,
-			'draw',
+			'power',
 			[0.512, 0.420],
 			float(self.gpuInfo[5].replace("W", '')),
 			'W',
