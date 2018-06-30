@@ -61,14 +61,14 @@ class Chart():
 		self.dragHandler = DragHandler(self, self.appWindow) # handles the mouse clicks on the curve
 		self.dataController = DataController(self.appWindow, self.x_values, self.y_values) # handles updating curve data
 
-		# starts a stoppable thread (loop that looks for temp changes and updates accordingly)
+		# initializes and starts a stoppable thread (loop that looks for temp changes and updates accordingly)
 		self.fanController = FanController(self.x_values, self.y_values)
 		self.fanController.start()
 
 	# closes Chart and stops GPU updating
 	def close(self):
-		plt.close('all')
-		self.fanController.stopUpdates()
+		plt.close('all') # closes all matplotlib figures
+		self.fanController.stopUpdates() # stops fancontroller and resets GPU control
 
 	# applies Chart's current curve data
 	def handleApplyData(self):
@@ -76,20 +76,20 @@ class Chart():
 
 	# handles GPU control disabling
 	def handleDisableGPUControl(self):
-		self.setLabelColor('grey', 'grey') # sets label colors
+		self.setLabelColor('grey', 'grey') # sets label and line colors
 		self.setAxesLabels(0,0) # 0's GPU stats
 		self.chartActions.setUpdateStats() # stops live GPU updates
-		self.fanController.pause()
-		self.fanController.disableFanControl()
+		self.fanController.pause() # pauses fancontroller run loop
+		self.fanController.disableFanControl() # resets gpu fspd to 0 to hand off control to driver
 		self.dragHandler.setDragControl() # disables dragging curve points
 		MessageDialogBox(self.appWindow, "Disabled GPU fan control.")
 
 	# handles GPU control enabling
 	def handleEnableGPUControl(self):
-		self.setLabelColor('black', 'blue')
+		self.setLabelColor('black', 'blue') # sets label and line colors
 		self.chartActions.setUpdateStats() # enables live GPU updates
-		self.fanController.resume()
-		self.fanController.resetFanControl()
+		self.fanController.resume() # resumes fancontroller run loop
+		self.fanController.resetFanControl() # resets old_fspd to 0 to initiate an update
 		self.dragHandler.setDragControl() # allows curve points to be dragged
 		MessageDialogBox(self.appWindow, "Enabled GPU fan control.")
 
@@ -106,26 +106,26 @@ class Chart():
 
 	# updates Chart's label colors (enabled / disabled)
 	def setLabelColor(self, c1, c2):
-		self.axes.title.set_color(c1)
-		self.axes.xaxis.label.set_color(c1)
-		self.axes.yaxis.label.set_color(c1)
-		self.plt.setp(self.line, color=c2)
+		self.axes.title.set_color(c1) # sets title color
+		self.axes.xaxis.label.set_color(c1) # sets xlabel color
+		self.axes.yaxis.label.set_color(c1) # sets ylabel color
+		self.plt.setp(self.line, color=c2) # sets line color
 
 	# updates Chart's GPU stats axes labels
 	def setAxesLabels(self, currtmp, currfspd):
-		self.axes.set_xlabel("Temperature "+ "(" + str(currtmp) + u"°C)", fontsize=12, labelpad=20)
-		self.axes.set_ylabel("Fan Speed " + "(" + str(currfspd) + u"%)", fontsize=12, labelpad=10)
+		self.axes.set_xlabel("Temperature "+ "(" + str(currtmp) + u"°C)", fontsize=12, labelpad=20) # sets chart xlabel
+		self.axes.set_ylabel("Fan Speed " + "(" + str(currfspd) + u"%)", fontsize=12, labelpad=10) # sets chart ylabel
 
 	def updateLabelStats(self, i):
 		if (self.chartActions.getUpdatesState()):
 			try:
-				curr_temp = FanController.temp # grabs current temp
-				curr_fspd = FanController.fanspeed # grabs current fspd
+				curr_temp = self.fanController.getCurrentTemp() # grabs current temp
+				curr_fspd = self.fanController.getCurrentFspd() # grabs current fspd
 				if not curr_temp or not curr_fspd: raise ValueError('Missing temp and/or fan speed') # see if values are present
 				self.setAxesLabels(curr_temp, curr_fspd) # updates chart labels
 			except ValueError:
-				self.disableAppButtons()
-				self.chartActions.stopControllingGPU(self.fanController, self.axes)
+				self.disableAppButtons() # disables app menu icons
+				self.chartActions.stopControllingGPU(self.fanController, self.axes) # disables chart
 				ErrorDialogBox(self.appWindow, "There was an error when attempting to read/set GPU stats. Please make sure that you're using the proprietary Nvidia drivers and that they're currently in use. The current Nvidia driver in use is: {0}.".format(self.fanController.getLoadedDriver()))
 
 if __name__ == '__main__':

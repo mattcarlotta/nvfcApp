@@ -11,7 +11,7 @@ class DonutChart():
 		self.supTitle = args[3] # supertitle's title
 		self.supXPos, self.supYPos = args[4] # supertitle x and y pos
 		self.stat = self.getStat() # grabs current stat number
-		self.old_stat = 0
+		self.old_stat = 0 # initialize a compare variable to avoid unnecessary redraws
 		self.maxStat = args[5] # max range of donut
 		self.statType = args[6] # type of stat (%, Mib, MHz, W)
 		self.statFontSize, self.supFontSize = args[7] # stat and supertitle font sizes
@@ -37,9 +37,12 @@ class DonutChart():
 
 	def update(self, i):
 		self.stat = self.getStat() # function that returns up-to-date stat
-		if self.stat != self.old_stat: # rerenders donut if the stat has changed, otherwise no update 
+		if self.stat != self.old_stat: # rerenders donut if the stat has changed, otherwise no update
 			self.ax.clear() # clears donut before rerendering -- otherwise it builds layers indefinitely
 			self.createAxis() # recreate axis
 			self.createDonut() # create new donut with new stat
 			self.fig.suptitle(self.supTitle, fontsize=self.supFontSize, x=self.supXPos, y=self.supYPos) # super chart title
 			self.old_stat = self.stat # updates old stat
+
+if __name__ == '__main__':
+	print ('Please launch GUI')

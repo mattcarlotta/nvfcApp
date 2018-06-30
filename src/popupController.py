@@ -71,3 +71,6 @@ def add_filters(dialog):
 	filter.set_name("CSV Files")
 	filter.add_mime_type("text/csv")
 	dialog.add_filter(filter)
+
+if __name__ == '__main__':
+	print ('Please launch GUI')

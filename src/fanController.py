@@ -6,23 +6,26 @@ from threadController import StoppableThread
 
 
 class FanController(StoppableThread):
-	""" Class Variables """
-	fanspeed = 0
-	temp = 0
-	""" --------------- """
-
 	def __init__(self, xdata, ydata):
 		super().__init__()
 		self.lock = threading.Lock() # intialize a lock object (allows more control over self.run() updates)
 		self.drv_ver = self.getDriverVersion() # sets current driver version
 		self.drv_ver_change = 352.09 # from this version on, we need to use a different method to change fan speed
 		self.drv_ver_regressions = [349.16, 349.12] # can't control fan speed in these driver versions
+		self.fspd = 0 # intialize fan speed variable
 		self.old_fspd = 0 # initialize an old fanspeed for later comparison
+		self.temp = 0 # initialize temp variable
 		self.curve = Curve(xdata, ydata) #[[temp0, temp1, temp2], [speed0, speed1, speed2]]
 
 	# resets fan control back to driver
 	def disableFanControl(self):
 		process = Popen("nvidia-settings -a [gpu:0]/GPUFanControlState=0", shell=True, stdin=PIPE, stdout=PIPE)
+
+	# returns stored temp
+	def getCurrentTemp(self): return self.temp
+
+	# returns stored fan speed
+	def getCurrentFspd(self): return self.fspd
 
 	# grabs the GPU driver as a string and returns a float
 	def getDriverVersion(self):
@@ -83,14 +86,14 @@ class FanController(StoppableThread):
 	# updates temp and fanspeed only on temp change or applied curve updates
 	def updateFan(self):
 		if self.drv_ver and not self.drv_ver in self.drv_ver_regressions: # driver version is present and valid
-			curr_temp = FanController.temp = self.getTemp() # get current GPU temp
-			curr_fspd = FanController.fanspeed = self.curve.evaluate(curr_temp) # set temp based upon curve fspd point
+			self.temp = self.getTemp() # get current GPU temp
+			self.fspd = self.curve.evaluate(self.temp) # set temp based upon curve fspd point
 			# checks if the current temp has changed from the stored temp
-			if (self.old_fspd != curr_fspd):
-				self.setFanSpeed(curr_fspd) # sets new fan speed according to curve points
-				self.old_fspd = curr_fspd  # updates an old fspd to compare against an incoming pssible new fspd
+			if (self.old_fspd != self.fspd):
+				self.setFanSpeed(self.fspd) # sets new fan speed according to curve points
+				self.old_fspd = self.fspd  # updates an old fspd to compare against an incoming pssible new fspd
 		# missing dvr vers or if dvr vers is 349.16 or 349.12, stops thread
 		else: self.stop()
 
-if __name__ == "__main__":
-	print ("Please launch nvda-contrl.py")
+if __name__ == '__main__':
+	print ('Please launch GUI')

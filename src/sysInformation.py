@@ -14,6 +14,7 @@ class SystemInformation():
 		self.builder = builder
 		self.systemInfo()
 		self.gpuInfo()
+		# GPU utilization (load)
 		self.gpuUtil1 = DonutChart(
 			self.builder.get_object("gpuUsageBox"),
 			[1.4, 0.15],
@@ -23,8 +24,9 @@ class SystemInformation():
 			100,
 			'%',
 			[16,12],
-			[300, 275]
+			[300, 280]
 		)
+		# GPU clock
 		self.gpuUtil2 = DonutChart(
 			self.builder.get_object("gpuClockBox"),
 			[1.3, 0.1],
@@ -34,8 +36,9 @@ class SystemInformation():
 			int(self.gpuInfo[4].replace("MHz", '')),
 			'MHz',
 			[12,10],
-			[150, 170]
+			[150, 175]
 		)
+		# GPU memory
 		self.gpuUtil3 = DonutChart(
 			self.builder.get_object("gpuMemBox"),
 			[1.3, 0.1],
@@ -45,8 +48,9 @@ class SystemInformation():
 			int(self.gpuInfo[2].replace("MiB", '')),
 			'MiB',
 			[12,10],
-			[150, 170]
+			[150, 175]
 		)
+		# GPU temperature
 		self.gpuStat1 = DonutChart(
 			self.builder.get_object("gpuTempBox"),
 			[1.3, 0.1],
@@ -58,8 +62,9 @@ class SystemInformation():
 			[14,10],
 			[300, 150]
 		)
+		# GPU fan speed
 		self.gpuStat2 = DonutChart(
-			self.builder.get_object("gpuTempBox"),
+			self.builder.get_object("gpuFspdBox"),
 			[1.3, 0.1],
 			self.getFanSpeed,
 			'fan',
@@ -69,6 +74,7 @@ class SystemInformation():
 			[14,10],
 			[300, 150]
 		)
+		# GPU power draw
 		self.gpuStat3 = DonutChart(
 			self.builder.get_object("gpuPowerBox"),
 			[1.3, 0.1],
@@ -81,6 +87,7 @@ class SystemInformation():
 			[300, 150]
 		)
 
+	# grabs current clock speed
 	def getClock(self):
 		try:
 			curr_clock = check_output("nvidia-smi --query-gpu=clocks.current.graphics --format=csv,noheader | sed 's/[^0-9]*//g'", shell=True).decode('utf8')
@@ -96,6 +103,7 @@ class SystemInformation():
 		except:
 			return 0
 
+	# grabs current power draw
 	def getPower(self):
 		try:
 			power_draw = check_output("nvidia-smi --query-gpu=power.draw --format=csv | awk 'NR>1' | sed 's/[^0-9.]*//g'", shell=True).decode('utf8')
@@ -111,6 +119,7 @@ class SystemInformation():
 		except:
 			return 0
 
+	# grabs current graphics usage
 	def getUtilization(self):
 		try:
 			gpu_util = check_output("nvidia-smi --query-gpu=utilization.gpu --format=csv | awk 'NR>1' |  sed 's/[^0-9]*//g;'", shell=True).decode('utf8')
@@ -118,6 +127,7 @@ class SystemInformation():
 		except:
 			return 0
 
+	# grabs current memory usage
 	def getMem(self):
 		try:
 			mem_used = check_output("nvidia-smi --query-gpu=memory.used --format=csv | awk 'NR>1' | sed 's/[^0-9]*//g'", shell=True).decode('utf8')
@@ -125,6 +135,7 @@ class SystemInformation():
 		except:
 			return 0
 
+	# grabs processor, driver, total memory, pci link speed, max clock speed, and max power draw
 	def getGPUInfo(self):
 		try:
 			gpuInfo = check_output(
@@ -135,6 +146,7 @@ class SystemInformation():
 		except:
 			return 0
 
+	# grabs kernel and architecture
 	def getHostInfo(self):
 		try:
 			hostInfo = check_output("hostnamectl", shell=True).decode('utf-8')
@@ -142,6 +154,7 @@ class SystemInformation():
 		except:
 			return None
 
+	# grabs system info
 	def getSysInfo(self):
 		try:
 			with open("/etc/os-release") as f:
@@ -149,11 +162,11 @@ class SystemInformation():
 		except:
 			return None
 
-
+	# plots GPU labels
 	def plotGPULabels(self, arr):
 		for args in arr: self.setLabel(args[0], args[1])
 
-
+	# plot Sys labels
 	def plotSysLabels(self, arr, info):
 		for args in arr:
 			try:
@@ -162,10 +175,12 @@ class SystemInformation():
 			except:
 				continue
 
+	# sets labels
 	def setLabel(self, widget, res):
 		label = self.builder.get_object(widget)
 		label.set_markup("<i>{0}</i>".format(res))
 
+	# gets system info for labels
 	def systemInfo(self):
 		sysInfo = self.getSysInfo()
 		sysInfo += self.getHostInfo()
@@ -189,6 +204,7 @@ class SystemInformation():
 			]]
 			self.plotSysLabels(sysLabelArr, sysInfo)
 
+	# gets gpuinfo for labels
 	def gpuInfo(self):
 		self.gpuInfo = self.getGPUInfo()
 
@@ -202,11 +218,6 @@ class SystemInformation():
 				['userPwrDrawLabel', self.gpuInfo[5]]
 			]
 			self.plotGPULabels(gpuInfoLabelArr)
-
-
-	# closes Chart and stops GPU updating
-	def close():
-		plt.close('all')
 
 if __name__ == '__main__':
 	print ('Please launch GUI')

@@ -49,3 +49,6 @@ class DataController(object):
 			if xdata[index] <= xdata[index - 1] or ydata[index] <= ydata[index - 1]:
 				self.showError("Invalid curve configuration. The curve must be growing linearly or exponentially.")
 				return True
+
+if __name__ == '__main__':
+	print ('Please launch GUI')

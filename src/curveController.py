@@ -34,3 +34,6 @@ class Curve():
 	def set(self, *args):
 		if len(args) == 1: self.curve = list(args[0]) # 1 arr with temp + speed : ([ ...temp], ...fspd])
 		if len(args) == 2: self.convertIntoMatrix(args[0], args[1]) # 2 arrs of temp & speed: ([...temp], [...fspd])
+
+if __name__ == '__main__':
+	print ('Please launch GUI')

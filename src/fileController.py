@@ -62,3 +62,6 @@ class FileController():
 			ErrorDialogBox(appWindow, "Failed to load the configuration file, {0}".format(error))
 			FileChooserBox.dir = None
 			return False, False
+
+if __name__ == '__main__':
+	print ('Please launch GUI')

@@ -13,3 +13,6 @@ class StoppableThread(threading.Thread):
 
 	# stops thread by setting it to false
 	def stop(self): self.event.clear()
+
+if __name__ == '__main__':
+	print ('Please launch GUI')

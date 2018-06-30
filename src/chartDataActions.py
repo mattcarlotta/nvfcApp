@@ -82,3 +82,6 @@ class ChartActionController():
 	# updates chart curve
 	def updateChart(self, fanController, xdata, ydata):
 		fanController.setCurve(xdata, ydata) # updates curve with new x and y data
+
+if __name__ == '__main__':
+	print ('Please launch GUI')

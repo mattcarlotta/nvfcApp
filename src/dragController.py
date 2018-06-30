@@ -48,3 +48,6 @@ class DragHandler(object):
 			self.chartObj.fig.canvas.draw()
 
 	def setDragControl(self): self.isActive = not self.isActive
+
+if __name__ == '__main__':
+	print ('Please launch GUI')
