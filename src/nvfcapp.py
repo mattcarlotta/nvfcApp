@@ -32,6 +32,8 @@ from sysInformation import SystemInformation
 #or making the tarball (alternatively, use project variables)
 APP_WINDOW = "nvfcapp.ui"
 #APP_WINDOW= "/usr/local/share/nvfcapp/ui/nvfcapp.ui"
+CHART_ICON = "chart_512x512.png"
+INFO_ICON = "info_512x512.png"
 
 class GUI:
 	def __init__(self):
@@ -40,7 +42,7 @@ class GUI:
 		try:
 			self.builder.add_from_file(APP_WINDOW)
 		except:
-			self.builder.add_from_file("src/" + APP_WINDOW)
+			self.builder.add_from_file("src/{0}".format(APP_WINDOW))
 
 		self.builder.connect_signals(self)
 
@@ -67,9 +69,14 @@ class GUI:
 		self.graph = self.builder.get_object('graphBox')
 		# self.chart = Chart(self.appWindow, self.graph, self.disable_app_buttons)
 		self.chart = Chart(self)
-		self.chartsvg = GdkPixbuf.Pixbuf.new_from_file_at_scale("/home/m6d/Documents/nvfcApp/chart_512x512.png", 32, 32, True)
+
+		try:
+			self.chartImg = GdkPixbuf.Pixbuf.new_from_file_at_scale(CHART_ICON)
+		except:
+			self.chartImg = GdkPixbuf.Pixbuf.new_from_file_at_scale("/home/m6d/Documents/nvfcApp/{0}".format(CHART_ICON), 32, 32, True)
+
 		self.chartIcon = Gtk.Image()
-		self.chartIcon.set_from_pixbuf(self.chartsvg)
+		self.chartIcon.set_from_pixbuf(self.chartImg)
 		self.notebook.append_page(self.graph, self.chartIcon)
 
 		# system info / gpu info
@@ -82,9 +89,13 @@ class GUI:
 
 		else: self.showgpuInfo = self.nogpuInfo
 
-		self.infosvg = GdkPixbuf.Pixbuf.new_from_file_at_scale("/home/m6d/Documents/nvfcApp/info_512x512.png", 32, 32, True)
+		try:
+			self.infoImg = GdkPixbuf.Pixbuf.new_from_file_at_scale(INFO_ICON, 32, 32, True)
+		except:
+			self.infoImg = GdkPixbuf.Pixbuf.new_from_file_at_scale("/home/m6d/Documents/nvfcApp/{0}".format(INFO_ICON), 32, 32, True)
+
 		self.infoIcon = Gtk.Image()
-		self.infoIcon.set_from_pixbuf(self.infosvg)
+		self.infoIcon.set_from_pixbuf(self.infoImg)
 		self.notebook.append_page(self.showgpuInfo, self.infoIcon)
 
 		# signal traps
