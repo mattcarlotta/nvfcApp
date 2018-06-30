@@ -12,19 +12,19 @@ from fanController import FanController
 class SystemInformation():
 	def __init__(self, builder):
 		self.builder = builder
-		self.systemInfo()
-		self.gpuInfo()
+		self.systemInfo() # System Information
+		self.gpuInfo() # GPU Information
 		# GPU utilization (load)
 		self.gpuUtil1 = DonutChart(
-			self.builder.get_object("gpuUsageBox"),
-			[1.4, 0.15],
-			self.getUtilization,
-			'load',
-			[0.512, 0.420],
-			100,
-			'%',
-			[16,12],
-			[300, 280]
+			self.builder.get_object("gpuUsageBox"), # gtkBox
+			[1.4, 0.15], # donut radius and width
+			self.getUtilization, # current GPU utilization stat
+			'load', # suptitle
+			[0.512, 0.420], # suptitle placement x,y coords
+			100, # max stat
+			'%', # type of stat
+			[16,12], # label font sizes
+			[300, 280] # canvas width and height
 		)
 		# GPU clock
 		self.gpuUtil2 = DonutChart(
@@ -87,21 +87,25 @@ class SystemInformation():
 			[300, 150]
 		)
 
-	# grabs current clock speed
-	def getClock(self):
+	# command-line shell command returns output
+	def getGpuInfoByString(self, string):
 		try:
-			curr_clock = check_output("nvidia-smi --query-gpu=clocks.current.graphics --format=csv,noheader | sed 's/[^0-9]*//g'", shell=True).decode('utf8')
-			return int(curr_clock)
+			info = check_output(string, shell=True).decode('utf8')
+			return int(info)
 		except:
 			return 0
 
+	# grabs current clock speed
+	def getClock(self):
+		return self.getGpuInfoByString("nvidia-smi --query-gpu=clocks.current.graphics --format=csv,noheader | sed 's/[^0-9]*//g'")
+
 	# grabs current fan speed
 	def getFanSpeed(self):
-		try:
-			curr_fspd = check_output("nvidia-smi --query-gpu=fan.speed --format=csv,noheader | sed 's/[^0-9]*//g'", shell=True).decode('utf8')
-			return int(curr_fspd)
-		except:
-			return 0
+		return self.getGpuInfoByString("nvidia-smi --query-gpu=fan.speed --format=csv,noheader | sed 's/[^0-9]*//g'")
+
+	# grabs current memory usage
+	def getMem(self):
+		return self.getGpuInfoByString("nvidia-smi --query-gpu=memory.used --format=csv | awk 'NR>1' | sed 's/[^0-9]*//g'")
 
 	# grabs current power draw
 	def getPower(self):
@@ -113,27 +117,11 @@ class SystemInformation():
 
 	# grabs current temp
 	def getTemp(self):
-		try:
-			curr_temp = check_output("nvidia-smi --query-gpu=temperature.gpu --format=csv,noheader", shell=True).decode('utf8')
-			return int(curr_temp)
-		except:
-			return 0
+		return self.getGpuInfoByString("nvidia-smi --query-gpu=temperature.gpu --format=csv,noheader")
 
 	# grabs current graphics usage
 	def getUtilization(self):
-		try:
-			gpu_util = check_output("nvidia-smi --query-gpu=utilization.gpu --format=csv | awk 'NR>1' |  sed 's/[^0-9]*//g;'", shell=True).decode('utf8')
-			return int(gpu_util)
-		except:
-			return 0
-
-	# grabs current memory usage
-	def getMem(self):
-		try:
-			mem_used = check_output("nvidia-smi --query-gpu=memory.used --format=csv | awk 'NR>1' | sed 's/[^0-9]*//g'", shell=True).decode('utf8')
-			return int(mem_used)
-		except:
-			return 0
+		return self.getGpuInfoByString("nvidia-smi --query-gpu=utilization.gpu --format=csv | awk 'NR>1' |  sed 's/[^0-9]*//g;'")
 
 	# grabs processor, driver, total memory, pci link speed, max clock speed, and max power draw
 	def getGPUInfo(self):
@@ -186,22 +174,13 @@ class SystemInformation():
 		sysInfo += self.getHostInfo()
 		# OS, codename, distro-like, kernel and architecture
 		if sysInfo:
-			sysLabelArr = [[
-				'PRETTY_NAME="(.*?)"\n',
-				'userOSLabel',
-			],[
-				'VERSION_CODENAME=(.*?)\n',
-				'userCodenameLabel',
-			],[
-				'ID_LIKE=(.*?)\n',
-				'userDistroLabel',
-			],[
-				' Kernel: (.*?)\n',
-				'userKernelLabel'
-			],[
-				' Architecture: (.*?)\n',
-				'userArchLabel'
-			]]
+			sysLabelArr = [
+				['PRETTY_NAME="(.*?)"\n', 'userOSLabel'],
+				['VERSION_CODENAME=(.*?)\n','userCodenameLabel'],
+				['ID_LIKE=(.*?)\n', 'userDistroLabel'],
+				[' Kernel: (.*?)\n', 'userKernelLabel'],
+				[' Architecture: (.*?)\n','userArchLabel']
+			]
 			self.plotSysLabels(sysLabelArr, sysInfo)
 
 	# gets gpuinfo for labels

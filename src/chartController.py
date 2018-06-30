@@ -36,13 +36,9 @@ class Chart():
 		self.anim = animation.FuncAnimation(self.fig, self.updateLabelStats, interval=1000)
 
 		# chart min/max values for the background grid layout
-		self.x_min = -5
-		self.x_max = 105
-		self.y_min = 0
-		self.y_max = 105
 		self.ticks = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
-		self.axes.set_xlim(self.x_min, self.x_max) # x-axis min/max values
-		self.axes.set_ylim(self.y_min, self.y_max) # y-axis min/max values
+		self.axes.set_xlim(-5, 105) # x-axis min/max values
+		self.axes.set_ylim(0, 105) # y-axis min/max values
 		self.axes.set_xticks(self.ticks) # x-axis ticks
 		self.axes.set_yticks(self.ticks) # y-axis ticks
 		self.axes.tick_params(colors='0.7', which='both', labelsize=12)
@@ -80,7 +76,6 @@ class Chart():
 		self.setAxesLabels(0,0) # 0's GPU stats
 		self.chartActions.setUpdateStats() # stops live GPU updates
 		self.fanController.pause() # pauses fancontroller run loop
-		self.fanController.disableFanControl() # resets gpu fspd to 0 to hand off control to driver
 		self.dragHandler.setDragControl() # disables dragging curve points
 		MessageDialogBox(self.appWindow, "Disabled GPU fan control.")
 
@@ -89,7 +84,6 @@ class Chart():
 		self.setLabelColor('black', 'blue') # sets label and line colors
 		self.chartActions.setUpdateStats() # enables live GPU updates
 		self.fanController.resume() # resumes fancontroller run loop
-		self.fanController.resetFanControl() # resets old_fspd to 0 to initiate an update
 		self.dragHandler.setDragControl() # allows curve points to be dragged
 		MessageDialogBox(self.appWindow, "Enabled GPU fan control.")
 

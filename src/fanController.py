@@ -48,10 +48,14 @@ class FanController(StoppableThread):
 			return None
 
 	# pauses "run" loop
-	def pause(self): self.lock.acquire() # locks the thread (blocking any calls to acquire it)
+	def pause(self):
+		self.lock.acquire() # locks the thread (blocking any calls to acquire it)
+		self.disableFanControl() # gives fan control over to driver
 
 	# resumes "run" loop
-	def resume(self): self.lock.release() # unlocks the thread (unblocking any calls to acquire it)
+	def resume(self):
+		self.lock.release() # unlocks the thread (unblocking any calls to acquire it)
+		self.resetFanControl() # resets old_fspd to 0 to initiate an update
 
 	# resets old fanspeed to 0 to intiate an update
 	def resetFanControl(self): self.old_fspd = 0
