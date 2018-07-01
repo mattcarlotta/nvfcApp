@@ -4,3 +4,5 @@
 /src/notes
 /src/*.csv
 /src/*.pyc
+/src/build
+/src/dist
