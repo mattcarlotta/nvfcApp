@@ -24,18 +24,14 @@ pyz = PYZ(a.pure, a.zipped_data,
              cipher=block_cipher)
 exe = EXE(pyz,
           a.scripts,
-          exclude_binaries=True,
+          a.binaries,
+          a.zipfiles,
+          a.datas + nvfc_ui + nvfc_images,
           name='nvfcapp',
           debug=False,
           strip=False,
           upx=True,
-          icon="/home/m6d/Documents/nvfcApp/nvfcApp_64x64.png",
-          console=True )
-coll = COLLECT(exe,
-               a.binaries,
-               a.zipfiles,
-               a.datas + nvfc_ui + nvfc_images,
-               strip=False,
-               upx=True,
-               icon="/home/m6d/Documents/nvfcApp/nvfcApp_64x64.png",
-               name='nvfcapp')
+          runtime_tmpdir=None,
+          console=True,
+          icon="/home/m6d/Documents/nvfcApp/nvfcApp_64x64.png"
+          )
