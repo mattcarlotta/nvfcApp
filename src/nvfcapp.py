@@ -26,6 +26,9 @@ import sys
 from os import path
 from chartController import Chart
 from sysInformation import SystemInformation
+from styleProvider import styles
+styles()
+
 
 # import external files
 def resource_path(relative_path):
