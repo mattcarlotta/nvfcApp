@@ -1,173 +1,126 @@
-#! /usr/bin/env python3.4
-# -*- coding: utf-8 -*-
-
-""" Main application--embed Matplotlib figure in window with UI """
-
 import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
 import matplotlib.pyplot as plt
-from matplotlib.figure import Figure
-from matplotlib.backends.backend_gtk3cairo import FigureCanvasGTK3Cairo as FigureCanvas
-from matplotlib.widgets import Button
 from matplotlib import animation, style
-from dataController import *
-from dragHandler import *
-from messageController import displayDialogBox, displayErrorBox
-from tkinter import filedialog
-import sys
-from nvFspd import NvidiaFanController, updatedCurve
-from os import path
-import csv
+from matplotlib.backends.backend_gtk3cairo import FigureCanvasGTK3Cairo as FigureCanvas
+from subprocess import check_output
+from chartDataActions import ChartActionController
+from dataController import DataController
+from dragController import DragHandler
+from fileController import FileController
+from fanController import FanController
+from popupController import ErrorDialogBox, MessageDialogBox
 
-style.use(['seaborn-dark', 'seaborn-talk']) # current plot theme
-
-""" Global Variables """
-fig = plt.figure(num="Nvidia Fan Controller", figsize=(12, 9)) # create a figure (one figure per window)
-axes = fig.add_subplot(111) # add a subplot to the figure. axes is of type Axes which contains most of the figure elements
-canvas = FigureCanvas(fig)
-canvas.set_size_request(800, 600)
-update_stats = True # sets flag for updating chart with GPU stats
-x_min = -5 # sets the x min value for the background grid  
-x_max = 105 # sets the x max value for the background grid 
-y_min = 25 # sets the y min value for the background grid  
-y_max = 105 # sets the y max value for the background grid 
-axes.set_xlim(x_min, x_max)
-axes.set_ylim(y_min, y_max)
-axes.set_title("Fan Controller")
-axes.grid() # draws background grid
-""" --------------- """
+style.use(['fivethirtyeight']) # current plot theme
 
 
 class Chart():
-	def __init__(self, chartBox):
-		global current_temp
-		global current_fan_speed
-		global nvidiaController
-		global fig
-		global dataController
-		global line
+	def __init__(self, parent):
+		self.appWindow = parent.appWindow # an instance of appWindow
+		self.disableAppButtons = parent.disable_app_buttons # an instance of disable_all_buttons
+		self.plt = plt # instance of plt
+		self.chartActions = ChartActionController(self) # an instance of chart actions
+		self.x_values, self.y_values = self.chartActions.initChartValues() # intialize x and y curve values
 
-		initChartValues()
-		self.plot = plt
-		self.fig = fig
-		self.axes = axes
-		self.canvas = canvas
-		chartBox.add(self.canvas)
-		self.anim = animation.FuncAnimation(self.fig, updateLabelStats, interval=1000)
+		self.fig = self.plt.figure(num="Fan Controller", figsize=(12, 9), facecolor='white') # add plt.figure instance
+		self.fig.subplots_adjust(left=0.11, bottom=0.15, right=0.94, top=0.89, wspace=0.2, hspace=0) # adjusts Chart's window
+		self.axes = self.fig.add_subplot(111) # add a subplot instance to the figure
+		self.canvas = FigureCanvas(self.fig) # add fig instance to a figure canvas
+		self.canvas.set_size_request(800, 700) # set default canvas height (req'd for displaying the chart)
 
-		# chart min/max display values
-		self.x_min = x_min
-		self.x_max = x_max
-		self.y_min = y_min
-		self.y_max = y_max
+		# appends the figure => to the graphBox => to the notebook
+		parent.graph.add(self.canvas)
 
-		# matplotlib stops working if two buttons aren't present
-		# [left, bottom, width, height]
-		self.fig.add_axes([0, -100, 0.01, 0.01])
-		self.fig.add_axes([0, 100, 0.01, 0.01])
+		# updates chart with GPU stats every 1000ms
+		self.anim = animation.FuncAnimation(self.fig, self.updateLabelStats, interval=1000)
 
-		line, = axes.plot(x_values, y_values, linestyle='-', marker='o', color='b', picker=5) #b=blue, o=circle, picker=max distance for 
+		# chart min/max values for the background grid layout
+		self.ticks = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
+		self.axes.set_xlim(-5, 105) # x-axis min/max values
+		self.axes.set_ylim(0, 105) # y-axis min/max values
+		self.axes.set_xticks(self.ticks) # x-axis ticks
+		self.axes.set_yticks(self.ticks) # y-axis ticks
+		self.axes.tick_params(colors='0.7', which='both', labelsize=12)
+		self.axes.grid(linestyle='-', linewidth='0.1', color='grey') # background lines (thin and grey)
 
-		self.dragHandler = DragHandler(self)
-		dataController = DataController(x_values, y_values)
+		# misc. chart configurations
+		self.axes.axhline(y=10, xmin=0, xmax=1, linewidth=1, color='red') # red line to represent lowest value (10,0)
+		self.axes.set_title("Fan Controller", fontsize=16) # Chart's title
+		for axis in ['bottom','left', 'top', 'right']: self.axes.spines[axis].set_color('0.1') # adds spines to x and y axes
+		self.plt.setp(self.axes.spines.values(), linewidth=0.2) # sets both spines' line widths
 
-		#validate points from file!
-		nvidiaController = NvidiaFanController(x_values, y_values)
-		nvidiaController.start()
+		# creates curve w/ options: color=blue, s=squares, picker=max distance for selection
+		self.line, = self.axes.plot(self.x_values, self.y_values, linestyle='-',  marker='s', markersize=4.5, color='b', picker=5, linewidth=1.5)
 
-	def close(self=None, widget=None, *data):
-		plt.close('all')
-		nvidiaController.stop()
-		# Gtk.main_quit()
+		# drag handler and curve instances
+		self.dragHandler = DragHandler(self, self.appWindow) # handles the mouse clicks on the curve
+		self.dataController = DataController(self.appWindow, self.x_values, self.y_values) # handles updating curve data
 
-def applyData():
-	xdata = line.get_xdata() # grabs current curve y data
-	ydata = line.get_ydata() # grabs current curve y data
-	is_valid_curve = dataController.setData(xdata, ydata) # checks if curve is exponentially growing (returns bool)
+		# initializes and starts a stoppable thread (loop that looks for temp changes and updates accordingly)
+		self.fanController = FanController(self.x_values, self.y_values)
+		self.fanController.start()
 
-	if is_valid_curve:
-		updateChart(xdata, ydata) # updates nvFspd.NvidiaFanController() with new curve data
-		displayDialogBox('Successfully applied the current curve to the fan settings!')
-	else:
-		xdata, ydata = dataController.getData() # gets previous data
-		xydata = [xdata, ydata] 
-		line.set_data(xydata) # resets line to previous curve
+	# closes Chart and stops GPU updating
+	def close(self):
+		plt.close('all') # closes all matplotlib figures
+		self.fanController.stopUpdates() # stops fancontroller and resets GPU control
 
-def initChartValues():
-	global x_values
-	global y_values
+	# applies Chart's current curve data
+	def handleApplyData(self):
+		self.chartActions.applyData(self.dataController, self.fanController, self.line)
 
-	# x_values = [0,  13, 33, 46, 58, 66, 73, 79, 85, 89, 94, 100] # default values
-	# y_values = [30, 32, 36, 39, 44, 50, 56, 65, 74, 82, 91, 100] # default values
+	# handles GPU control disabling
+	def handleDisableGPUControl(self):
+		self.setLabelColor('grey', 'grey') # sets label and line colors
+		self.setAxesLabels(0,0) # 0's GPU stats
+		self.chartActions.setUpdateStats() # stops live GPU updates
+		self.fanController.pause() # pauses fancontroller run loop
+		self.dragHandler.setDragControl() # disables dragging curve points
+		MessageDialogBox(self.appWindow, "Disabled GPU fan control.")
 
-	x_values = [0,  10, 20, 30, 40, 50, 60, 65, 70, 80, 90, 100] # default values
-	y_values = [30, 35, 40, 45, 55, 60, 65, 70, 75, 85, 95, 100] # default values
+	# handles GPU control enabling
+	def handleEnableGPUControl(self):
+		self.setLabelColor('black', 'blue') # sets label and line colors
+		self.chartActions.setUpdateStats() # enables live GPU updates
+		self.fanController.resume() # resumes fancontroller run loop
+		self.dragHandler.setDragControl() # allows curve points to be dragged
+		MessageDialogBox(self.appWindow, "Enabled GPU fan control.")
 
+	# resets Chart's current curve data
+	def handleDataReset(self):
+		self.chartActions.resetData(self.dataController, self.fanController, self.line)
 
-	cfg_x = []
-	cfg_y = []
+	# attempts to open and load a config file
+	def handleOpenFile(self):
+		self.chartActions.initValuesFromOpenFile(self.fanController, self.dataController, self.line)
 
-	# Load array [temp, fspd] from csv
-	if path.exists("config.csv"):
-		try:
-			with open('config.csv', 'r') as csvfile:
-				config = csv.reader(csvfile, delimiter=',')
-				for row in config:
-					cfg_x.append(int(row[0]))
-					cfg_y.append(int(row[1]))
-		except:
-			displayErrorBox("Failed to load configuration file. Falling back to a default curve")
+	# attempts to save a config file
+	def handleSaveToFile(self): FileController.saveToFile(self.appWindow, self.dataController)
 
-		# updates default curve values with csv array
-		x_values = cfg_x #temp
-		y_values = cfg_y #speed
+	# updates Chart's label colors (enabled / disabled)
+	def setLabelColor(self, c1, c2):
+		self.axes.title.set_color(c1) # sets title color
+		self.axes.xaxis.label.set_color(c1) # sets xlabel color
+		self.axes.yaxis.label.set_color(c1) # sets ylabel color
+		self.plt.setp(self.line, color=c2) # sets line color
 
-def resetData():
-	initChartValues() # reset to initial values
-	xydata = [x_values, y_values]
-	line.set_data(xydata) # update curve with values
-	updateChart(x_values, y_values) # update chart to reflect values
+	# updates Chart's GPU stats axes labels
+	def setAxesLabels(self, currtmp, currfspd):
+		self.axes.set_xlabel("Temperature "+ "(" + str(currtmp) + u"°C)", fontsize=12, labelpad=20) # sets chart xlabel
+		self.axes.set_ylabel("Fan Speed " + "(" + str(currfspd) + u"%)", fontsize=12, labelpad=10) # sets chart ylabel
 
-def saveToFile():
-	config = '' # initialize config variable
-	xdata, ydata = dataController.getData() # get current curve points
-
-	# combines x and y curve data: (x, y) (x, y) ...etc as a string
-	for index in range(0, len(xdata)): 
-		config += str(xdata[index]) + "," + str(ydata[index]) + "\n"
-
-	#default saved as *.csv
-	f = filedialog.asksaveasfile(mode='w', defaultextension=".csv") 
-
-	if f is None: return # if dialog is canceled
-
-	f.write(str(config)) # write string to file
-	displayDialogBox('Successfully saved the current curve configuration!')
-
-def setUpdateStats(bool):
-	global update_stats
-	update_stats = bool # whether or not update GPU stats
-
-def updateChart(xdata, ydata):
-	"""
-	Due to how the NvidiaFanController run loop was previously structured to constantly update, there was an issue where updating the curve points could take anywhere from 3 to 10+ loop iterations
-	By pausing the loop, updates to the curve points occur consistently between 1-3 loop iterations
-	As a precaution, updating the chart with GPU temp/fan speed stats have also been paused, although may not be necessary.
-	"""
-	setUpdateStats(False) # temporarily stops live GPU updates
-	updatedCurve(True) # pauses the nvFspd run loop
-	nvidiaController.setCurve(xdata, ydata) # updates curve with new x and y data
-	updatedCurve(False) # resumes nvFspd loop
-	setUpdateStats(True) # enables live GPU updates
-
-def updateLabelStats(i):
-	if (update_stats):
-		current_temp = NvidiaFanController().getTemp() # grabs current temp from NvidiaFanController
-		axes.set_xlabel("Temperature "+ "(" + str(current_temp) + u"°C)") # updates chart x-axis label
-		current_fan_speed = str(NvidiaFanController().getFanSpeed()) # grabs current fspd from NvidiaFanController
-		axes.set_ylabel("Fan Speed " + "(" + str(current_fan_speed) + u"%)") # updates chart y-axis label
-
+	def updateLabelStats(self, i):
+		if (self.chartActions.getUpdatesState()):
+			try:
+				curr_temp = self.fanController.getCurrentTemp() # grabs current temp
+				curr_fspd = self.fanController.getCurrentFspd() # grabs current fspd
+				if not curr_temp or not curr_fspd: raise ValueError('Missing temp and/or fan speed') # see if values are present
+				self.setAxesLabels(curr_temp, curr_fspd) # updates chart labels
+			except ValueError:
+				self.disableAppButtons() # disables app menu icons
+				self.chartActions.stopControllingGPU(self.fanController, self.axes) # disables chart
+				ErrorDialogBox(self.appWindow, "There was an error when attempting to read/set GPU stats. Please make sure that you're using the proprietary Nvidia drivers and that they're currently in use. The current Nvidia driver in use is: {0}.".format(self.fanController.getLoadedDriver()))
 
 if __name__ == '__main__':
-	print ('Use GUI')
+	print ('Please launch GUI')

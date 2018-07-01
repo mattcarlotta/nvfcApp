@@ -1,12 +1,746 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Generated with glade 3.22.1 -->
 <interface>
-  <requires lib="gtk+" version="3.0"/>
+  <requires lib="gtk+" version="3.18"/>
+  <object class="GtkBox" id="graphBox">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="orientation">vertical</property>
+    <child>
+      <placeholder/>
+    </child>
+  </object>
+  <object class="GtkGrid" id="infoBox">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="border_width">10</property>
+    <child>
+      <object class="GtkBox" id="systemInfoContainer">
+        <property name="width_request">390</property>
+        <property name="height_request">220</property>
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="border_width">5</property>
+        <property name="orientation">vertical</property>
+        <child>
+          <object class="GtkLabel">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="label" translatable="yes">SYSTEM INFORMATION</property>
+            <attributes>
+              <attribute name="font-desc" value="Sans 11"/>
+              <attribute name="style" value="normal"/>
+              <attribute name="weight" value="semibold"/>
+            </attributes>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkSeparator">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkGrid" id="sysInfoGrid">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="border_width">10</property>
+            <property name="row_spacing">7</property>
+            <property name="column_spacing">7</property>
+            <child>
+              <object class="GtkLabel" id="osLabel">
+                <property name="width_request">175</property>
+                <property name="height_request">20</property>
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">Operation System:</property>
+                <property name="justify">fill</property>
+                <property name="xalign">0.95999997854232788</property>
+                <attributes>
+                  <attribute name="font-desc" value="Sans 10"/>
+                </attributes>
+              </object>
+              <packing>
+                <property name="left_attach">0</property>
+                <property name="top_attach">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="codenameLabel">
+                <property name="width_request">175</property>
+                <property name="height_request">20</property>
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">Codename:</property>
+                <property name="justify">fill</property>
+                <property name="xalign">0.95999997854232788</property>
+                <attributes>
+                  <attribute name="font-desc" value="Sans 10"/>
+                </attributes>
+              </object>
+              <packing>
+                <property name="left_attach">0</property>
+                <property name="top_attach">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="distroLabel">
+                <property name="width_request">175</property>
+                <property name="height_request">20</property>
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">Distro-like:</property>
+                <property name="justify">fill</property>
+                <property name="xalign">0.95999997854232788</property>
+                <attributes>
+                  <attribute name="font-desc" value="Sans 10"/>
+                </attributes>
+              </object>
+              <packing>
+                <property name="left_attach">0</property>
+                <property name="top_attach">2</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="archLabel">
+                <property name="width_request">175</property>
+                <property name="height_request">20</property>
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">Architecture:</property>
+                <property name="justify">fill</property>
+                <property name="xalign">0.95999997854232788</property>
+                <attributes>
+                  <attribute name="font-desc" value="Sans 10"/>
+                </attributes>
+              </object>
+              <packing>
+                <property name="left_attach">0</property>
+                <property name="top_attach">4</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="kernelLabel">
+                <property name="width_request">175</property>
+                <property name="height_request">20</property>
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">Kernel:</property>
+                <property name="xalign">0.95999997854232788</property>
+                <attributes>
+                  <attribute name="font-desc" value="Sans 10"/>
+                </attributes>
+              </object>
+              <packing>
+                <property name="left_attach">0</property>
+                <property name="top_attach">3</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="userOSLabel">
+                <property name="width_request">215</property>
+                <property name="height_request">20</property>
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">N/A</property>
+                <property name="xalign">2.2351741291171123e-10</property>
+                <attributes>
+                  <attribute name="style" value="italic"/>
+                </attributes>
+              </object>
+              <packing>
+                <property name="left_attach">1</property>
+                <property name="top_attach">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="userCodenameLabel">
+                <property name="width_request">215</property>
+                <property name="height_request">20</property>
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">N/A</property>
+                <property name="xalign">2.2351741291171123e-10</property>
+                <attributes>
+                  <attribute name="style" value="italic"/>
+                </attributes>
+              </object>
+              <packing>
+                <property name="left_attach">1</property>
+                <property name="top_attach">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="userDistroLabel">
+                <property name="width_request">215</property>
+                <property name="height_request">20</property>
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">N/A</property>
+                <property name="xalign">2.2351741291171123e-10</property>
+                <attributes>
+                  <attribute name="style" value="italic"/>
+                </attributes>
+              </object>
+              <packing>
+                <property name="left_attach">1</property>
+                <property name="top_attach">2</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="userArchLabel">
+                <property name="width_request">215</property>
+                <property name="height_request">20</property>
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">N/A</property>
+                <property name="xalign">2.2351741291171123e-10</property>
+                <attributes>
+                  <attribute name="style" value="italic"/>
+                </attributes>
+              </object>
+              <packing>
+                <property name="left_attach">1</property>
+                <property name="top_attach">4</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="userKernelLabel">
+                <property name="width_request">215</property>
+                <property name="height_request">20</property>
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">N/A</property>
+                <property name="xalign">0</property>
+                <attributes>
+                  <attribute name="style" value="italic"/>
+                </attributes>
+              </object>
+              <packing>
+                <property name="left_attach">1</property>
+                <property name="top_attach">3</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">True</property>
+            <property name="fill">True</property>
+            <property name="position">2</property>
+          </packing>
+        </child>
+      </object>
+      <packing>
+        <property name="left_attach">0</property>
+        <property name="top_attach">0</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkBox" id="gpuInfoContainer">
+        <property name="width_request">390</property>
+        <property name="height_request">220</property>
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="border_width">5</property>
+        <property name="orientation">vertical</property>
+        <child>
+          <object class="GtkLabel">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="label" translatable="yes">GPU INFORMATION</property>
+            <attributes>
+              <attribute name="font-desc" value="Sans 11"/>
+              <attribute name="style" value="normal"/>
+              <attribute name="weight" value="semibold"/>
+            </attributes>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkSeparator">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkGrid" id="gpuInfoGrid">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="border_width">10</property>
+            <property name="row_spacing">7</property>
+            <property name="column_spacing">7</property>
+            <child>
+              <object class="GtkLabel" id="processorLabel">
+                <property name="width_request">150</property>
+                <property name="height_request">20</property>
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">Processor:</property>
+                <property name="justify">right</property>
+                <property name="xalign">0.95999997854232788</property>
+                <attributes>
+                  <attribute name="font-desc" value="Sans 10"/>
+                </attributes>
+              </object>
+              <packing>
+                <property name="left_attach">0</property>
+                <property name="top_attach">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="driverLabel">
+                <property name="width_request">150</property>
+                <property name="height_request">20</property>
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">Driver Version:</property>
+                <property name="xalign">0.95999997854232788</property>
+              </object>
+              <packing>
+                <property name="left_attach">0</property>
+                <property name="top_attach">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="userProcLabel">
+                <property name="width_request">150</property>
+                <property name="height_request">20</property>
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">N/A</property>
+                <property name="xalign">0</property>
+                <attributes>
+                  <attribute name="style" value="italic"/>
+                </attributes>
+              </object>
+              <packing>
+                <property name="left_attach">1</property>
+                <property name="top_attach">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="userDriverLabel">
+                <property name="width_request">150</property>
+                <property name="height_request">20</property>
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">N/A</property>
+                <property name="xalign">0</property>
+                <attributes>
+                  <attribute name="style" value="italic"/>
+                </attributes>
+              </object>
+              <packing>
+                <property name="left_attach">1</property>
+                <property name="top_attach">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="totalMemLabel">
+                <property name="width_request">150</property>
+                <property name="height_request">20</property>
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">Total Memory:</property>
+                <property name="justify">right</property>
+                <property name="xalign">0.95999997854232788</property>
+                <attributes>
+                  <attribute name="font-desc" value="Sans 10"/>
+                </attributes>
+              </object>
+              <packing>
+                <property name="left_attach">0</property>
+                <property name="top_attach">2</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="userTotMemLabel">
+                <property name="width_request">150</property>
+                <property name="height_request">20</property>
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">N/A</property>
+                <property name="xalign">0</property>
+                <attributes>
+                  <attribute name="style" value="italic"/>
+                </attributes>
+              </object>
+              <packing>
+                <property name="left_attach">1</property>
+                <property name="top_attach">2</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="pciBwLabel">
+                <property name="width_request">150</property>
+                <property name="height_request">20</property>
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">PCI Bandwidth:</property>
+                <property name="justify">right</property>
+                <property name="xalign">0.95999997854232788</property>
+                <attributes>
+                  <attribute name="font-desc" value="Sans 10"/>
+                </attributes>
+              </object>
+              <packing>
+                <property name="left_attach">0</property>
+                <property name="top_attach">3</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="userPciBwLabel">
+                <property name="width_request">150</property>
+                <property name="height_request">20</property>
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">N/A</property>
+                <property name="xalign">0</property>
+                <attributes>
+                  <attribute name="style" value="italic"/>
+                </attributes>
+              </object>
+              <packing>
+                <property name="left_attach">1</property>
+                <property name="top_attach">3</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="pwrDraLabel">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">Max Power Draw:</property>
+                <property name="xalign">0.95999997854232788</property>
+                <attributes>
+                  <attribute name="font-desc" value="Sans 10"/>
+                </attributes>
+              </object>
+              <packing>
+                <property name="left_attach">0</property>
+                <property name="top_attach">5</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="userPwrDrawLabel">
+                <property name="width_request">150</property>
+                <property name="height_request">20</property>
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">N/A</property>
+                <property name="xalign">0</property>
+                <attributes>
+                  <attribute name="style" value="italic"/>
+                </attributes>
+              </object>
+              <packing>
+                <property name="left_attach">1</property>
+                <property name="top_attach">5</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="maxClocksLabel">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">Max Clock:</property>
+                <property name="xalign">0.95999997854232788</property>
+                <attributes>
+                  <attribute name="font-desc" value="Sans 10"/>
+                </attributes>
+              </object>
+              <packing>
+                <property name="left_attach">0</property>
+                <property name="top_attach">4</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="userMaxClockLabel">
+                <property name="width_request">150</property>
+                <property name="height_request">20</property>
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">N/A</property>
+                <property name="xalign">0</property>
+                <attributes>
+                  <attribute name="style" value="italic"/>
+                </attributes>
+              </object>
+              <packing>
+                <property name="left_attach">1</property>
+                <property name="top_attach">4</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">True</property>
+            <property name="fill">True</property>
+            <property name="position">2</property>
+          </packing>
+        </child>
+      </object>
+      <packing>
+        <property name="left_attach">1</property>
+        <property name="top_attach">0</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkBox" id="gfxUtilContainer">
+        <property name="width_request">390</property>
+        <property name="height_request">200</property>
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="border_width">5</property>
+        <property name="orientation">vertical</property>
+        <child>
+          <object class="GtkLabel">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="label" translatable="yes">GPU UTILIZATION</property>
+            <attributes>
+              <attribute name="font-desc" value="Sans 11"/>
+              <attribute name="style" value="normal"/>
+              <attribute name="weight" value="semibold"/>
+            </attributes>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkSeparator">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkBox" id="gpuUtilContainer">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="orientation">vertical</property>
+            <child>
+              <object class="GtkBox" id="gpuUsageBox">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="orientation">vertical</property>
+                <child>
+                  <placeholder/>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkGrid">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <child>
+                  <object class="GtkBox" id="gpuClockBox">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="hexpand">True</property>
+                    <property name="vexpand">True</property>
+                    <property name="orientation">vertical</property>
+                    <child>
+                      <placeholder/>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="left_attach">0</property>
+                    <property name="top_attach">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkBox" id="gpuMemBox">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="hexpand">True</property>
+                    <property name="vexpand">True</property>
+                    <property name="orientation">vertical</property>
+                    <child>
+                      <placeholder/>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="left_attach">1</property>
+                    <property name="top_attach">0</property>
+                  </packing>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">True</property>
+            <property name="fill">True</property>
+            <property name="position">2</property>
+          </packing>
+        </child>
+      </object>
+      <packing>
+        <property name="left_attach">0</property>
+        <property name="top_attach">1</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkBox" id="gpuStatsContainer">
+        <property name="width_request">390</property>
+        <property name="height_request">200</property>
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="border_width">5</property>
+        <property name="orientation">vertical</property>
+        <child>
+          <object class="GtkLabel">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="label" translatable="yes">GPU STATISTICS</property>
+            <attributes>
+              <attribute name="font-desc" value="Sans 11"/>
+              <attribute name="style" value="normal"/>
+              <attribute name="weight" value="semibold"/>
+            </attributes>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkSeparator">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkBox" id="gpuStatContainer">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="orientation">vertical</property>
+            <child>
+              <object class="GtkBox" id="gpuTempBox">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="orientation">vertical</property>
+                <child>
+                  <placeholder/>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkBox" id="gpuFspdBox">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="orientation">vertical</property>
+                <child>
+                  <placeholder/>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkBox" id="gpuPowerBox">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="orientation">vertical</property>
+                <child>
+                  <placeholder/>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">2</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">True</property>
+            <property name="fill">True</property>
+            <property name="position">2</property>
+          </packing>
+        </child>
+      </object>
+      <packing>
+        <property name="left_attach">1</property>
+        <property name="top_attach">1</property>
+      </packing>
+    </child>
+  </object>
+  <object class="GtkBox" id="noinfoBox">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="orientation">vertical</property>
+    <child>
+      <object class="GtkLabel">
+        <property name="width_request">800</property>
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="label" translatable="yes">GPU STATISTICS UNAVAILABLE</property>
+        <attributes>
+          <attribute name="font-desc" value="Sans 24"/>
+          <attribute name="style" value="normal"/>
+          <attribute name="weight" value="semibold"/>
+          <attribute name="foreground" value="#d3d3d7d7cfcf"/>
+        </attributes>
+      </object>
+      <packing>
+        <property name="expand">True</property>
+        <property name="fill">True</property>
+        <property name="position">0</property>
+      </packing>
+    </child>
+  </object>
   <object class="GtkWindow" id="nvfcApp">
     <property name="name">nvfcApp</property>
     <property name="visible">True</property>
     <property name="can_focus">False</property>
-    <property name="title" translatable="yes">Nvidia GPU Fan Controller</property>
+    <property name="title" translatable="yes">GPU Fan Controller</property>
     <signal name="destroy" handler="on_nvfcApp_destroy" swapped="no"/>
     <child>
       <placeholder/>
@@ -38,6 +772,7 @@
                         <property name="can_focus">False</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
+                        <signal name="activate" handler="on_fileButton_activate" swapped="no"/>
                       </object>
                     </child>
                   </object>
@@ -61,6 +796,7 @@
                         <property name="can_focus">False</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
+                        <signal name="activate" handler="on_aboutButton_activate" swapped="no"/>
                       </object>
                     </child>
                   </object>
@@ -76,17 +812,24 @@
         </child>
         <child>
           <object class="GtkToolbar" id="appMenu">
+            <property name="name">app_menu_container</property>
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="toolbar_style">both</property>
             <child>
-              <object class="GtkToolButton" id="openButton">
+              <object class="GtkToolButton" id="enableButton">
+                <property name="name">enableButton</property>
                 <property name="visible">True</property>
+                <property name="sensitive">False</property>
                 <property name="can_focus">True</property>
-                <property name="tooltip_text" translatable="yes">Open configuration</property>
-                <property name="label" translatable="yes">Open</property>
+                <property name="tooltip_text" translatable="yes">Enable GPU Fan Controlling</property>
+                <property name="label" translatable="yes">Enable</property>
                 <property name="use_underline">True</property>
-                <property name="stock_id">gtk-open</property>
+                <property name="stock_id">gtk-media-play</property>
+                <signal name="clicked" handler="on_enableButton_clicked" swapped="no"/>
+                <style>
+                  <class name="toolbar"/>
+                </style>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -94,14 +837,53 @@
               </packing>
             </child>
             <child>
-              <object class="GtkToolButton" id="applyButton">
+              <object class="GtkToolButton" id="disableButton">
+                <property name="name">disableButton</property>
                 <property name="visible">True</property>
+                <property name="sensitive">False</property>
+                <property name="can_focus">False</property>
+                <property name="tooltip_text" translatable="yes">Disable GPU Fan Controlling</property>
+                <property name="label" translatable="yes">Disable</property>
+                <property name="use_underline">True</property>
+                <property name="stock_id">gtk-media-stop</property>
+                <signal name="clicked" handler="on_disableButton_clicked" swapped="no"/>
+                <style>
+                  <class name="toolbar"/>
+                </style>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="homogeneous">True</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkSeparatorToolItem" id="menuSeperator1">
+                <property name="name">toolmenuSeparator1</property>
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <style>
+                  <class name="toolbar_separator"/>
+                </style>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="homogeneous">False</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkToolButton" id="applyButton">
+                <property name="name">applyButton</property>
+                <property name="visible">True</property>
+                <property name="sensitive">False</property>
                 <property name="can_focus">False</property>
                 <property name="tooltip_text" translatable="yes">Apply to curve</property>
                 <property name="label" translatable="yes">Apply</property>
                 <property name="use_underline">True</property>
                 <property name="stock_id">gtk-apply</property>
                 <signal name="clicked" handler="on_applyButton_clicked" swapped="no"/>
+                <style>
+                  <class name="toolbar"/>
+                </style>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -110,13 +892,38 @@
             </child>
             <child>
               <object class="GtkToolButton" id="resetButton">
+                <property name="name">resetButton</property>
                 <property name="visible">True</property>
+                <property name="sensitive">False</property>
                 <property name="can_focus">False</property>
                 <property name="tooltip_text" translatable="yes">Reset curve to default</property>
                 <property name="label" translatable="yes">Reset</property>
                 <property name="use_underline">True</property>
                 <property name="stock_id">gtk-refresh</property>
                 <signal name="clicked" handler="on_resetButton_clicked" swapped="no"/>
+                <style>
+                  <class name="toolbar"/>
+                </style>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="homogeneous">True</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkToolButton" id="openButton">
+                <property name="name">resetButton</property>
+                <property name="visible">True</property>
+                <property name="sensitive">False</property>
+                <property name="can_focus">True</property>
+                <property name="tooltip_text" translatable="yes">Open configuration</property>
+                <property name="label" translatable="yes">Open</property>
+                <property name="use_underline">True</property>
+                <property name="stock_id">gtk-open</property>
+                <signal name="clicked" handler="on_openButton_clicked" swapped="no"/>
+                <style>
+                  <class name="toolbar"/>
+                </style>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -125,13 +932,18 @@
             </child>
             <child>
               <object class="GtkToolButton" id="saveButton">
+                <property name="name">saveButton</property>
                 <property name="visible">True</property>
+                <property name="sensitive">False</property>
                 <property name="can_focus">False</property>
                 <property name="tooltip_text" translatable="yes">Save configuration</property>
                 <property name="label" translatable="yes">Save</property>
                 <property name="use_underline">True</property>
                 <property name="stock_id">gtk-floppy</property>
                 <signal name="clicked" handler="on_saveButton_clicked" swapped="no"/>
+                <style>
+                  <class name="toolbar"/>
+                </style>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -139,20 +951,41 @@
               </packing>
             </child>
             <child>
-              <object class="GtkToolButton" id="quitButton">
+              <object class="GtkSeparatorToolItem" id="menuSeperator2">
+                <property name="name">toolmenuSeparator2</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
+                <style>
+                  <class name="toolbar_separator"/>
+                </style>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="homogeneous">False</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkToolButton" id="quitButton">
+                <property name="name">quitButton</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
                 <property name="tooltip_text" translatable="yes">Quit application</property>
                 <property name="label" translatable="yes">Quit</property>
                 <property name="use_underline">True</property>
                 <property name="stock_id">gtk-quit</property>
                 <signal name="clicked" handler="on_quitButton_clicked" swapped="no"/>
+                <style>
+                  <class name="toolbar"/>
+                </style>
               </object>
               <packing>
                 <property name="expand">False</property>
                 <property name="homogeneous">True</property>
               </packing>
             </child>
+            <style>
+              <class name="menu_container"/>
+            </style>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -161,7 +994,7 @@
           </packing>
         </child>
         <child>
-          <object class="GtkBox" id="chartBox">
+          <object class="GtkBox" id="viewContainer">
             <property name="name">chart_box</property>
             <property name="width_request">600</property>
             <property name="height_request">400</property>
@@ -169,13 +1002,88 @@
             <property name="can_focus">False</property>
             <property name="orientation">vertical</property>
             <child>
-              <placeholder/>
+              <object class="GtkNotebook" id="notebookContainer">
+                <property name="name">notebook</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <child>
+                  <placeholder/>
+                </child>
+                <child type="tab">
+                  <placeholder/>
+                </child>
+                <child>
+                  <placeholder/>
+                </child>
+                <child type="tab">
+                  <placeholder/>
+                </child>
+                <child>
+                  <placeholder/>
+                </child>
+                <child type="tab">
+                  <placeholder/>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
             </child>
           </object>
           <packing>
             <property name="expand">False</property>
             <property name="fill">True</property>
             <property name="position">2</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+  </object>
+  <object class="GtkAboutDialog" id="nvfcAbout">
+    <property name="can_focus">False</property>
+    <property name="title" translatable="yes">GPU Fan Controller</property>
+    <property name="resizable">False</property>
+    <property name="modal">True</property>
+    <property name="default_width">320</property>
+    <property name="default_height">260</property>
+    <property name="type_hint">dialog</property>
+    <property name="transient_for">nvfcApp</property>
+    <property name="program_name">GPU Fan Controller</property>
+    <property name="version">0.0.1 RC</property>
+    <property name="copyright" translatable="yes">Copyright (C) 2018 </property>
+    <property name="website">https://code.mattcarlotta.io/root/nvfcApp</property>
+    <property name="website_label" translatable="yes">Support</property>
+    <property name="license" translatable="yes">This program comes with absolutely no warranty.
+See the &lt;a href="https://www.gnu.org/licenses/gpl-3.0.html"&gt;GNU General Public License, version 3 or later&lt;/a&gt; for details.</property>
+    <property name="authors">Matt Carlotta
+</property>
+    <property name="logo">./nvfcApp_128x128.png</property>
+    <property name="wrap_license">True</property>
+    <property name="license_type">gpl-3-0</property>
+    <signal name="delete-event" handler="on_nvfcAbout_delete_event" swapped="no"/>
+    <child>
+      <placeholder/>
+    </child>
+    <child internal-child="vbox">
+      <object class="GtkBox">
+        <property name="can_focus">False</property>
+        <property name="orientation">vertical</property>
+        <property name="spacing">2</property>
+        <child internal-child="action_area">
+          <object class="GtkButtonBox">
+            <property name="sensitive">False</property>
+            <property name="can_focus">False</property>
+            <property name="layout_style">end</property>
+            <child>
+              <placeholder/>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">False</property>
+            <property name="position">0</property>
           </packing>
         </child>
       </object>
