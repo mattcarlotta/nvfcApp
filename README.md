@@ -1,27 +1,30 @@
 # Nvidia GPU Fan Controller (nvfcApp)
 a GTK3 (v3.18) application that creates a modifiable 2D curve of [temp, fanspeed] points that automatically controls a Nvidia GPU's fan speed according to the GPU's temp within a Linux environment.
 
-![nvfc.png](https://code.mattcarlotta.io/root/nvfcApp/raw/master/nvfcApp_512x512.png)
+![nvfc.png](https://code.mattcarlotta.io/root/nvfcApp/raw/master/imgs/nvfcApp_512x512.png)
 
 ## Linux Quickstart:
 
-* Install python3:  
+* Download the zipped application file from the `dist` folder
+* Extract the application's folder from the zipped file and place it anywhere
+* Open a terminal window
+* Install python3:
   `sudo apt-get install python3.6`
-* Install pip3:  
+* Install pip3:
   `sudo apt-get install python3-pip`
-* Install matplotlib:  
+* Install matplotlib:
   `python3 -mpip install matplotlib`
-* Install pyGTK:  
+* Install pyGTK:
   `sudo apt-get install libgtk-3-dev`
-* Install cairocffi:  
+* Install cairocffi:
   `sudo apt-get install python3-cairocffi`  
-* Install libcanberra-gtk3:  
+* Install libcanberra-gtk3:
   `sudo apt-get install libcanberra-gtk3-module`
-* Allow the Nvidia card's fan to be controlled:  
+* Allow the Nvidia card's fan to be controlled:
   `sudo nvidia-xconfig --enable-all-gpus` and `sudo nvidia-xconfig --cool-bits=28`
-* Reboot your computer for the GPU settings to take effect:  
+* Reboot your computer for the GPU settings to take effect:
   `sudo reboot`
-* Open a terminal in the folder containing nvfcapp.py, then execute:  
+* Open a terminal in the folder containing nvfcapp.py, then execute:
   `python3 nvfcapp.py`
 
 ## Button Actions

@@ -6,3 +6,5 @@
 /src/*.pyc
 /src/build
 /src/dist
+configure.ac
+autogen.sh
