@@ -8,18 +8,12 @@ a GTK3 (v3.18) application that creates a modifiable 2D curve of [temp, fanspeed
 1. Download the zipped application file from the `dist` folder
 2. Extract the application's folder from the zipped file and place it anywhere
 3. Open a terminal window and install the following dependencies:  
-  I. Install python3:  
-    `sudo apt-get install python3.6`  
-  II. Install pip3:  
-    `sudo apt-get install python3-pip`  
-  III. Install matplotlib:  
-    `python3 -mpip install matplotlib`  
-  IV. Install pyGTK:  
-    `sudo apt-get install libgtk-3-dev`  
-  V. Install cairocffi:  
-    `sudo apt-get install python3-cairocffi`    
-  VI. Install libcanberra-gtk3:  
-    `sudo apt-get install libcanberra-gtk3-module`  
+  I. Install python3: `sudo apt-get install python3.6`  
+  II. Install pip3: `sudo apt-get install python3-pip`  
+  III. Install matplotlib: `python3 -mpip install matplotlib`  
+  IV. Install pyGTK: `sudo apt-get install libgtk-3-dev`  
+  V. Install cairocffi: `sudo apt-get install python3-cairocffi`    
+  VI. Install libcanberra-gtk3: `sudo apt-get install libcanberra-gtk3-module`  
 4. Allow the Nvidia card's fan to be controlled:  
   `sudo nvidia-xconfig --enable-all-gpus` and `sudo nvidia-xconfig --cool-bits=28`
 5. Reboot your computer for the GPU settings to take effect:  
