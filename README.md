@@ -7,7 +7,7 @@ a GTK3 (v3.18) application that creates a modifiable 2D curve of [temp, fanspeed
 
 1. Download the zipped application file from the `dist` folder
 2. Extract the application's folder from the zipped file and place it anywhere
-3. Open a terminal window and install the following dependencies:
+3. Open a terminal window and install the following dependencies:  
   I. Install python3:  
     `sudo apt-get install python3.6`
   II. Install pip3:  
