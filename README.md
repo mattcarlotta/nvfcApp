@@ -5,26 +5,26 @@ a GTK3 (v3.18) application that creates a modifiable 2D curve of [temp, fanspeed
 
 ## Linux Quickstart:
 
-* Download the zipped application file from the `dist` folder
-* Extract the application's folder from the zipped file and place it anywhere
-* Open a terminal window
-* Install python3:
+1. Download the zipped application file from the `dist` folder
+2. Extract the application's folder from the zipped file and place it anywhere
+3. Open a terminal window and install the following dependencies.
+4. Install python3:  
   `sudo apt-get install python3.6`
-* Install pip3:
+5. Install pip3:  
   `sudo apt-get install python3-pip`
-* Install matplotlib:
+6. Install matplotlib:  
   `python3 -mpip install matplotlib`
-* Install pyGTK:
+7. Install pyGTK:  
   `sudo apt-get install libgtk-3-dev`
-* Install cairocffi:
+8. Install cairocffi:  
   `sudo apt-get install python3-cairocffi`  
-* Install libcanberra-gtk3:
+9. Install libcanberra-gtk3:  
   `sudo apt-get install libcanberra-gtk3-module`
-* Allow the Nvidia card's fan to be controlled:
+10. Allow the Nvidia card's fan to be controlled:  
   `sudo nvidia-xconfig --enable-all-gpus` and `sudo nvidia-xconfig --cool-bits=28`
-* Reboot your computer for the GPU settings to take effect:
+11. Reboot your computer for the GPU settings to take effect:  
   `sudo reboot`
-* Open a terminal in the folder containing nvfcapp.py, then execute:
+12. Open a terminal in the folder containing nvfcapp.py, then execute:  
   `python3 nvfcapp.py`
 
 ## Button Actions
