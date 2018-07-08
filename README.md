@@ -7,24 +7,24 @@ a GTK3 (v3.18) application that creates a modifiable 2D curve of [temp, fanspeed
 
 1. Download the zipped application file from the `dist` folder
 2. Extract the application's folder from the zipped file and place it anywhere
-3. Open a terminal window and install the following dependencies.
-4. Install python3:  
-  `sudo apt-get install python3.6`
-5. Install pip3:  
-  `sudo apt-get install python3-pip`
-6. Install matplotlib:  
-  `python3 -mpip install matplotlib`
-7. Install pyGTK:  
-  `sudo apt-get install libgtk-3-dev`
-8. Install cairocffi:  
-  `sudo apt-get install python3-cairocffi`  
-9. Install libcanberra-gtk3:  
-  `sudo apt-get install libcanberra-gtk3-module`
-10. Allow the Nvidia card's fan to be controlled:  
+3. Open a terminal window and install the following dependencies:
+  I. Install python3:  
+    `sudo apt-get install python3.6`
+  II. Install pip3:  
+    `sudo apt-get install python3-pip`
+  III. Install matplotlib:  
+    `python3 -mpip install matplotlib`
+  IV. Install pyGTK:  
+    `sudo apt-get install libgtk-3-dev`
+  V. Install cairocffi:  
+    `sudo apt-get install python3-cairocffi`  
+  VI. Install libcanberra-gtk3:  
+    `sudo apt-get install libcanberra-gtk3-module`
+4. Allow the Nvidia card's fan to be controlled:  
   `sudo nvidia-xconfig --enable-all-gpus` and `sudo nvidia-xconfig --cool-bits=28`
-11. Reboot your computer for the GPU settings to take effect:  
+5. Reboot your computer for the GPU settings to take effect:  
   `sudo reboot`
-12. Open a terminal in the folder containing nvfcapp.py, then execute:  
+6. Open a terminal in the folder containing nvfcapp.py, then execute:  
   `python3 nvfcapp.py`
 
 ## Button Actions
