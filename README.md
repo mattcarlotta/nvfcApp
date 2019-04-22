@@ -72,6 +72,7 @@ a GTK3 (v3.18) application that creates a modifiable 2D curve of [temp, fanspeed
 * pyGTK (libgtk-3-dev)
 * cairocffi (python3-cairocffi)
 * libcanberra-gtk3
+* tkinter (python3-tk)
 * proprietary Nvidia driver
 
 ## Credits:
