@@ -14,6 +14,7 @@ a GTK3 (v3.18) application that creates a modifiable 2D curve of [temp, fanspeed
   IV. Install pyGTK: `sudo apt-get install libgtk-3-dev`  
   V. Install cairocffi: `sudo apt-get install python3-cairocffi`    
   VI. Install libcanberra-gtk3: `sudo apt-get install libcanberra-gtk3-module`  
+  VII. Install tkinter: `sudo apt-get install python3-tk`
 4. Allow the Nvidia card's fan to be controlled:  
   `sudo nvidia-xconfig --enable-all-gpus` and `sudo nvidia-xconfig --cool-bits=28`
 5. Reboot your computer for the GPU settings to take effect:  
